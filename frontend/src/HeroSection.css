@@ -1,0 +1,42 @@
+.hero-image {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px;
+    background-size: cover;
+  }
+  
+  .hero-image h1 {
+    color: black;
+    text-align: center;
+    padding: 30px;
+    font-size: 30px;
+  }
+  
+  @media (max-width: 600px) {
+    .hero-image {
+      height: 70vh;
+      background-size: cover;   
+      background-repeat: no-repeat; 
+    }
+  }
+  
+  @media (max-height: 600px) {
+    .hero-image {
+      height: 120vh;
+      background-size: cover;   
+      background-repeat: no-repeat; 
+    }
+  }
+  
+  @media (min-width: 1025px) {
+    .bothcontainer {
+       position: relative;
+       bottom: 100px;
+      display: flex;
+      flex-direction: column; 
+      gap: 10px; 
+    }
+  }
+  

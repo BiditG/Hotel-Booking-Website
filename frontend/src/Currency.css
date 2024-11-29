@@ -1,0 +1,15 @@
+.Currencybutton 
+{
+    background-color: transparent;
+    color: #013b72;
+    border: none;
+    padding-bottom: 5px;
+    
+
+}
+.Currencybutton:hover {
+    border-bottom: 2px solid #013b72;
+    background-color: transparent;
+    border-radius: 0px;
+    color: #013b72;
+}

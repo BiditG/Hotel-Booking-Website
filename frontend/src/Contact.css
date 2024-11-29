@@ -1,0 +1,86 @@
+
+  .contact-form-container-custom {
+    background-color:white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin-top: 100px;
+  }
+  
+  .contact-form-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #013b72;
+  }
+  
+  /* Input group container */
+  .input-group-custom {
+    margin-bottom: 20px;
+  }
+  
+  .input-label-custom {
+    font-weight: 500;
+    color: #013b72;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .input-field-custom,
+  .textarea-field-custom {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.3s ease;
+  }
+  
+  /* Focus styles for inputs */
+  .input-field-custom:focus,
+  .textarea-field-custom:focus {
+    border-color: #0056b3;
+    outline: none;
+  }
+  
+  /* Button styling */
+  .submit-btn-custom {
+    background-color: #0056b3;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Button hover effect */
+  .submit-btn-custom:hover {
+    background-color: #003d7a;
+  }
+  
+  /* Responsive styles for smaller screens */
+  @media (max-width: 600px) {
+    .contact-form-container-custom {
+      padding: 20px;
+    }
+  
+    .contact-form-title {
+      font-size: 24px;
+    }
+  
+    .input-field-custom,
+    .textarea-field-custom {
+      font-size: 14px;
+    }
+  
+    .submit-btn-custom {
+      font-size: 14px;
+    }
+  }
+  

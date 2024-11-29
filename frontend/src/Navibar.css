@@ -1,0 +1,29 @@
+.link {
+    border-bottom: 2px transparent;
+    transition: border-bottom 0.3s ease;
+    padding-bottom: 5px;
+    text-decoration: none;
+    color: #013b72;
+}
+
+
+
+.link:hover {
+    border-bottom: 2px solid #013b72;
+    
+
+}
+@media (min-width: 1025px) {
+
+
+    .navdrop {
+    margin-left: 50%;
+    }
+    
+      #nav{
+      margin-left: 20%;
+      margin-top: 10px;
+
+      }
+    }
+

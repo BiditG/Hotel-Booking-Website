@@ -1,0 +1,17 @@
+.cards {
+    display: flex;
+    justify-content: start;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: nowrap;
+    width: 83%;
+    overflow-x: auto;
+    padding: 10px;
+    margin-top: 40px;
+}
+.cardcon {
+    flex-shrink: 0;
+}
+.cards::-webkit-scrollbar {
+    display: none;
+}
