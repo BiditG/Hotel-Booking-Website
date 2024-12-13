@@ -11,21 +11,22 @@ import Contact from './Contact';
 
 function Navibar() {
   return (
-    <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary shadow ">
+    <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary shadow fixed-top" >
       <Container>
         <Navbar.Brand href="#home">World Hotels</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto" id='nav'>
+            
             <Nav.Link as={Link} to="/" className='link'>Home</Nav.Link>
             <Nav.Link  className='link'>Rooms/Rates</Nav.Link>
             <Nav.Link as={Link} to='./Offers'className='link'>Offers</Nav.Link> 
-            <Currency/>
             <Nav.Link  as = {Link} to='./Contact' className='link'>Contact </Nav.Link>
             <Nav.Link  as = {Link} to='/' className='link'>Bookings </Nav.Link> 
             
             
             <NavDropdown title="Account" id="collapsible-nav-dropdown"className='navdrop'>
+  
               
               <NavDropdown.Item as={Link} to="/Login">Login</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/Register">Register</NavDropdown.Item>
@@ -40,3 +41,5 @@ function Navibar() {
 }
 
 export default Navibar;
+
+

@@ -7,6 +7,36 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
     z-index: 1001;
 }
+.flagcontainer button {
+    background-color: white;
+    border: none;
+    display: flex;
+    padding: 10px;
+
+}
+.flagcontainer button:hover {
+    background-color: whitesmoke;
+    border: none;
+
+}
+.flag {
+    width: 25px;
+    height: 25px;
+    border: 0px solid black;
+    margin-left: 10px;
+    background-image: url('UK.png') ;
+    background-size: cover;
+}
+.flag1 {
+    width: 20px;
+    height: 20px;
+    border: 0px solid black;
+    margin-left: 10px;
+    margin-bottom: 2px;
+    background-image: url('Nepal.jpg') ;
+    background-size: cover;
+}
+
 .Filter-container select {
     width: 40%;
     margin-left: 30px;
@@ -42,23 +72,95 @@ iframe {
     width: 200px;
     height: 100px;
 }
-
-
-@media (max-width: 600px) {
+.custom-accordion {
+    border: 1px solid #1d58a2; 
+    width: 90%;
+    margin-left: 5%;
+    position: relative;
+    bottom: 40px;
+}
+@media (min-width: 375px ) and (max-width: 599px) {
+    .filteroverview {
+        margin-top: 50%;
+    }
+    
 
 }
+
 
 @media (min-width: 601px) and (max-width: 1024px) {
+    .filteroverview {
+        margin-top: 35%;
+    }
+
+
+    .Filter-container {
+        width: 80%;
+        background-color: white;
+        margin: auto;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+        z-index: 1001;
+    }
+
+    .Filter-container select {
+        width: 40%;
+        margin-left: 30px;
+    }
+    .Amenities {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+    .Amenities label {
+       margin-top: 10px;
+    }
+    .Amenities h2 {
+        text-align: left;
+     }
+    .Amenities input {
+        transform: scale(2);
+        position: relative;
+        bottom: 15px;
+        width: 50%;
+        margin-left: 120px;
+    }
+    .apply-filter-button {
+        width: 100%;
+        background-color: #013b72;
+        
+    }
+    .apply-filter-button:hover{
+        background-color: #1d58a2;
+        
+    }
+    iframe {
+        width: 200px;
+        height: 100px;
+    }
+    .custom-accordion {
+        margin-top: 25%;
+        border: 1px solid #1d58a2; 
+    }
+    #cus1 {
+        margin-top: 1%;
+    }
 
 }
 
+
 @media (min-width: 1025px) {
+    .filteroverview {
+        margin-top: 30%;
+    }
 
     .Filter-container {
         width: 100%;
         margin-top: 1%;
         margin-right: auto;
         margin-left: auto;
+        border: 1px dotted black;
     }
 
     .Filter-container select {
@@ -77,6 +179,8 @@ iframe {
     .custom-accordion {
         width: 70%;  
         margin: auto; 
+        border: 1px solid #1d58a2; 
+        border-radius: 5px;
     }
     iframe {
         width: 80%;
@@ -103,6 +207,12 @@ iframe {
     }
 
 
+
+}
+@media (min-width: 1280px) {
+    .filteroverview {
+        margin-top: 10%;
+    }
 
 }
 

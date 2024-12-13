@@ -7,9 +7,12 @@ import "./Filters.css";
 function Filters() {
   return (
     <>
+    <div className="filteroverview">
       <Accordion className="custom-accordion">
         <Accordion.Item eventKey="0">
-          <Accordion.Header>Filters - <ion-icon name="filter-outline"></ion-icon></Accordion.Header>
+          <Accordion.Header>
+            Filters - <ion-icon name="filter-outline"></ion-icon>
+          </Accordion.Header>
           <Accordion.Body>
             <div className="Filter-container">
               <h2>Price Range</h2>
@@ -57,9 +60,11 @@ function Filters() {
         </Accordion.Item>
       </Accordion>
 
-      <Accordion className="custom-accordion">
+      <Accordion className="custom-accordion" id="cus1">
         <Accordion.Item eventKey="1">
-          <Accordion.Header className="aheader">Map - <ion-icon name="map-outline"></ion-icon></Accordion.Header>
+          <Accordion.Header className="aheader">
+            Map - <ion-icon name="map-outline"></ion-icon>
+          </Accordion.Header>
           <Accordion.Body>
             <div className="Filter-container">
               <h2>MAP</h2>
@@ -67,7 +72,7 @@ function Filters() {
                 src="https://www.google.com/maps/embed?pb=..."
                 width="400"
                 height="300"
-                style={{ border: '0' }}
+                style={{ border: "0" }}
                 allowFullScreen={true}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -76,6 +81,32 @@ function Filters() {
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
+
+      <Accordion className="custom-accordion" id="cus1">
+        <Accordion.Item eventKey="1">
+          <Accordion.Header className="aheader">
+            Currency - <ion-icon name="card-outline"></ion-icon>
+          </Accordion.Header>
+          <Accordion.Body>
+            <div className="Filter-container">
+              <h2>CURRENCY</h2>
+              <br />
+              <div className="flagcontainer">
+                <button>
+                  UK POUND<div className="flag"></div>
+                </button>
+              </div>
+              <div className="flagcontainer">
+                <button>
+                  NEPALI RUPPES<div className="flag1"></div>
+                </button>
+              </div>
+            </div>
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
+      </div>
+      <br />
     </>
   );
 }

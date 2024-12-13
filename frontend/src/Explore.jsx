@@ -10,8 +10,8 @@ function Explore({cities=[]}) {
     for (let i=0; i<cities.length; i++){
         const city = cities[i]
 
-      ExploreCards.push(  <Card style={{ width: '18rem' }} key={i} className='cardcon'>
-        <Card.Img variant="top" src="holder.js/100px180" />
+      ExploreCards.push(  <Card style={{ width: '18rem',border: "1px groove #007bff" }} key={i} className='cardcon'>
+        <Card.Img variant="top" src={city.image} style={{width: '290px', height:'144px'}} />
         <Card.Body>
           <Card.Title>{city.name}</Card.Title>
         </Card.Body>
@@ -20,8 +20,8 @@ function Explore({cities=[]}) {
 
   return (
     <>
-    <center>
-    <h2 style={{fontSize:'30px'}}>Explore UK</h2>
+    <center style={{marginTop:'30px'}}>
+    <h2 className='headingexplore'>Explore UK</h2>
     <div className='cards'>{ExploreCards}</div>
     </center>
 
@@ -32,3 +32,10 @@ function Explore({cities=[]}) {
 }
 
 export default Explore
+
+
+
+
+
+
+

@@ -69,23 +69,23 @@ function App() {
     },
   ];
   const cities = [
-    { name: "Aberdeen", capacity: 90, peakRate: 140, offPeakRate: 70 },
-    { name: "Belfast", capacity: 80, peakRate: 130, offPeakRate: 70 },
-    { name: "Birmingham", capacity: 110, peakRate: 150, offPeakRate: 75 },
-    { name: "Bristol", capacity: 100, peakRate: 140, offPeakRate: 70 },
-    { name: "Cardiff", capacity: 90, peakRate: 130, offPeakRate: 70 },
-    { name: "Edinburgh", capacity: 120, peakRate: 160, offPeakRate: 80 },
-    { name: "Glasgow", capacity: 140, peakRate: 150, offPeakRate: 75 },
-    { name: "London", capacity: 160, peakRate: 200, offPeakRate: 100 },
-    { name: "Manchester", capacity: 150, peakRate: 180, offPeakRate: 90 },
-    { name: "Newcastle", capacity: 90, peakRate: 120, offPeakRate: 70 },
-    { name: "Norwich", capacity: 90, peakRate: 130, offPeakRate: 70 },
-    { name: "Nottingham", capacity: 110, peakRate: 130, offPeakRate: 70 },
-    { name: "Oxford", capacity: 90, peakRate: 180, offPeakRate: 90 },
-    { name: "Plymouth", capacity: 80, peakRate: 180, offPeakRate: 90 },
-    { name: "Swansea", capacity: 70, peakRate: 130, offPeakRate: 70 },
-    { name: "Bournemouth", capacity: 90, peakRate: 130, offPeakRate: 70 },
-    { name: "Kent", capacity: null, peakRate: null, offPeakRate: null }  // Example: Kent data is missing or undefined
+    { name: "Aberdeen", capacity: 90, peakRate: 140, offPeakRate: 70 , image: '/Aberdeen.jpg'},
+    { name: "Belfast", capacity: 80, peakRate: 130, offPeakRate: 70 , image: '/Belfast.jpg'},
+    { name: "Birmingham", capacity: 110, peakRate: 150, offPeakRate: 75, image: '/Birmingham.jpg' },
+    { name: "Bristol", capacity: 100, peakRate: 140, offPeakRate: 70, image: '/Bristol.jpg' },
+    { name: "Cardiff", capacity: 90, peakRate: 130, offPeakRate: 70 , image: '/Cardiff.jpg'},
+    { name: "Edinburgh", capacity: 120, peakRate: 160, offPeakRate: 80 , image: '/Edinburgh.jpg'},
+    { name: "Glasgow", capacity: 140, peakRate: 150, offPeakRate: 75 , image: '/Glasgow.jpg'},
+    { name: "London", capacity: 160, peakRate: 200, offPeakRate: 100 , image: '/London.jpg'},
+    { name: "Manchester", capacity: 150, peakRate: 180, offPeakRate: 90, image: '/Manchester.jpeg' },
+    { name: "Newcastle", capacity: 90, peakRate: 120, offPeakRate: 70, image: '/Newcastle.jpg' },
+    { name: "Norwich", capacity: 90, peakRate: 130, offPeakRate: 70 , image: '/Norwich.jpg'},
+    { name: "Nottingham", capacity: 110, peakRate: 130, offPeakRate: 70 , image: '/Nottingham.jpg'},
+    { name: "Oxford", capacity: 90, peakRate: 180, offPeakRate: 90, image: '/Oxford.jpg' },
+    { name: "Plymouth", capacity: 80, peakRate: 180, offPeakRate: 90, image: '/Plymouth.jpg'},
+    { name: "Swansea", capacity: 70, peakRate: 130, offPeakRate: 70, image: '/Swansea.jpg' },
+    { name: "Bournemouth", capacity: 90, peakRate: 130, offPeakRate: 70 , image: '/Bourne.jpg'},
+    { name: "Kent", capacity: null, peakRate: null, offPeakRate: null, image: '/Kent.jpg'}  
   ];
   return (
     <>

@@ -8,10 +8,19 @@
     overflow-x: auto;
     padding: 10px;
     margin-top: 40px;
+    
 }
 .cardcon {
     flex-shrink: 0;
 }
 .cards::-webkit-scrollbar {
     display: none;
+}
+.headingexplore {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 300;
+    color: #222;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
