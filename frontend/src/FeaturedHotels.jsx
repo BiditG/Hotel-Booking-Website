@@ -51,7 +51,7 @@ function FeaturedHotels({ hotels = [] }) {
   };
 
   return (
-    <center>
+    <center style={{backgroundColor: 'whitesmoke'}}>
       <div className="Featured-container">
         <div className="scroll-buttons">
           <button onClick={scrollLeft} className="scroll-btn">{"<"}</button>

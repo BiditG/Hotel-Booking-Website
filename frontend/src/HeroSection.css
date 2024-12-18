@@ -1,5 +1,5 @@
 .hero-image {
-  height: 80vh;
+  height: 120vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -40,7 +40,7 @@
 
 @media (max-width: 600px) {
   .hero-image {
-    height: 70vh;
+    height: 130vh;
     background-size: cover;
     background-repeat: no-repeat;
   }
@@ -58,12 +58,12 @@
 @media ( min-width: 768px) and (max-width:1024px) {
 
   .hero-image {
-    height: 70vh;
+    height: 120vh;
   }
   .seven h1 {
-    margin-top: 70px;
+    margin-top: 120px;
     text-align: center;
-    font-size: 30px;
+    font-size: 40px;
     font-weight: 300;
     color: white;
     letter-spacing: 1px;
@@ -89,7 +89,7 @@
 
 @media (min-width: 1025px) {
   .hero-image {
-    height: 70vh;
+    height: 110vh;
     background-size: cover;
     background-repeat: no-repeat;
   }
@@ -102,14 +102,14 @@
     gap: 10px;
   }
   .seven h1 {
-    margin-top: 70px;
+    margin-top: 120px;
     text-align: center;
-    font-size: 30px;
+    font-size: 40px;
     font-weight: 300;
     color: white;
     letter-spacing: 1px;
     text-transform: uppercase;
-
+    
     display: grid;
     grid-template-columns: 1fr max-content 1fr;
     grid-template-rows: 27px 0;
@@ -122,28 +122,17 @@
   .seven h1:before {
     content: " ";
     display: block;
-    border-bottom: 1px solid #c50000;
-    border-top: 1px solid #c50000;
+    border-bottom: 1px solid whitesmoke;
+    border-top: 1px solid whitesmoke;
     height: 5px;
-    background-color: #f8f8f8;
+    background-color: white;
   }
 
-  @keyframes colorChange {
-    0% {
-      color: red;
-    }
-    50% {
-      color: blue;
-    }
-    100% {
-      color: green;
-    }
-  }
 
   }
   @media (min-width: 1366px) {
     .hero-image {
-      height: 70vh;
+      height: 120vh;
       background-size: cover;
       background-repeat: no-repeat;
     }

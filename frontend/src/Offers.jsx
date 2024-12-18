@@ -1,10 +1,8 @@
-import React from 'react';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import './Offers.css'
+import React from "react";
+import { Carousel, Button, Card, Container } from "react-bootstrap"; // Import Container
+import "./Offers.css";
 
 function Offers() {
-  // Function to calculate discount based on days in advance
   const getDiscount = (daysInAdvance) => {
     if (daysInAdvance >= 80 && daysInAdvance <= 90) {
       return 30;
@@ -13,40 +11,52 @@ function Offers() {
     } else if (daysInAdvance >= 45 && daysInAdvance <= 59) {
       return 10;
     } else {
-      return 0; // No discount for under 45 days
+      return 0;
     }
   };
 
-  // Example of different booking days for each offer (this can be dynamic based on real data)
   const offers = [
-    { title: "Offer 1", daysInAdvance: 85, price: 1000 },
-    { title: "Offer 2", daysInAdvance: 70, price: 1200 },
-    { title: "Offer 3", daysInAdvance: 40, price: 900 },
+    {
+      title: "Offer 1",
+      daysInAdvance: 85,
+      price: 1000,
+      backgroundImage: "url('/images/offer1.jpg')",
+    },
+    {
+      title: "Offer 2",
+      daysInAdvance: 70,
+      price: 1200,
+      backgroundImage: "url('/images/offer2.jpg')",
+    },
+    {
+      title: "Offer 3",
+      daysInAdvance: 40,
+      price: 900,
+      backgroundImage: "url('/images/offer3.jpg')",
+    },
+    {
+      title: "Offer 4",
+      daysInAdvance: 90,
+      price: 1500,
+      backgroundImage: "url('/images/offer4.jpg')",
+    },
+    {
+      title: "Offer 5",
+      daysInAdvance: 55,
+      price: 1100,
+      backgroundImage: "url('/images/offer5.jpg')",
+    },
   ];
 
   return (
-    <>
-      {offers.map((offer, index) => {
-        const discount = getDiscount(offer.daysInAdvance);
-        const discountedPrice = offer.price - (offer.price * discount / 100);
+    <Container>
+      <div className="offertitle">
+      <h2>Travel ideas and discounts with World Hotels</h2>
+      <p>Choose World Hotels for your next getaway. Enjoy our unforgettable experiences with this selection of packs, rates and special discounts.</p>
+      </div>
 
-        return (
-          <Card style={{ width: '18rem', marginBottom: '20px' }} key={index}>
-            <Card.Img variant="top" src="holder.js/100px180" />
-            <Card.Body>
-              <Card.Title>{offer.title}</Card.Title>
-              <Card.Text>
-                Book {offer.daysInAdvance} days in advance<br />
-                Discount: {discount}%<br />
-                Original Price: ${offer.price}<br />
-                Price After Discount: ${discountedPrice.toFixed(2)}
-              </Card.Text>
-              <Button variant="primary">Book Now</Button>
-            </Card.Body>
-          </Card>
-        );
-      })}
-    </>
+
+    </Container>
   );
 }
 

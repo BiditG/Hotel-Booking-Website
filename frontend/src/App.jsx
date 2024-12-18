@@ -96,7 +96,6 @@ function App() {
             <>
               <LandingPage />
               <div className="bothcontainer">
-                <Filters />
                 <FeaturedHotels hotels={hotels} />
               </div>
               <Explore cities={cities}/>

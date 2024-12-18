@@ -20,7 +20,7 @@ function Explore({cities=[]}) {
 
   return (
     <>
-    <center style={{marginTop:'30px'}}>
+    <center style={{marginTop:'30px'}} >
     <h2 className='headingexplore'>Explore UK</h2>
     <div className='cards'>{ExploreCards}</div>
     </center>

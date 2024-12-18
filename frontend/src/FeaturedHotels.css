@@ -3,6 +3,7 @@
   height: auto;
   padding: 20px;
 }
+
 .Featured-container h2 {
   text-align: center;
   font-size: 30px;
@@ -11,12 +12,14 @@
   letter-spacing: 1px;
   text-transform: uppercase;
 }
+
 .hotel-container {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
   justify-items: center;
 }
+
 .scroll-buttons {
   display: none;
 }
@@ -28,23 +31,84 @@
 .scroll-btn:hover {
   display: none;
 }
-.Booknowbutton {
-  border-radius: 5px;
-  background-color: #1d58a2;
-  color: white;
-  padding: 5px;
-}
-.Seedetailsbutton {
-  border-radius: 5px;
-  background-color: #1d58a2;
-  color: white;
-  padding: 5px;
-}
+
 .Card-container {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: #1d58a2 1px solid;
+  border: 1px solid #1d58a2;
+  border-radius: 12px; /* Added rounded corners */
+  background-color: #fff; /* White background for cleaner look */
+  transition: all 0.3s ease; /* Smooth transition for all changes */
+  padding: 15px; /* Added some padding inside the card */
 }
 
+/* Enhanced Hover Effect */
+.Card-container:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* More intense shadow on hover */
+  transform: scale(5px)
+  border: 1px solid #155a8a; /* Change border color on hover */
+  background-color: #f7f7f7; /* Light grey background on hover */
+}
+
+/* Card Content */
+.Card-container .card-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.Card-container .card-body {
+  font-size: 16px;
+  color: #555;
+}
+
+/* Improved Button Styles */
+.Booknowbutton {
+  border-radius: 30px; /* More rounded for a softer appearance */
+  background-color: #1d58a2;
+  color: white;
+  padding: 12px 30px; /* Larger padding for a more comfortable clickable area */
+  font-size: 16px; /* Slightly larger font size for readability */
+  font-weight: 500;
+  border: none; /* Removed border for a cleaner look */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.Booknowbutton:hover {
+  background-color: #155a8a; /* Darker shade for hover effect */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* More intense shadow on hover */
+  transform: translateY(-3px); /* Slight lift effect on hover */
+}
+
+.Booknowbutton:focus {
+  outline: none; /* Removing default focus outline */
+  box-shadow: 0 0 0 4px rgba(29, 88, 162, 0.4); /* Custom focus outline for accessibility */
+}
+
+.Seedetailsbutton {
+  border-radius: 30px; /* Rounded corners for consistency */
+  background-color: #ff8c00;
+  color: white;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.Seedetailsbutton:hover {
+  background-color: #e67e00; /* Slightly darker shade on hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* More intense shadow on hover */
+  transform: translateY(-3px); /* Slight lift effect on hover */
+}
+
+.Seedetailsbutton:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.4); /* Custom focus outline for accessibility */
+}
 
 @media (min-width: 601px) and (max-width: 1025px) {
   .scroll-buttons {
@@ -58,6 +122,7 @@
   .scroll-btn:hover {
     display: none;
   }
+
   .Card-container {
     width: 100%;
     max-width: 1000px;
@@ -67,10 +132,11 @@
     border: 1px solid #1d58a2;
     transition: box-shadow 0.2s ease-in-out;
   }
+
   .Card-container:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   }
-  
+
 }
 
 @media (min-width: 1025px) {
@@ -92,13 +158,11 @@
     scroll-behavior: smooth;
     margin-top: 60px;
   }
-  .hotel-container::-webkit-scrollbar {
-    display: none;
-  }
 
   .hotel-container::-webkit-scrollbar {
     display: none;
   }
+
   .scroll-buttons {
     position: absolute;
     top: 60%;
@@ -126,7 +190,6 @@
   }
 
   .scroll-btn:hover {
-    display: block;
     background-color: #1d58a2;
     color: white;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -145,11 +208,16 @@
     max-width: 1000px;
     margin: 0 auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    transition: box-shadow 0.2s ease-in-out;
-    border: 1px dotted ;
+    border-radius: 12px; /* More rounded corners */
+    transition: all 0.3s ease; /* Smooth transition for all changes */
+    padding: 15px; /* Added padding inside the card */
+    border: 1px solid #1d58a2; /* Clean border */
   }
+
   .Card-container:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1.02); /* Slight lift effect on hover */
+    border: 1px solid #155a8a; /* Darker border on hover */
+    background-color: #f7f7f7; /* Light grey background */
   }
 }

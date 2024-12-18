@@ -1,100 +1,315 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    
-}
+  }
 
-.search-container {
+.modalbutton {
+    display: flex;
+    flex-direction: row;
+    gap: 15px; 
+    width: 100%;
+  }
+  
+  button.secondary-btn {
+    background-color: #f8f8f8;
+    color: #013b72;
+    border: 1px solid #013b72;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  button.secondary-btn:hover {
+    background-color: #013b72;
+    color: white;
+  }
+  
+  button.secondary-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  }
+  
+  button.secondary-btn:active {
+    background-color: #1d58a2;
+    color: white;
+  }
+  
+  .search-container {
+    backdrop-filter: blur(5px);
     background-color: rgba(255, 255, 255, 0.7);
     padding: 30px;
-    max-width: 600px; 
-    margin: 40px auto; 
+    max-width: 600px;
+    margin: 40px auto;
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex-direction: column; 
-    text-align: left; 
+    flex-direction: column;
+    text-align: left;
     border: 1px solid #013b72;
-}
-
-.form-group {
-    margin-bottom: 20px; 
-}
-
-.form-group label {
-    display: block; 
-    margin-bottom: 5px; 
-    font-size: 1rem; 
-}
-
-.form-group input {
-    width: 100%; 
-    padding: 10px; 
-    border: 1px solid #013b72;
-    border-radius: 5px; 
-    font-size: 0.8rem; 
-}
-.form-group select {
-    width: 100%; 
-    padding: 10px; 
-    border: 1px solid #013b72; 
-    border-radius: 5px; 
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
     font-size: 1rem;
+    color: #013b72;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #013b72;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .search-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #013b72;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .search-button:hover {
+    background-color: #1d58a2;
+  }
+  
+  .search-button:focus {
+    outline: none;
+  }
+  
+  /* Modal Styles */
+  .modal-content {
+    border-radius: 10px;
+    border: 1px solid #013b72;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .modal-header {
+    background-color: #013b72;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .modal-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  
+  .modal-body {
+    padding: 20px;
+    color: #333;
+  }
+  
+  .modal-footer {
+    background-color: #f8f8f8;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+  
+  .modal-footer button {
+    border-radius: 5px;
+    padding: 8px 15px;
+  }
+  
+  .modal-footer .btn-secondary {
+    background-color: #f0f0f0;
+    color: #013b72;
+    border: 1px solid #013b72;
+  }
+  
+  .modal-footer .btn-secondary:hover {
+    background-color: #013b72;
+    color: white;
+  }
+  
+  .modal-footer .btn-primary {
+    background-color: #013b72;
+    color: white;
+    border: 1px solid #013b72;
+  }
+  
+  .modal-footer .btn-primary:hover {
+    background-color: #1d58a2;
+  }
+  
+  @media (max-width: 600px) {
+    .search-container {
+      width: 90%;
+      padding: 20px;
+    }
+  
+    .form-group {
+      width: 100%;
+    }
+  
+    .modal-content {
+      width: 90%;
+    }
+  }
+  
+  @media (min-width: 601px) and (max-width: 1024px) {
+    .search-container {
+      padding: 30px;
+      width: 70%;
+      margin-top: 20px;
+    }
+  
+    .form-group {
+      width: 100%;
+    }
+  
+    .modal-content {
+      width: 70%;
+    }
+  }
+  
+  @media (min-width: 1025px) {
+    .search-container {
+      width: 60%;
+      margin-top: 50px;
+    }
+  
+    .form-group {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+  
+    .search-button {
+      width: 100%;
+      margin-top: 25px;
+    }
+  }
+button {
+  font-size: 1rem;
+  padding: 12px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.form-group input:focus {
-    border-color: #007bff; 
-    outline: none; 
+button:focus {
+  outline: none;
 }
 
 .search-button {
-    width: 100%; 
-    padding: 10px; 
-    background-color: #013b72;
-    border: none;
+  background-color: #013b72;
+  color: white;
+  width: 100%;
 }
-.search-button:hover {
-    background-color: #1d58a2;
-}
-@media (max-width: 600px) {
-    .search-container {
-        width: 90%;
-        padding: 20px; 
-    }
 
-    .form-group {
-        width: 100%;
-    }
+.search-button:hover {
+  background-color: #1d58a2;
+}
+
+/* Filter, Map, and Currency Buttons */
+button.secondary-btn {
+  background-color: #f8f8f8;
+  color: #013b72;
+  border: 1px solid #013b72;
+  margin-top: 10px; /* Add some space between buttons */
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+button.secondary-btn:hover {
+  background-color: #013b72;
+  color: white;
+}
+
+/* Button Hover Effects */
+button.secondary-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+.modal-footer .btn-secondary {
+  background-color: #f8f8f8;
+  color: #013b72;
+  border: 1px solid #013b72;
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: #013b72;
+  color: white;
+}
+
+.modal-footer .btn-primary {
+  background-color: #013b72;
+  color: white;
+  border: 1px solid #013b72;
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: #1d58a2;
+}
+
+@media (max-width: 600px) {
+  .search-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  .search-button,
+  .secondary-btn {
+    width: 100%;
+  }
 }
 
 @media (min-width: 601px) and (max-width: 1024px) {
-    .search-container {
-        padding: 30px; 
-        width: 70%;
-        margin-top: 20px;
-    }
+  .search-container {
+    padding: 30px;
+    width: 70%;
+    margin-top: 20px;
+  }
 
-    .form-group {
-        width: 100%; 
-    }
+  .form-group {
+    width: 100%;
+  }
+
+  .search-button,
+  .secondary-btn {
+    width: 100%;
+  }
 }
 
 @media (min-width: 1025px) {
-    .search-container {
-        width: 70%; 
-        margin-top: 10px;
-    }
+  .search-container {
+    width: 60%;
+    margin-top: 20px;
+  }
 
-    .form-group {
-        width: 45%; 
-        display: inline-block; 
-        margin-right: 20px; 
-    }
-    .search-button {
-        width: 100%;
-        margin-left: 144px;
-        margin-top: 25px;
-    }
+  .form-group {
+    width: 100%;
+    margin-bottom: 15px;
+  }
 
-
+  .search-button {
+    width: 100%;
+    margin-top: 25px;
+  }
 }

@@ -10,7 +10,7 @@ function Filters() {
     <div className="filteroverview">
       <Accordion className="custom-accordion">
         <Accordion.Item eventKey="0">
-          <Accordion.Header>
+          <Accordion.Header >
             Filters - <ion-icon name="filter-outline"></ion-icon>
           </Accordion.Header>
           <Accordion.Body>
@@ -60,12 +60,12 @@ function Filters() {
         </Accordion.Item>
       </Accordion>
 
-      <Accordion className="custom-accordion" id="cus1">
-        <Accordion.Item eventKey="1">
-          <Accordion.Header className="aheader">
+      <Accordion className="custom-accordion" id="cus1" >
+        <Accordion.Item eventKey="1" >
+          <Accordion.Header className="aheader"  >
             Map - <ion-icon name="map-outline"></ion-icon>
           </Accordion.Header>
-          <Accordion.Body>
+          <Accordion.Body >
             <div className="Filter-container">
               <h2>MAP</h2>
               <iframe
@@ -84,7 +84,7 @@ function Filters() {
 
       <Accordion className="custom-accordion" id="cus1">
         <Accordion.Item eventKey="1">
-          <Accordion.Header className="aheader">
+          <Accordion.Header className="aheader" >
             Currency - <ion-icon name="card-outline"></ion-icon>
           </Accordion.Header>
           <Accordion.Body>

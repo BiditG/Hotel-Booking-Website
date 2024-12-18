@@ -11,23 +11,19 @@ import Contact from './Contact';
 
 function Navibar() {
   return (
-    <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary shadow fixed-top" >
+    <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary shadow fixed-top">
       <Container>
-        <Navbar.Brand href="#home">World Hotels</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/" className="navbar-brand">World Hotels</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto" id='nav'>
-            
-            <Nav.Link as={Link} to="/" className='link'>Home</Nav.Link>
-            <Nav.Link  className='link'>Rooms/Rates</Nav.Link>
-            <Nav.Link as={Link} to='./Offers'className='link'>Offers</Nav.Link> 
-            <Nav.Link  as = {Link} to='./Contact' className='link'>Contact </Nav.Link>
-            <Nav.Link  as = {Link} to='/' className='link'>Bookings </Nav.Link> 
-            
-            
-            <NavDropdown title="Account" id="collapsible-nav-dropdown"className='navdrop'>
-  
-              
+          <Nav className="me-auto" id="nav">
+            <Nav.Link as={NavLink} to="/" className="link" activeClassName="active" style={{color: 'white',}}>Home</Nav.Link>
+            <Nav.Link className="link">Rooms/Rates</Nav.Link>
+            <Nav.Link as={NavLink} to="/Offers" className="link" activeClassName="active"style={{color: 'white',}}>Offers</Nav.Link>
+            <Nav.Link as={NavLink} to="/Contact" className="link" activeClassName="active"style={{color: 'white',}}>Contact</Nav.Link>
+            <Nav.Link as={NavLink} to="/Bookings" className="link" activeClassName="active"style={{color: 'white',}}>Bookings</Nav.Link>
+
+            <NavDropdown title="Account" id="collapsible-nav-dropdown" className="navdrop">
               <NavDropdown.Item as={Link} to="/Login">Login</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/Register">Register</NavDropdown.Item>
               <NavDropdown.Divider />
@@ -41,5 +37,3 @@ function Navibar() {
 }
 
 export default Navibar;
-
-

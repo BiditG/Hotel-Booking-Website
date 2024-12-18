@@ -78,6 +78,7 @@ iframe {
     margin-left: 5%;
     position: relative;
     bottom: 40px;
+    background-color: #1d58a2;
 }
 @media (min-width: 375px ) and (max-width: 599px) {
     .filteroverview {
@@ -96,7 +97,7 @@ iframe {
 
     .Filter-container {
         width: 80%;
-        background-color: white;
+        background-color: #1d58a2;
         margin: auto;
         padding: 20px;
         border-radius: 15px;
@@ -142,6 +143,7 @@ iframe {
     .custom-accordion {
         margin-top: 25%;
         border: 1px solid #1d58a2; 
+        background-color: #1d58a2;
     }
     #cus1 {
         margin-top: 1%;
@@ -161,6 +163,7 @@ iframe {
         margin-right: auto;
         margin-left: auto;
         border: 1px dotted black;
+        
     }
 
     .Filter-container select {
@@ -181,6 +184,7 @@ iframe {
         margin: auto; 
         border: 1px solid #1d58a2; 
         border-radius: 5px;
+        background-color: #1d58a2;
     }
     iframe {
         width: 80%;
@@ -213,7 +217,9 @@ iframe {
     .filteroverview {
         margin-top: 10%;
     }
-
+    .custom-accordion {
+        background-color: #1d58a2;
+    }
 }
 
 
