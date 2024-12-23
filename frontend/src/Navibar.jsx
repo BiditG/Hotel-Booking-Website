@@ -1,33 +1,76 @@
-import { Link } from 'react-router-dom';
-import { NavLink } from 'react-router-dom'; // For active navigation
+import { Link, NavLink } from 'react-router-dom';
+import { FaHome, FaConciergeBell, FaTags, FaEnvelope, FaBook, FaUserCircle } from 'react-icons/fa'; // Icons
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import './Navibar.css';
-import Offers from './Offers';
-import Currency from './Currency';
-import Contact from './Contact';
 
 function Navibar() {
   return (
-    <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary shadow fixed-top">
+    <Navbar collapseOnSelect expand="lg" className="nav-container fixed-top">
       <Container>
-        <Navbar.Brand as={Link} to="/" className="navbar-brand">World Hotels</Navbar.Brand>
+        {/* Logo */}
+        <Navbar.Brand as={Link} to="/" className="navbar-logo">
+          World Hotels
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto" id="nav">
-            <Nav.Link as={NavLink} to="/" className="link" activeClassName="active" style={{color: 'white',}}>Home</Nav.Link>
-            <Nav.Link className="link">Rooms/Rates</Nav.Link>
-            <Nav.Link as={NavLink} to="/Offers" className="link" activeClassName="active"style={{color: 'white',}}>Offers</Nav.Link>
-            <Nav.Link as={NavLink} to="/Contact" className="link" activeClassName="active"style={{color: 'white',}}>Contact</Nav.Link>
-            <Nav.Link as={NavLink} to="/Bookings" className="link" activeClassName="active"style={{color: 'white',}}>Bookings</Nav.Link>
+          <Nav className="ms-auto nav-links">
+            {/* Home */}
+            <div className="nav-item-container">
+              <Nav.Link as={NavLink} to="/" className="nav-link-item" activeClassName="active-link">
+                <FaHome className="nav-icon" /> Home
+              </Nav.Link>
+              <div className="nav-description">Discover our homepage.</div>
+            </div>
 
-            <NavDropdown title="Account" id="collapsible-nav-dropdown" className="navdrop">
-              <NavDropdown.Item as={Link} to="/Login">Login</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/Register">Register</NavDropdown.Item>
+            {/* Rooms */}
+            <div className="nav-item-container">
+              <Nav.Link as={NavLink} to="/rooms" className="nav-link-item" activeClassName="active-link">
+                <FaConciergeBell className="nav-icon" /> Rooms & Rates
+              </Nav.Link>
+              <div className="nav-description">Explore luxury and comfort.</div>
+            </div>
+
+            {/* Offers */}
+            <div className="nav-item-container">
+              <Nav.Link as={NavLink} to="/offers" className="nav-link-item" activeClassName="active-link">
+                <FaTags className="nav-icon" /> Offers
+              </Nav.Link>
+              <div className="nav-description">Special deals and packages.</div>
+            </div>
+
+            {/* Contact */}
+            <div className="nav-item-container">
+              <Nav.Link as={NavLink} to="/contact" className="nav-link-item" activeClassName="active-link">
+                <FaEnvelope className="nav-icon" /> Contact
+              </Nav.Link>
+              <div className="nav-description">Get in touch with us.</div>
+            </div>
+
+            {/* Bookings */}
+            <div className="nav-item-container">
+              <Nav.Link as={NavLink} to="/bookings" className="nav-link-item" activeClassName="active-link">
+                <FaBook className="nav-icon" /> Bookings
+              </Nav.Link>
+              <div className="nav-description">Make your reservations now.</div>
+            </div>
+
+            {/* Account Dropdown */}
+            <NavDropdown
+              title={
+                <span className="nav-link-item">
+                  <FaUserCircle className="nav-icon" /> Account
+                </span>
+              }
+              id="collapsible-nav-dropdown"
+              className="account-dropdown"
+            >
+              <NavDropdown.Item as={Link} to="/login">Login</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/register">Register</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#">Separated link</NavDropdown.Item>
+              <NavDropdown.Item href="#">Profile</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
