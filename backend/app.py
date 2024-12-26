@@ -1,90 +1,49 @@
-from flask import Flask, jsonify 
-
-from flask_cors import CORS
-import mysql.connector
-
-app = Flask(__name__)
-CORS(app)  
-
-
-
+from flask import Flask, jsonify
+from flask_mysqldb import MySQL
+from flask_cors import CORS  # Import CORS
 
 app = Flask(__name__)
 
-# Database configuration
-db_config = {
-    "host": "localhost",
-    "user": "root",
-    "password": "Pratima@12345",
-    "database": "WHBooking",
-}
-
-# Establish a database connection
-def get_db_connection():
-    try:
-        conn = mysql.connector.connect(**db_config)
-        return conn
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return None
+# Enable CORS for the frontend origin (your React app running at http://localhost:5174)
+# Enable CORS for all origins (only for debugging purposes)
+CORS(app, origins=["http://localhost:5173"])
 
 
-@app.route('/')
-def home():
-    return "Welcome to WHBooking API!"
 
+# Configure MySQL
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'  # Replace with your MySQL username
+app.config['MYSQL_PASSWORD'] = 'Pratima@12345'  # Replace with your MySQL password
+app.config['MYSQL_DB'] = 'hotels_db'  # Your database name
 
-# Fetch all customers
-@app.route('/customers', methods=['GET'])
-def get_customers():
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({"error": "Database connection failed"}), 500
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM Customers")
-    customers = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jsonify(customers)
+mysql = MySQL(app)
 
+# Route to fetch all hotels
+@app.route('/api/hotels', methods=['GET'])
+def get_hotels():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM hotels")
+    hotels = cur.fetchall()
+    cur.close()
 
-# Add a new customer
-@app.route('/customers', methods=['POST'])
-def add_customer():
-    data = request.json
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({"error": "Database connection failed"}), 500
-    cursor = conn.cursor()
-    query = """
-        INSERT INTO Customers (Name, Email, Password, Phone)
-        VALUES (%s, %s, %s, %s)
-    """
-    values = (data["Name"], data["Email"], data["Password"], data["Phone"])
-    cursor.execute(query, values)
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return jsonify({"message": "Customer added successfully!"})
+    hotel_list = []
+    for hotel in hotels:
+        hotel_dict = {
+            "id": hotel[0],
+            "name": hotel[1],
+            "description": hotel[2],
+            "image": hotel[3],
+            "amenities": hotel[4],
+            "rating": hotel[5],
+            "price": hotel[6],
+            "city": hotel[7],  # City field
+            "room_capacity": hotel[8],
+            "standard_rate_peak": hotel[9],
+            "standard_rate_off_peak": hotel[10]
+        }
+        hotel_list.append(hotel_dict)
 
-
-# Fetch a single customer
-@app.route('/customers/<int:customer_id>', methods=['GET'])
-def get_customer(customer_id):
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({"error": "Database connection failed"}), 500
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM Customers WHERE Customer_ID = %s", (customer_id,))
-    customer = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    if customer:
-        return jsonify(customer)
-    else:
-        return jsonify({"error": "Customer not found"}), 404
-
+    return jsonify(hotel_list)
 
 if __name__ == '__main__':
     app.run(debug=True)
-

@@ -15,6 +15,7 @@ import Currency from "./Currency";
 import Contact from "./Contact";
 import Filters from "./Filters";
 import Explore from "./Explore";
+import SearchResults from "./SearchResults";
 
 
 function App() {
@@ -106,6 +107,8 @@ function App() {
           <Route path="/Offers" element={<Offers/>}/>
           <Route path="/Currency" element={<Currency/>}/>
           <Route path="/Contact" element={<Contact/>}/>
+          <Route path="/Search" element={<Search />} />
+          <Route path="/SearchResults" element={<SearchResults />} />
         </Routes>
       </Router>
 
