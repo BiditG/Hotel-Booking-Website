@@ -1,117 +1,101 @@
 /* ===== General Navigation Bar Styling ===== */
 .nav-container {
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  padding: 10px 0;
-  transition: all 0.3s ease;
+  background-color: #013b72; /* Darker blue for a sophisticated, modern look */
+  padding: 12px 20px; /* Slightly more padding for a cleaner layout */
+  font-family: 'Inter', sans-serif; /* Clean sans-serif font */
+  transition: background-color 0.3s ease;
 }
 
 .navbar-logo {
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 2rem; /* Larger logo for emphasis */
+  font-weight: 700; /* Bolder font for better legibility */
   color: #ffffff;
   text-transform: uppercase;
+  letter-spacing: 1px; /* Subtle letter-spacing for a refined feel */
   transition: color 0.3s ease;
 }
 
 .navbar-logo:hover {
-  color: #ffab00;
+  color: #ff9f00; /* Gold on hover for better visibility */
 }
 
+/* ===== Navigation Links Container ===== */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 25px; /* Slightly more space between links */
+  margin-left: auto;
 }
 
-/* ===== Navigation Item Container ===== */
-.nav-item-container {
-  position: relative;
-}
-
+/* ===== Individual Navigation Item Styling ===== */
 .nav-link-item {
+  color: #f1f1f1; /* Soft white for text */
+  text-decoration: none;
+  font-size: 1.2rem; /* Larger font size for better readability */
+  font-weight: 500; /* Medium weight for easy legibility */
+  transition: color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effect */
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1.1rem;
-  color: #ffffff;
-  text-decoration: none;
-  transition: color 0.3s ease;
 }
 
+/* Hover Effect for Navigation Links */
 .nav-link-item:hover {
-  color: #ffab00;
+  color: #ff9f00; /* Gold on hover */
+  transform: translateY(-2px); /* Slightly lift the link on hover */
 }
 
-/* ===== Navigation Icons ===== */
+/* Active Link Styling */
+.nav-link-item.active {
+  color: #ff9f00 !important; /* Gold for active state */
+  font-weight: bold; /* Bold active link */
+}
+
+/* ===== Navigation Icons Styling ===== */
 .nav-icon {
-  font-size: 1.2rem;
+  font-size: 1.4rem; /* Slightly larger icons for better visibility */
+  color: inherit; /* Inherit the color of the text */
   transition: transform 0.3s ease;
 }
 
 .nav-link-item:hover .nav-icon {
-  transform: scale(1.1);
-}
-
-/* ===== Hover Dropdown Description ===== */
-.nav-description {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 220px;
-  background: #ffffff;
-  color: #333333;
-  text-align: center;
-  padding: 5px 10px;
-  font-size: 0.9rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.3s ease;
-  pointer-events: none;
-  z-index: 999;
-}
-
-.nav-item-container:hover .nav-description {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* ===== Active Link Styling ===== */
-.active-link {
-  color: #ffab00 !important;
-  font-weight: bold;
+  transform: scale(1.1); /* Slightly enlarge icon on hover */
 }
 
 /* ===== Account Dropdown Styling ===== */
 .account-dropdown .dropdown-menu {
-  background-color: #2a5298;
+  background-color: #2a5298; /* Subtle blue for dropdown background */
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
 }
 
 .account-dropdown .dropdown-item {
-  color: #ffffff;
-  font-size: 1rem;
-  transition: background 0.3s ease, color 0.3s ease;
+  color: #f1f1f1;
+  font-size: 1.1rem; /* Slightly larger text */
+  padding: 12px 20px; /* Adequate padding for better spacing */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .account-dropdown .dropdown-item:hover {
-  background-color: #1e3c72;
-  color: #ffab00;
+  background-color: #ff9f00; /* Gold background on hover */
+  color: #ffffff; /* Ensure white text color on hover */
 }
 
-/* ===== Responsive Behavior ===== */
+/* ===== Responsive Behavior (Mobile View) ===== */
 @media (max-width: 991px) {
   .nav-links {
     flex-direction: column;
-    text-align: center;
-    gap: 10px;
+    align-items: center;
+    gap: 15px;
   }
 
   .nav-link-item {
-    justify-content: center;
+    font-size: 1.4rem; /* Larger text for mobile */
+    text-align: center;
+  }
+
+  .nav-item-container .nav-description {
+    width: 250px; /* Adjust width for smaller screens */
+    font-size: 0.9rem;
   }
 }

@@ -1,0 +1,110 @@
+/* Main Footer Container */
+.footer-container {
+    width: 100%;
+    background-color: #1d58a2; /* Rich blue */
+    color: #ffffff;
+    padding: 60px 0;
+    text-align: center;
+  }
+  
+  /* Footer Inner Wrapper */
+  .footer-inner {
+    width: 70%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    text-align: left;
+  }
+  
+  /* Footer Section Title */
+  .footer-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #f0c040; /* Gold color */
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  
+  /* Footer Links */
+  .footer-links a {
+    display: block;
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .footer-links a:hover {
+    color: #f0c040;
+  }
+  
+  /* Newsletter Subscription */
+  .footer-newsletter input[type="email"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .footer-newsletter button {
+    background-color: #f0c040;
+    color: #1d58a2;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .footer-newsletter button:hover {
+    background-color: #e0a830;
+  }
+  
+  /* Social Media Icons */
+  .footer-social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .footer-social-icons a {
+    font-size: 20px;
+    color: #ffffff;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  
+  .footer-social-icons a:hover {
+    transform: scale(1.2);
+    color: #f0c040;
+  }
+  
+  /* Footer Legal Section */
+  .footer-legal {
+    margin-top: 30px;
+    font-size: 12px;
+    color: #e0e0e0;
+  }
+  
+  .footer-legal a {
+    color: #f0c040;
+    text-decoration: none;
+  }
+  
+  .footer-legal a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  }
+  

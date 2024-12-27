@@ -1,9 +1,4 @@
-.Featured-container {
-  width: 100%;
-  height: auto;
-  padding: 20px;
-}
-
+/* Main Hotel Container */
 .Featured-container h2 {
   text-align: center;
   font-size: 30px;
@@ -14,80 +9,143 @@
 }
 
 .hotel-container {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-wrap: nowrap;
   gap: 10px;
-  justify-items: center;
+  justify-content: start;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-y: hidden; /* Disable vertical scrolling */
+  padding: 10px;
+  margin-top: 60px;
+  scroll-behavior: smooth;
+  position: relative; /* To handle the scroll buttons correctly */
 }
 
+/* Custom Scrollbar Styling */
+.hotel-container::-webkit-scrollbar {
+  height: 8px; /* For horizontal scrollbar */
+}
+
+.hotel-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Light gray background for the track */
+  border-radius: 10px;
+}
+
+.hotel-container::-webkit-scrollbar-thumb {
+  background-color: #1d58a2; /* Deep blue color for the scrollbar thumb */
+  border-radius: 10px;
+  border: 2px solid #fff; /* White border around the thumb */
+}
+
+.hotel-container::-webkit-scrollbar-thumb:hover {
+  background-color: #155a8a; /* Darker blue on hover */
+}
+
+.hotel-container::-webkit-scrollbar-thumb:active {
+  background-color: #123f60; /* Even darker blue when active */
+}
+
+/* Scroll Buttons */
 .scroll-buttons {
-  display: none;
+  position: absolute;
+  top: 60%;
+  left: 130px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 82.5%;
+  transform: translateY(-50%);
+  z-index: 10;
 }
 
 .scroll-btn {
-  display: none;
+  display: block;
+  background-color: whitesmoke;
+  color: black;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  padding: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  transition: background-color 0.3s;
 }
 
 .scroll-btn:hover {
-  display: none;
+  background-color: #1d58a2;
+  color: white;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  transition: background-color 0.3s;
 }
 
+/* Card Container */
 .Card-container {
+  width: 400px;
+  flex-shrink: 0;
+  max-width: 1000px;
+  margin: 0 auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid #1d58a2;
-  border-radius: 12px; /* Added rounded corners */
-  background-color: #fff; /* White background for cleaner look */
-  transition: all 0.3s ease; /* Smooth transition for all changes */
-  padding: 15px; /* Added some padding inside the card */
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  padding: 20px;
+  border: 2px solid #e0e0e0;
 }
 
-/* Enhanced Hover Effect */
 .Card-container:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* More intense shadow on hover */
-  transform: scale(5px)
-  border: 1px solid #155a8a; /* Change border color on hover */
-  background-color: #f7f7f7; /* Light grey background on hover */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+  border: 2px solid #1d58a2;
+  background-color: #f7f7f7;
 }
 
-/* Card Content */
+/* Card Content (Title, Description) */
 .Card-container .card-header {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 10px;
+  color: #333;
 }
 
 .Card-container .card-body {
   font-size: 16px;
   color: #555;
+  margin-bottom: 10px;
 }
 
-/* Improved Button Styles */
+/* Button Styles (Book Now & See Details) */
 .Booknowbutton {
-  border-radius: 30px; /* More rounded for a softer appearance */
+  border-radius: 5px;
   background-color: #1d58a2;
   color: white;
-  padding: 12px 30px; /* Larger padding for a more comfortable clickable area */
-  font-size: 16px; /* Slightly larger font size for readability */
+  padding: 12px 30px;
+  font-size: 16px;
   font-weight: 500;
-  border: none; /* Removed border for a cleaner look */
+  border: none;
   cursor: pointer;
-  transition: all 0.3s ease; /* Smooth transition for hover effects */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .Booknowbutton:hover {
-  background-color: #155a8a; /* Darker shade for hover effect */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* More intense shadow on hover */
-  transform: translateY(-3px); /* Slight lift effect on hover */
+  background-color: #155a8a;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
 }
 
 .Booknowbutton:focus {
-  outline: none; /* Removing default focus outline */
-  box-shadow: 0 0 0 4px rgba(29, 88, 162, 0.4); /* Custom focus outline for accessibility */
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(29, 88, 162, 0.4);
 }
 
 .Seedetailsbutton {
-  border-radius: 30px; /* Rounded corners for consistency */
+  border-radius: 5px;
   background-color: #ff8c00;
   color: white;
   padding: 12px 30px;
@@ -95,129 +153,98 @@
   font-weight: 500;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease; /* Smooth transition for hover effects */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .Seedetailsbutton:hover {
-  background-color: #e67e00; /* Slightly darker shade on hover */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* More intense shadow on hover */
-  transform: translateY(-3px); /* Slight lift effect on hover */
+  background-color: #e67e00;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
 }
 
 .Seedetailsbutton:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.4); /* Custom focus outline for accessibility */
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.4);
 }
 
+/* Media Query for Tablet to Small Desktop (601px - 1025px) */
 @media (min-width: 601px) and (max-width: 1025px) {
-  .scroll-buttons {
-    display: none;
-  }
-
-  .scroll-btn {
-    display: none;
-  }
-
-  .scroll-btn:hover {
-    display: none;
-  }
-
-  .Card-container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    border: 1px solid #1d58a2;
-    transition: box-shadow 0.2s ease-in-out;
-  }
-
-  .Card-container:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  }
-
-}
-
-@media (min-width: 1025px) {
-  .Featured-container {
-    width: 100%;
-    height: auto;
-    padding: 20px;
-  }
-
   .hotel-container {
-    width: 83%;
+    width: 84%;
+    height: 600px;
     display: flex;
     flex-wrap: nowrap;
     gap: 10px;
     justify-content: start;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 20px;
+    padding: 10px;
     scroll-behavior: smooth;
     margin-top: 60px;
   }
 
   .hotel-container::-webkit-scrollbar {
-    display: none;
+    height: 8px;
   }
 
-  .scroll-buttons {
-    position: absolute;
-    top: 60%;
-    left: 130px;
-    right: 10px;
-    display: flex;
-    justify-content: space-between;
-    width: 82.5%;
-    transform: translateY(-50%);
-    z-index: 10;
+  .hotel-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 10px;
   }
 
-  .scroll-btn {
-    display: block;
-    background-color: whitesmoke;
-    color: black;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    padding: 5px;
-    font-size: 15px;
-    cursor: pointer;
-    border-radius: 50%;
-    height: 30px;
-    width: 30px;
-    transition: background-color 0.3s;
-  }
-
-  .scroll-btn:hover {
+  .hotel-container::-webkit-scrollbar-thumb {
     background-color: #1d58a2;
-    color: white;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 5px;
-    font-size: 15px;
-    cursor: pointer;
-    border-radius: 50%;
-    height: 30px;
-    width: 30px;
-    transition: background-color 0.3s;
+    border-radius: 10px;
+    border: 2px solid #fff;
   }
 
-  .Card-container {
-    width: 400px;
-    flex-shrink: 0;
-    max-width: 1000px;
-    margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 12px; /* More rounded corners */
-    transition: all 0.3s ease; /* Smooth transition for all changes */
-    padding: 15px; /* Added padding inside the card */
-    border: 1px solid #1d58a2; /* Clean border */
+  .hotel-container::-webkit-scrollbar-thumb:hover {
+    background-color: #155a8a;
   }
 
-  .Card-container:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    transform: scale(1.02); /* Slight lift effect on hover */
-    border: 1px solid #155a8a; /* Darker border on hover */
-    background-color: #f7f7f7; /* Light grey background */
+  .hotel-container::-webkit-scrollbar-thumb:active {
+    background-color: #123f60;
+  }
+}
+
+/* Media Query for Large Desktop (1025px and above) */
+@media (min-width: 1025px) {
+  .hotel-container {
+    width: 84%;
+    height: 650px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    justify-content: start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px;
+    scroll-behavior: smooth;
+    margin-top: 60px;
+  }
+
+  .hotel-container::-webkit-scrollbar {
+    margin-top: 20px;
+    height: 10px;
+  }
+
+  .hotel-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .hotel-container::-webkit-scrollbar-thumb {
+    background-color: #1d58a2;
+    border-radius: 10px;
+    border: 2px solid #fff;
+  }
+
+  .hotel-container::-webkit-scrollbar-thumb:hover {
+    background-color: #155a8a;
+  }
+
+  .hotel-container::-webkit-scrollbar-thumb:active {
+    background-color: #123f60;
   }
 }

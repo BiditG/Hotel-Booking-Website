@@ -1,8 +1,144 @@
+/* Base Styles */
 .search-results {
-    padding: 20px;
-    text-align: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.hotel-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.hotel-card {
+  width: 70%;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  transition: all 0.3s ease-in-out;
+}
+
+.hotel-image {
+  width: 40%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.hotel-info {
+  flex: 1;
+  text-align: left;
+}
+
+.hotel-card h4 {
+  font-size: 1.4rem;
+  margin: 10px 0;
+  font-weight: 600;
+}
+
+.hotel-card p {
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+.hotel-card .hotel-description {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.hotel-rating {
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.hotel-price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.hotel-card .buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button.book-now {
+  background-color: #28a745;
+  color: white;
+}
+
+.button.details {
+  background-color: #007bff;
+  color: white;
+}
+
+.button:hover {
+  opacity: 0.8;
+}
+
+/* Media Queries for Responsiveness */
+
+/* For Mobile Devices */
+@media (max-width: 767px) {
+  .hotel-card {
+    width: 100%; /* Full width for mobile */
+    flex-direction: column; /* Stack the image and text vertically */
+    align-items: center; /* Center items */
+    text-align: center; /* Center text */
   }
-  
+
+  .hotel-image {
+    width: 100%; /* Full width for the image on mobile */
+    height: 200px; /* Adjust image height for mobile */
+    margin-bottom: 10px;
+  }
+
+  .hotel-info {
+    text-align: center; /* Center align text on mobile */
+  }
+
+  .hotel-card h4 {
+    font-size: 1.2rem; /* Reduce font size for smaller screens */
+  }
+
+  .hotel-card p {
+    font-size: 0.8rem; /* Adjust text size */
+  }
+
+  .hotel-rating,
+  .hotel-price {
+    font-size: 1rem; /* Adjust font size for smaller screens */
+  }
+
+  .hotel-card .buttons {
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px;
+    align-items: center; /* Center the buttons */
+  }
+
+  .button {
+    width: 100%; /* Make buttons full width on mobile */
+    padding: 12px; /* Larger padding for buttons on mobile */
+  }
+}
+
+/* For Tablets (768px and above) */
+@media (min-width: 768px) and (max-width: 1023px) {
   .hotel-cards {
     display: flex;
     flex-wrap: wrap;
@@ -11,26 +147,103 @@
   }
   
   .hotel-card {
-    width: 200px;
+    width: 70%;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    transition: all 0.3s ease-in-out;
   }
   
   .hotel-image {
-    width: 100%;
+    width: 45%; /* Adjust image width on tablet */
+    height: 180px; /* Adjust image height */
+  }
+
+  .hotel-info {
+    text-align: left; /* Keep text left-aligned */
+  }
+
+  .hotel-card h4 {
+    font-size: 1.3rem; /* Slightly larger font for tablets */
+  }
+
+  .hotel-card p {
+    font-size: 0.9rem; /* Keep text size readable on tablets */
+  }
+
+  .hotel-rating,
+  .hotel-price {
+    font-size: 1.1rem;
+  }
+
+  .hotel-card .buttons {
+    gap: 15px;
+  }
+
+  .button {
+    width: auto; /* Buttons return to normal width on tablet */
+    padding: 10px 20px; /* Adjust padding on tablet */
+  }
+}
+
+/* For Desktop Devices (1024px and above) */
+@media (min-width: 1024px) {
+  .hotel-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .hotel-card {
+    width: 70%;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .hotel-image {
+    width: 40%;
     height: 150px;
     object-fit: cover;
     border-radius: 8px;
   }
   
-  .hotel-card h4 {
-    font-size: 1.2rem;
-    margin: 10px 0;
+  .hotel-info {
+    text-align: left; /* Keep text left-aligned */
   }
-  
+
+  .hotel-card h4 {
+    font-size: 1.4rem;
+  }
+
   .hotel-card p {
     font-size: 0.9rem;
   }
-  
+
+  .hotel-rating,
+  .hotel-price {
+    font-size: 1.2rem;
+  }
+
+  .hotel-card .buttons {
+    gap: 15px;
+  }
+
+  .button {
+    padding: 10px 20px; /* Standard padding for desktop */
+  }
+}

@@ -1,0 +1,106 @@
+/* General Styling for the City Detail Page */
+.city-detail {
+    padding: 40px;
+    background-color: #f7f7f7;  /* Soft background for a calm feel */
+    max-width: 1200px;
+    margin: 0 auto;  /* Centers the content on large screens */
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Subtle shadow to add depth */
+    font-family: 'Arial', sans-serif;  /* Clean, modern font */
+  }
+  
+  /* City Image Styling */
+  .city-image {
+    width: 100%;
+    max-width: 1000px;  /* Limiting max-width for large screens */
+    height: auto;
+    border-radius: 12px;  /* Rounded corners for a soft look */
+    object-fit: cover;  /* Ensures the image covers the area without stretching */
+    margin-bottom: 30px;  /* Space below the image */
+  }
+  
+  /* Title of the City */
+  .city-title {
+    font-size: 2.5rem;
+    font-weight: 700;  /* Bold title for impact */
+    color: #333;  /* Dark gray color for text */
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Description Text */
+  .city-description {
+    font-size: 1.2rem;
+    line-height: 1.6;  /* Increase line-height for readability */
+    color: #555;  /* Slightly lighter gray for the body text */
+    text-align: center;
+    margin-bottom: 30px;
+    max-width: 900px;  /* Max width to keep the text line length readable */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Styling for the 360° View iframe */
+  .city-detail iframe {
+    width: 100%;
+    max-width: 900px;  /* Maximum width for better control */
+    height: 500px;  /* Set a comfortable height for the view */
+    border-radius: 12px;  /* Rounded corners to match the design */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Shadow around the iframe for emphasis */
+    margin-top: 40px;  /* Space above the iframe */
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .city-detail {
+      padding: 20px;
+    }
+  
+    .city-title {
+      font-size: 2rem;  /* Slightly smaller title on mobile */
+    }
+  
+    .city-description {
+      font-size: 1rem;  /* Adjust font size for smaller screens */
+      padding: 0 20px;  /* Add padding for mobile view */
+    }
+  
+    .city-image {
+      max-width: 100%;  /* Ensure the image takes full width on smaller screens */
+    }
+  
+    .city-detail iframe {
+      height: 300px;  /* Adjust iframe height for mobile view */
+    }
+  }
+  
+  /* Button Styling (Optional: If you want to add buttons like 'Explore More') */
+  .button {
+    padding: 12px 20px;
+    background-color: #007bff;  /* Blue button for contrast */
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 30px;
+    display: inline-block;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;  /* Darker shade on hover */
+    transform: translateY(-3px);  /* Slight lift effect */
+  }
+  
+  /* Text and Links Styling */
+  .city-detail a {
+    color: #007bff;  /* Link color */
+    text-decoration: none;
+  }
+  
+  .city-detail a:hover {
+    text-decoration: underline;  /* Underline links on hover */
+  }
+  

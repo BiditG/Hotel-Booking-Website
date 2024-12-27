@@ -84,22 +84,19 @@ function FeaturedHotels() {
   };
 
   return (
+    <>
+    <br/>
     <center style={{ backgroundColor: "whitesmoke" }}>
       <div className="Featured-container">
-        <div className="scroll-buttons">
-          <button onClick={scrollLeft} className="scroll-btn">
-            {"<"}
-          </button>
-          <button onClick={scrollRight} className="scroll-btn">
-            {">"}
-          </button>
-        </div>
+        <br/>
+        <br/>
         <h2 className="section-title">Featured Hotels</h2>
         <div className="hotel-container" ref={scrollContainerRef}>
           {hotelCards}
         </div>
       </div>
     </center>
+    </>
   );
 }
 

@@ -16,6 +16,9 @@ import Contact from "./Contact";
 import Filters from "./Filters";
 import Explore from "./Explore";
 import SearchResults from "./SearchResults";
+import Footer from "./Footer";
+import Rooms from "./Rooms";
+import CityDetail from "./CityDetail"
 
 
 function App() {
@@ -105,12 +108,15 @@ function App() {
           <Route path="/Login" element={<Login/>}/>
           <Route path="/Register" element={<Register/>}/>
           <Route path="/Offers" element={<Offers/>}/>
+          <Route path="/Rooms" element = {<Rooms/>}/>
           <Route path="/Currency" element={<Currency/>}/>
           <Route path="/Contact" element={<Contact/>}/>
           <Route path="/Search" element={<Search />} />
           <Route path="/SearchResults" element={<SearchResults />} />
+          <Route path="/city/:cityName" element={<CityDetail />} />
         </Routes>
       </Router>
+      <Footer/>
 
       
     </>
