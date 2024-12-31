@@ -7,9 +7,7 @@ import Search from "./Search";
 import HeroSection from "./HeroSection";
 import FeaturedHotels from "./FeaturedHotels";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./Login";
 import LandingPage from "./LandingPage";
-import Register from "./Register";
 import Offers from "./Offers";
 import Currency from "./Currency";
 import Contact from "./Contact";
@@ -19,6 +17,8 @@ import SearchResults from "./SearchResults";
 import Footer from "./Footer";
 import Rooms from "./Rooms";
 import CityDetail from "./CityDetail"
+import Booking from "./Booking";
+import Checkout from "./Checkout";
 
 
 function App() {
@@ -105,15 +105,15 @@ function App() {
               <Explore cities={cities}/>
             </>
           }/>
-          <Route path="/Login" element={<Login/>}/>
-          <Route path="/Register" element={<Register/>}/>
           <Route path="/Offers" element={<Offers/>}/>
           <Route path="/Rooms" element = {<Rooms/>}/>
           <Route path="/Currency" element={<Currency/>}/>
           <Route path="/Contact" element={<Contact/>}/>
           <Route path="/Search" element={<Search />} />
+          <Route path="/Booking" element={<Booking/>} />
           <Route path="/SearchResults" element={<SearchResults />} />
           <Route path="/city/:cityName" element={<CityDetail />} />
+          <Route path="/Checkout" element={<Checkout/>}/>
         </Routes>
       </Router>
       <Footer/>

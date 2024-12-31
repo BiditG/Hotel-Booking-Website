@@ -1,0 +1,86 @@
+.booking-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+.hotel-title {
+  font-size: 2rem;
+  color: #1d58a2;
+  text-align: center;
+}
+
+.hotel-description {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: #333;
+  text-align: center;
+}
+
+.hotel-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.hotel-details {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hotel-details h3 {
+  font-size: 1.5rem;
+  color: #1d58a2;
+}
+
+.hotel-details p {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.room-select,
+.guest-input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.book-now-button {
+  background-color: #1d58a2;
+  color: white;
+  font-size: 1.2rem;
+  padding: 15px 20px;
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.book-now-button:hover {
+  background-color: #155a7a;
+}
+
+.booking-success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.booking-success h3 {
+  font-size: 1.5rem;
+  color: #155724;
+}
+
+.booking-success p {
+  font-size: 1.1rem;
+  color: #155724;
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./FeaturedHotels.css";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
+import { Link } from "react-router-dom";
 
 function FeaturedHotels() {
   const [hotels, setHotels] = useState([]);
@@ -24,7 +25,7 @@ function FeaturedHotels() {
         src={hotel.image}
         style={{
           width: "100%",
-          height: "220px",
+          height: "180px",
           objectFit: "cover",
           borderRadius: "10px 10px 0 0", // Added rounded corners to the image
         }}
@@ -34,7 +35,9 @@ function FeaturedHotels() {
         <Card.Text className="hotel-description">{hotel.description}</Card.Text>
       </Card.Body>
       <ListGroup className="list-group-flush">
-        <ListGroup.Item>Amenities - {hotel.amenities}</ListGroup.Item>
+        <ListGroup.Item>
+          Amenities - {Array.isArray(hotel.amenities) ? hotel.amenities.join(", ") : hotel.amenities || "No amenities available"}
+        </ListGroup.Item>
         <ListGroup.Item>
           Rating - {hotel.rating}{" "}
           <ion-icon
@@ -61,41 +64,27 @@ function FeaturedHotels() {
         </ListGroup.Item>
       </ListGroup>
       <Card.Body>
-        <Card.Link href="#">
+        {/* Using Link component from react-router-dom to pass hotel data via state */}
+        <Link to="/Booking" state={hotel}>
           <button className="Booknowbutton">Book Now</button>
-        </Card.Link>
-        <Card.Link href="#">
-          <button className="Seedetailsbutton">See Details</button>
-        </Card.Link>
+        </Link>
       </Card.Body>
     </Card>
   ));
 
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -410, behavior: "smooth" });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 410, behavior: "smooth" });
-    }
-  };
-
   return (
     <>
-    <br/>
-    <center style={{ backgroundColor: "whitesmoke" }}>
-      <div className="Featured-container">
-        <br/>
-        <br/>
-        <h2 className="section-title">Featured Hotels</h2>
-        <div className="hotel-container" ref={scrollContainerRef}>
-          {hotelCards}
+      <br />
+      <center style={{ backgroundColor: "whitesmoke" }}>
+        <div className="Featured-container">
+          <br />
+          <br />
+          <h2 className="section-title">Featured Hotels</h2>
+          <div className="hotel-container" ref={scrollContainerRef}>
+            {hotelCards}
+          </div>
         </div>
-      </div>
-    </center>
+      </center>
     </>
   );
 }

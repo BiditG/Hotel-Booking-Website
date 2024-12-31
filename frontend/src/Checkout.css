@@ -1,0 +1,71 @@
+.checkout-container {
+    font-family: Arial, sans-serif;
+    padding: 30px;
+    background-color: #f9f9f9;
+    margin-top: 20px;
+  }
+  
+  .checkout-title {
+    font-size: 2rem;
+    text-align: center;
+    color: #2a5d8c;
+  }
+  
+  .checkout-details {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .hotel-name {
+    font-size: 2rem;
+    color: #2a5d8c;
+    text-align: center;
+  }
+  
+  .hotel-description {
+    font-size: 1.2rem;
+    color: #555;
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  .checkout-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 20px 0;
+  }
+  
+  .booking-summary {
+    margin: 20px 0;
+  }
+  
+  .booking-summary h4 {
+    font-size: 1.5rem;
+    color: #2a5d8c;
+    margin-bottom: 10px;
+  }
+  
+  .booking-summary p {
+    font-size: 1.1rem;
+    color: #555;
+  }
+  
+  .confirm-booking-button {
+    background-color: #2a5d8c;
+    color: white;
+    font-size: 1.2rem;
+    padding: 15px 20px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .confirm-booking-button:hover {
+    background-color: #214e70;
+  }
+  
