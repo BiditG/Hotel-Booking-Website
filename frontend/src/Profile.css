@@ -1,0 +1,52 @@
+.profile-container {
+    margin: 50px auto;
+    width: 50%;
+    text-align: center;
+}
+
+.profile-details {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+}
+
+.change-password {
+    margin-top: 20px;
+}
+
+.change-password input {
+    margin: 10px 0;
+    padding: 8px;
+    width: 100%;
+}
+
+.change-password button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.change-password button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.success-message {
+    color: green;
+    margin-bottom: 10px;
+}

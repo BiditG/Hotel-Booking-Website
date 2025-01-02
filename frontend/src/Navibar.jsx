@@ -51,7 +51,7 @@ function Navibar() {
               <NavDropdown.Item as={NavLink} to="/Login">Login</NavDropdown.Item>
               <NavDropdown.Item as={NavLink} to="/Register">Register</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#">Profile</NavDropdown.Item>
+              <NavDropdown.Item as={NavLink} to="/Profile">Profile</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

@@ -126,7 +126,6 @@ def register():
 
 
 
-# Route for user login
 @app.route('/login', methods=['POST', 'OPTIONS'])
 def login():
     if request.method == 'OPTIONS':
@@ -136,23 +135,62 @@ def login():
     email = data.get('email')
     password = data.get('password')
 
+    # Fetch user from database
     cur = mysql.connection.cursor()
     cur.execute("SELECT id, username, password FROM users WHERE email = %s", (email,))
     user = cur.fetchone()
     cur.close()
 
+    # Check if user exists and password is correct
     if user and bcrypt.check_password_hash(user[2], password):
+        remember = data.get('remember', False)  # Check if remember me is true
         user_obj = User(id=user[0], username=user[1], email=email)
-        login_user(user_obj, remember=data.get('remember', False))
+        login_user(user_obj, remember=remember)  # Pass remember flag here
         return jsonify({'message': 'Login successful'})
     
     return jsonify({'message': 'Invalid credentials'}), 401
+    
+    return jsonify({'message': 'Invalid credentials'}), 401
 
-# Route for user logout
 @app.route('/api/logout', methods=['GET'])
 def logout():
-    logout_user()
+    logout_user()  # This will log the user out from the session
     return jsonify({'message': 'Logged out successfully'})
+
+
+@app.route('/api/user', methods=['GET'])
+def get_user():
+    if current_user.is_authenticated:
+        return jsonify({
+            'username': current_user.username,
+            'email': current_user.email
+        })
+    else:
+        return jsonify({'message': 'Not logged in'}), 401
+    
+
+@app.route('/api/change-password', methods=['POST'])
+def change_password():
+    if not current_user.is_authenticated:
+        return jsonify({'message': 'User not authenticated'}), 401
+
+    data = request.json
+    new_password = data.get('newPassword')
+
+    if not new_password:
+        return jsonify({'message': 'New password is required'}), 400
+
+    # Hash the new password
+    hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+
+    # Update the password in the database
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_password, current_user.id))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message': 'Password updated successfully'})
+
 
 
 if __name__ == '__main__':

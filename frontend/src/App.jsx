@@ -21,6 +21,7 @@ import Booking from "./Booking";
 import Checkout from "./Checkout";
 import Login from "./Login";
 import Register from "./Register";
+import Profile from "./Profile";
 
 
 function App() {
@@ -118,6 +119,7 @@ function App() {
           <Route path="/SearchResults" element={<SearchResults />} />
           <Route path="/city/:cityName" element={<CityDetail />} />
           <Route path="/Checkout" element={<Checkout/>}/>
+          <Route path='/Profile' element={<Profile/>}/>
         </Routes>
       </Router>
       <Footer/>
