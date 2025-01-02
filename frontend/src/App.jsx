@@ -19,6 +19,8 @@ import Rooms from "./Rooms";
 import CityDetail from "./CityDetail"
 import Booking from "./Booking";
 import Checkout from "./Checkout";
+import Login from "./Login";
+import Register from "./Register";
 
 
 function App() {
@@ -110,6 +112,8 @@ function App() {
           <Route path="/Currency" element={<Currency/>}/>
           <Route path="/Contact" element={<Contact/>}/>
           <Route path="/Search" element={<Search />} />
+          <Route path='/Login' element={<Login/>}/>
+          <Route path='/Register' element={<Register/>}/>
           <Route path="/Booking" element={<Booking/>} />
           <Route path="/SearchResults" element={<SearchResults />} />
           <Route path="/city/:cityName" element={<CityDetail />} />

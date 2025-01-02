@@ -1,62 +1,84 @@
-import React from "react";
-import { Carousel, Button, Card, Container } from "react-bootstrap"; // Import Container
+import React, { useState, useEffect } from "react";
+import { Button, Card, Container, Navbar, Nav, Row, Col, Tab, Tabs } from "react-bootstrap";
+import axios from "axios"; // Import axios for making requests
 import "./Offers.css";
+import { Link } from "react-router-dom";
 
 function Offers() {
-  const getDiscount = (daysInAdvance) => {
-    if (daysInAdvance >= 80 && daysInAdvance <= 90) {
-      return 30;
-    } else if (daysInAdvance >= 60 && daysInAdvance <= 79) {
-      return 20;
-    } else if (daysInAdvance >= 45 && daysInAdvance <= 59) {
-      return 10;
-    } else {
-      return 0;
-    }
-  };
+  const [offers, setOffers] = useState([]);
+  const [key, setKey] = useState("0");
 
-  const offers = [
-    {
-      title: "Offer 1",
-      daysInAdvance: 85,
-      price: 1000,
-      backgroundImage: "url('/images/offer1.jpg')",
-    },
-    {
-      title: "Offer 2",
-      daysInAdvance: 70,
-      price: 1200,
-      backgroundImage: "url('/images/offer2.jpg')",
-    },
-    {
-      title: "Offer 3",
-      daysInAdvance: 40,
-      price: 900,
-      backgroundImage: "url('/images/offer3.jpg')",
-    },
-    {
-      title: "Offer 4",
-      daysInAdvance: 90,
-      price: 1500,
-      backgroundImage: "url('/images/offer4.jpg')",
-    },
-    {
-      title: "Offer 5",
-      daysInAdvance: 55,
-      price: 1100,
-      backgroundImage: "url('/images/offer5.jpg')",
-    },
-  ];
+  // Fetch offers from the API when the component mounts
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/offers")
+      .then((response) => {
+        setOffers(response.data); // Set the offers in the state
+      })
+      .catch((error) => {
+        console.error("Error fetching offers:", error);
+      });
+  }, []); // Empty dependency array ensures the effect runs once when the component mounts
 
   return (
-    <Container>
-      <div className="offertitle">
-      <h2>Travel ideas and discounts with World Hotels</h2>
-      <p>Choose World Hotels for your next getaway. Enjoy our unforgettable experiences with this selection of packs, rates and special discounts.</p>
-      </div>
+    <>
+      {/* Navigation Bar */}
+      <Navbar bg="dark" variant="dark" expand="lg">
+        <Navbar.Brand href="#home">World Hotels</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto" justify="true">
+            <Nav.Link href="#home">Home</Nav.Link>
+            <Nav.Link href="#offers">Offers</Nav.Link>
+            <Nav.Link href="#contact">Contact</Nav.Link>
+            <Nav.Link href="#about">About</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
 
+      <Container>
+        <div className="offertitle">
+          <h2>Travel Ideas and Discounts with World Hotels</h2>
+          <br />
+          <p>Choose World Hotels for your next getaway. Enjoy our unforgettable experiences with this selection of packs, rates, and special discounts.</p>
+        </div>
 
-    </Container>
+        {/* Tabs for Offers */}
+        <Tabs activeKey={key} onSelect={(k) => setKey(k)} id="offer-tabs" fill variant="tabs">
+          {offers.map((offer, index) => (
+            <Tab eventKey={index.toString()} title={offer.title} key={offer.id}>
+              <Container className="mt-4">
+                <Row>
+                  <Col md={6}>
+                    <Card>
+                      <Card.Img
+                        variant="top"
+                        src={offer.background_image}
+                        style={{ height: "200px", objectFit: "cover" }}
+                      />
+                      <Card.Body>
+                        <Card.Title>{offer.title}</Card.Title>
+                        <Card.Text>
+                          Price: ${offer.price}
+                          <br />
+                          Discount: {offer.discount_percentage}%
+                          <br />
+                          Price after discount: ${offer.discounted_price}
+                        </Card.Text>
+                        <Button variant="primary">
+                          <Link to="/" style={{ color: "white", textDecoration: "none" }}>
+                            Book Now
+                          </Link>
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              </Container>
+            </Tab>
+          ))}
+        </Tabs>
+      </Container>
+    </>
   );
 }
 
