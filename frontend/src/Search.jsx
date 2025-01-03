@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaFilter, FaMap, FaMoneyBillWave } from "react-icons/fa";
+import { Autocomplete, TextField } from "@mui/material";
 import "./Search.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -20,6 +21,13 @@ const SearchBar = () => {
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const navigate = useNavigate();
 
+  // Sample UK cities
+  const ukCities = [
+    "Aberdeen", "Belfast", "Birmingham", "Bristol", "Cardiff", "Edinburgh", "Glasgow",
+    "London", "Manchester", "Newcastle", "Norwich", "Nottingham", "Oxford", "Plymouth",
+    "Swansea", "Bournemouth", "Kent"
+  ];
+
   // Fetch hotels from the API
   useEffect(() => {
     const fetchHotels = async () => {
@@ -29,7 +37,7 @@ const SearchBar = () => {
       try {
         // Replace with your actual API endpoint
         const response = await fetch("http://localhost:5000/api/hotels");
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch hotels.");
         }
@@ -105,15 +113,22 @@ const SearchBar = () => {
   return (
     <div className="search-bar">
       <form className="search-form" onSubmit={handleSearchSubmit}>
-        {/* Destination Input */}
+        {/* Autocomplete for Destination */}
         <div className="form-group">
-          <input
-            type="text"
-            placeholder="🔍 Destination"
-            className="input-field"
+          <Autocomplete
             value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            required
+            onChange={(event, newValue) => setDestination(newValue)}
+            options={ukCities}
+            renderInput={(params) => (
+              <TextField
+              style={{backgroundColor: 'white'}}
+                {...params}
+                label="🔍 Destination"
+                className="input-field"
+                required
+              />
+            )}
+            freeSolo // Allow typing custom cities that are not in the list
           />
         </div>
 

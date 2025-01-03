@@ -32,7 +32,7 @@ function FeaturedHotels() {
       />
       <Card.Body>
         <Card.Title className="hotel-title">{hotel.name}</Card.Title>
-        <Card.Text className="hotel-description">{hotel.description}</Card.Text>
+        <Card.Text className="hotel-description" style={{fontSize: '16px'}}>{hotel.description}</Card.Text>
       </Card.Body>
       <ListGroup className="list-group-flush">
         <ListGroup.Item>

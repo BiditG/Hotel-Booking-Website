@@ -43,9 +43,9 @@ function Offers() {
         </div>
 
         {/* Tabs for Offers */}
-        <Tabs activeKey={key} onSelect={(k) => setKey(k)} id="offer-tabs" fill variant="tabs">
+        <Tabs activeKey={key} onSelect={(k) => setKey(k)} id="offer-tabs" fill variant="tabs" style={{backgroundColor: 'whitesmoke'}}>
           {offers.map((offer, index) => (
-            <Tab eventKey={index.toString()} title={offer.title} key={offer.id}>
+            <Tab eventKey={index.toString()} title={offer.title} key={offer.id} style={{backgroundColor: 'whitesmoke'}}>
               <Container className="mt-4">
                 <Row>
                   <Col md={6}>

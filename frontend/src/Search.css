@@ -1,9 +1,9 @@
 :root {
   --primary-color: #2c3e50; /* Dark Blue */
-  --secondary-color: #ecf0f1; /* Light Gray */
+  --secondary-color: #888; /* Light Gray */
   --button-bg: #3498db; /* Button Blue */
   --button-hover: #2980b9; /* Darker Blue */
-  --text-color: #fff;
+  --text-color: red;
 }
 
 .search-bar {

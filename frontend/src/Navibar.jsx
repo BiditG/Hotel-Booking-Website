@@ -1,12 +1,28 @@
+import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { FaHome, FaConciergeBell, FaTags, FaEnvelope, FaBook, FaUserCircle } from 'react-icons/fa';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import { Menu as MenuIcon } from '@mui/icons-material';
 import './Navibar.css';
 
 function Navibar() {
+  const [anchorEl, setAnchorEl] = useState(null); // For handling account dropdown menu state
+
+  // Open the dropdown menu when account icon is clicked
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // Close the dropdown menu
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Navbar collapseOnSelect expand="lg" className="nav-container fixed-top">
       <Container>
@@ -42,17 +58,35 @@ function Navibar() {
               <FaBook className="nav-icon" /> Bookings
             </Nav.Link>
 
-            {/* Account Dropdown */}
-            <NavDropdown
-              title={<span className="nav-link-item"><FaUserCircle className="nav-icon" /> Account</span>}
-              id="collapsible-nav-dropdown"
-              className="account-dropdown"
+            {/* Account Icon and Dropdown */}
+            <IconButton
+              edge="end"
+              color="inherit"
+              onClick={handleMenuOpen}
+              sx={{ display: 'flex', alignItems: 'center' }}
             >
-              <NavDropdown.Item as={NavLink} to="/Login">Login</NavDropdown.Item>
-              <NavDropdown.Item as={NavLink} to="/Register">Register</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item as={NavLink} to="/Profile">Profile</NavDropdown.Item>
-            </NavDropdown>
+              <FaUserCircle className="nav-icon" />
+            </IconButton>
+
+            {/* Account Menu */}
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'account-menu-button',
+              }}
+            >
+              <MenuItem component={NavLink} to="/Login" onClick={handleMenuClose}>
+                Login
+              </MenuItem>
+              <MenuItem component={NavLink} to="/Register" onClick={handleMenuClose}>
+                Register
+              </MenuItem>
+              <MenuItem component={NavLink} to="/Profile" onClick={handleMenuClose}>
+                Profile
+              </MenuItem>
+            </Menu>
           </Nav>
         </Navbar.Collapse>
       </Container>

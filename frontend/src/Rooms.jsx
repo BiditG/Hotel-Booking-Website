@@ -28,7 +28,9 @@ function Rooms() {
       <div className="cards-container">
         {cities.map((city, index) => (
           <div className="card" key={index}>
-            <img src={city.image} alt={city.name} className="card-image" />
+            <div className="card-image-container">
+              <img src={city.image} alt={city.name} className="card-image" />
+            </div>
             <div className="card-content">
               <h2 className="city-name">{city.name}</h2>
               {city.capacity ? (
