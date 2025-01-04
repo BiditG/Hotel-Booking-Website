@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Rooms.css";
 
 const cities = [
@@ -22,11 +22,29 @@ const cities = [
 ];
 
 function Rooms() {
+  const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
+
+  // Filter cities based on the search query
+  const filteredCities = cities.filter((city) =>
+    city.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="rooms-and-rates">
+    <div className="rooms-and-rates" style={{marginTop: '50px'}}>
+      {/* Search Bar */}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search for a city..."
+          className="search-input"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+        />
+      </div>
+
       <h1 className="heading">Rooms & Rates</h1>
       <div className="cards-container">
-        {cities.map((city, index) => (
+        {filteredCities.map((city, index) => (
           <div className="card" key={index}>
             <div className="card-image-container">
               <img src={city.image} alt={city.name} className="card-image" />

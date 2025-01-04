@@ -25,6 +25,8 @@ function Explore({ cities = [] }) {
           />
           <Card.Body>
             <Card.Title>{city.name}</Card.Title>
+            {/* Add Description */}
+            <Card.Text className="card-description">{city.description}</Card.Text>
           </Card.Body>
         </Card>
       </Link>
@@ -33,8 +35,12 @@ function Explore({ cities = [] }) {
 
   return (
     <>
-      <center style={{ marginTop: '10px' }}>
+      <center style={{ marginTop: '20px' }}>
+        <br/>
         <h2 className="headingexplore">Explore UK</h2>
+        <p className="explore-description">
+          Discover some of the most beautiful and historic cities in the United Kingdom. Whether you're looking for rich culture, iconic landmarks, or scenic views, there's something for everyone in these cities.
+        </p>
         <div className="cards">{ExploreCards}</div>
       </center>
     </>
@@ -42,11 +48,3 @@ function Explore({ cities = [] }) {
 }
 
 export default Explore;
-
-
-
-
-
-
-
-

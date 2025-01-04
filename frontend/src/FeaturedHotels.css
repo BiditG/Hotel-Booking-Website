@@ -1,13 +1,46 @@
+/* Featured Hotels Section */
+.Featured-container h2 {
+  text-align: center;
+  font-size: 36px; /* Increased font size for better visibility */
+  font-weight: 600; /* Bold weight for prominence */
+  color: #222;
+  letter-spacing: 1.5px; /* Slightly wider spacing for balance */
+  text-transform: uppercase; /* Uppercase for a clean, modern look */
+  margin-bottom: 30px; /* Adds more space below the title */
+  margin-top: 30px;
+  padding: 0 20px; /* Added horizontal padding */
+  font-family: 'Roboto', sans-serif; /* Use a modern font */
+}
+
+/* Featured Hotels Description */
+.Featured-container .section-description {
+  text-align: center;
+  font-size: 18px; /* Increased font size for readability */
+  color: #666;
+  line-height: 1.6; /* Added line height for a more spacious feel */
+  max-width: 800px; /* Prevent text from becoming too wide */
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 40px; /* Adds spacing below the description */
+  padding: 0 20px; /* Added padding for left and right */
+  font-family: 'Roboto', sans-serif; /* Use a modern, clean font */
+  font-weight: 400; /* Normal weight for description */
+}
+
 /* Main Hotel Container */
 .Featured-container h2 {
   text-align: center;
-  font-size: 30px;
-  font-weight: 300;
+  font-size: 40px; /* Increased font size for better visibility */
+  font-weight: 600; /* Bold weight for prominence */
   color: #222;
   letter-spacing: 1px;
   text-transform: uppercase;
+  margin-bottom: 30px; /* More space below the title */
+  padding: 0 20px; /* Added horizontal padding */
+  font-family: 'Roboto', sans-serif; /* Clean, modern font */
 }
 
+/* Hotel Container Layout */
 .hotel-container {
   display: flex;
   flex-wrap: nowrap;
@@ -54,7 +87,7 @@
   display: flex;
   justify-content: space-between;
   width: 82.5%;
-  transform: translateY(-50%);
+  transform: translateY(-50%); /* Center vertically */
   z-index: 10;
 }
 
@@ -76,13 +109,11 @@
   background-color: #1d58a2;
   color: white;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  padding: 5px;
-  font-size: 15px;
-  cursor: pointer;
-  border-radius: 50%;
-  height: 30px;
-  width: 30px;
-  transition: background-color 0.3s;
+}
+
+.scroll-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(29, 88, 162, 0.4);
 }
 
 /* Card Container */

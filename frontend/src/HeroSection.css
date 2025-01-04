@@ -5,8 +5,9 @@
   justify-content: flex-start;
   padding: 20px;
   background-size: cover;
-  background-image: url('/Aberdeen.jpg');
+  background-image: url('/Belfast.jpg');
   background-attachment: fixed;
+  background-position: center;
 
 }
 .seven h1 {
@@ -132,7 +133,7 @@
   }
   @media (min-width: 1366px) {
     .hero-image {
-      height: 90vh;
+      height: 70vh;
       background-size: cover;
       background-repeat: no-repeat;
     }

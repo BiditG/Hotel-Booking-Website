@@ -2,7 +2,7 @@
 .cards {
   display: flex;
   justify-content: start;
-  gap: 10px;
+  gap: 3px;
   flex-wrap: nowrap; /* Prevent wrapping, only horizontal scroll */
   width: 90%;
   overflow-x: auto;
@@ -52,8 +52,8 @@
 
 /* Title Styling */
 .card-title {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 22px; /* Increased font size for better visibility */
+  font-weight: 600; /* Bold title for emphasis */
   color: #333;
   text-align: center;
   margin-top: 15px;
@@ -71,19 +71,33 @@
 /* Heading Styling */
 .headingexplore {
   text-align: center;
-  font-size: 36px;
-  font-weight: 600;
+  font-size: 40px; /* Increased font size */
+  font-weight: 700; /* Bold weight for better prominence */
   color: #222;
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 40px;
+  margin-bottom: 15px;
   position: relative;
   transition: transform 0.3s ease, color 0.3s ease;
+  font-family: 'Roboto', sans-serif; /* Clean font */
 }
 
 .headingexplore:hover {
   color: #007bff; /* Highlight the heading on hover */
   transform: scale(1.05); /* Slight scaling effect for emphasis */
+}
+
+/* Description under the title */
+.explore-description {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  font-weight: 400;
+  padding: 0 20px; /* Add some padding for better readability */
+  max-width: 800px; /* Limit the width of the description */
+  margin: 0 auto; /* Center align the text */
 }
 
 /* Cards Horizontal Scrollbar Styling */
@@ -132,6 +146,10 @@
 @media (max-width: 480px) {
   .headingexplore {
       font-size: 28px;
+  }
+
+  .explore-description {
+      font-size: 16px; /* Slightly smaller font for smaller screens */
   }
 
   .card-title {

@@ -1,9 +1,17 @@
+/* Offer Title Container */
 .offertitle {
   margin-top: 50px;
-  font-size: 20px;
+  text-align: center; /* Center align the text */
   padding: 20px;
 }
-.offertitle h2 {
-  font-size: 24px;
-}
 
+/* Offer Title (h2) */
+.offertitle h2 {
+  font-size: 36px; /* Increased font size for consistency with other titles */
+  font-weight: 600; /* Bold weight for prominence */
+  color: #222;
+  letter-spacing: 1.5px; /* Slightly wider spacing for balance */
+  text-transform: uppercase; /* Uppercase for a clean, modern look */
+  margin-bottom: 20px; /* Adds space below the title */
+  font-family: 'Roboto', sans-serif; /* Use a modern font */
+}

@@ -1,20 +1,31 @@
+/* General Styles */
 .booking-container {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f4f4f4;
+  font-family: 'Roboto', sans-serif;
+  padding: 30px;
+  background-color: #f7f7f7;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .hotel-title {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #1d58a2;
   text-align: center;
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 
 .hotel-description {
   font-size: 1.2rem;
-  margin: 10px 0;
-  color: #333;
+  color: #555;
+  margin: 15px 0;
   text-align: center;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hotel-image {
@@ -22,34 +33,81 @@
   height: auto;
   border-radius: 10px;
   margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.hotel-details {
-  background-color: #fff;
+/* Booking Success Section */
+.booking-success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
   padding: 20px;
-  border-radius: 10px;
+  margin: 30px 0;
+  border-radius: 8px;
+  text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.booking-success h3 {
+  font-size: 1.8rem;
+  color: #155724;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.booking-success p {
+  font-size: 1.2rem;
+  color: #155724;
+}
+
+/* Hotel Details Section */
+.hotel-details {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
 .hotel-details h3 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: #1d58a2;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .hotel-details p {
   font-size: 1.1rem;
   color: #555;
+  margin-bottom: 15px;
 }
 
+.hotel-details label {
+  font-size: 1rem;
+  color: #333;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Inputs and Select Dropdown */
 .room-select,
 .guest-input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin: 10px 0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 1.1rem;
+  color: #333;
+  background-color: #f9f9f9;
 }
 
+.room-select:focus,
+.guest-input:focus {
+  border-color: #1d58a2;
+  outline: none;
+}
+
+/* Book Now Button */
 .book-now-button {
   background-color: #1d58a2;
   color: white;
@@ -57,30 +115,67 @@
   padding: 15px 20px;
   width: 100%;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .book-now-button:hover {
-  background-color: #155a7a;
+  background-color: #155a8a;
+  transform: translateY(-3px);
 }
 
-.booking-success {
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  padding: 20px;
-  margin: 20px 0;
-  border-radius: 5px;
-  text-align: center;
+.book-now-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(29, 88, 162, 0.3);
 }
 
-.booking-success h3 {
-  font-size: 1.5rem;
-  color: #155724;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hotel-title {
+    font-size: 2rem;
+  }
+
+  .hotel-description {
+    font-size: 1rem;
+  }
+
+  .hotel-details {
+    padding: 20px;
+  }
+
+  .room-select,
+  .guest-input {
+    font-size: 1rem;
+  }
+
+  .book-now-button {
+    font-size: 1rem;
+    padding: 12px;
+  }
 }
 
-.booking-success p {
-  font-size: 1.1rem;
-  color: #155724;
+@media (max-width: 480px) {
+  .hotel-title {
+    font-size: 1.8rem;
+  }
+
+  .hotel-description {
+    font-size: 0.9rem;
+  }
+
+  .hotel-details {
+    padding: 15px;
+  }
+
+  .room-select,
+  .guest-input {
+    font-size: 0.95rem;
+  }
+
+  .book-now-button {
+    font-size: 1rem;
+    padding: 10px;
+  }
 }

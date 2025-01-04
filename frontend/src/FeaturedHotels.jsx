@@ -6,15 +6,20 @@ import { Link } from "react-router-dom";
 
 function FeaturedHotels() {
   const [hotels, setHotels] = useState([]);
+  const [loading, setLoading] = useState(true);
   const scrollContainerRef = useRef(null);
 
   // Fetch hotels data from the Flask API
   useEffect(() => {
     fetch("http://localhost:5000/api/hotels")
       .then((response) => response.json())
-      .then((data) => setHotels(data))
+      .then((data) => {
+        setHotels(data);
+        setLoading(false);
+      })
       .catch((error) => {
         console.error("Error fetching hotels:", error);
+        setLoading(false);
       });
   }, []);
 
@@ -27,19 +32,21 @@ function FeaturedHotels() {
           width: "100%",
           height: "180px",
           objectFit: "cover",
-          borderRadius: "10px 10px 0 0", // Added rounded corners to the image
+          borderRadius: "10px 10px 0 0", // Rounded corners for images
         }}
       />
       <Card.Body>
         <Card.Title className="hotel-title">{hotel.name}</Card.Title>
-        <Card.Text className="hotel-description" style={{fontSize: '16px'}}>{hotel.description}</Card.Text>
+        <Card.Text className="hotel-description" style={{ fontSize: '16px' }}>
+          {hotel.description || "No description available."}
+        </Card.Text>
       </Card.Body>
       <ListGroup className="list-group-flush">
         <ListGroup.Item>
-          Amenities - {Array.isArray(hotel.amenities) ? hotel.amenities.join(", ") : hotel.amenities || "No amenities available"}
+          <strong>Amenities:</strong> {Array.isArray(hotel.amenities) ? hotel.amenities.join(", ") : hotel.amenities || "No amenities available"}
         </ListGroup.Item>
         <ListGroup.Item>
-          Rating - {hotel.rating}{" "}
+          <strong>Rating:</strong> {hotel.rating}{" "}
           <ion-icon
             name="star-sharp"
             size="medium"
@@ -51,7 +58,7 @@ function FeaturedHotels() {
           ></ion-icon>
         </ListGroup.Item>
         <ListGroup.Item>
-          Price - {hotel.price}{" "}
+          <strong>Price:</strong> {hotel.price}{" "}
           <ion-icon
             name="cash-sharp"
             style={{
@@ -64,7 +71,6 @@ function FeaturedHotels() {
         </ListGroup.Item>
       </ListGroup>
       <Card.Body>
-        {/* Using Link component from react-router-dom to pass hotel data via state */}
         <Link to="/Booking" state={hotel}>
           <button className="Booknowbutton">Book Now</button>
         </Link>
@@ -74,17 +80,23 @@ function FeaturedHotels() {
 
   return (
     <>
+    <br/>
+    <div className="Featured-container" style={{ backgroundColor: "whitesmoke" }}>
       <br />
-      <center style={{ backgroundColor: "whitesmoke" }}>
-        <div className="Featured-container">
-          <br />
-          <br />
-          <h2 className="section-title">Featured Hotels</h2>
-          <div className="hotel-container" ref={scrollContainerRef}>
-            {hotelCards}
-          </div>
+      <center>
+        <h2 className="section-title">Featured Hotels</h2>
+        <p className="section-description">
+          Explore the best hotels with top amenities, great prices, and stellar ratings. Whether you're looking for luxury or budget-friendly stays, we've got you covered.
+        </p>
+        <div className="hotel-container" ref={scrollContainerRef}>
+          {loading ? (
+            <div className="loading-spinner">Loading...</div>
+          ) : (
+            hotelCards
+          )}
         </div>
       </center>
+    </div>
     </>
   );
 }

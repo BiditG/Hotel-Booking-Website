@@ -7,6 +7,7 @@ import FeaturedHotels from "./FeaturedHotels";
 
 function HeroSection() {
   return (
+    <>
     <div className="hero-image">
       <center>
         <div class="seven" id="animated-text">
@@ -15,6 +16,9 @@ function HeroSection() {
       </center>
       <Search />
     </div>
+    <br/>
+    <br/>
+    </>
   );
 }
 

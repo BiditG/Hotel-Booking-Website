@@ -6,88 +6,22 @@
   --text-color: red;
 }
 
-.search-bar {
-  padding: 20px;
-  background: var(--primary-color);
-  color: var(--text-color);
-}
-
-.search-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.form-group {
-  flex: 1 1 22%;
-  position: relative;
-}
-
-.input-field {
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-}
-
-.input-field::placeholder {
-  color: var(--secondary-color);
-}
-
-.search-button {
-  flex: 1 1 100%;
-  padding: 10px;
-  background: var(--button-bg);
-  color: var(--text-color);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 15px;
-}
-
-.search-button:hover {
-  background: var(--button-hover);
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-}
-
-.action-button {
-  flex: 1;
-  padding: 10px;
-  background: var(--button-bg);
-  color: var(--text-color);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.action-button:hover {
-  background: var(--button-hover);
-}
-
-.icon {
-  margin-right: 8px;
-  vertical-align: middle;
-}
+/* Search Container */
 .search-bar {
   width: 100%;
-  max-width: 1200px;
-  margin: 20px auto;
+  max-width: 1200px; /* Limit width for large screens */
+  margin: 40px auto; /* Center the container with top margin */
   padding: 20px;
   background: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  justify-content: space-between;
+  justify-content: space-between; /* Distribute elements across */
 }
 
+/* Search Form */
 .search-form {
   display: flex;
   flex-wrap: wrap;
@@ -95,11 +29,14 @@
   width: 100%;
 }
 
+/* Form Group (input field wrapper) */
 .form-group {
   flex: 1 1 23%;
-  min-width: 150px;
+  min-width: 160px; /* Ensures fields don’t shrink too small */
+  position: relative;
 }
 
+/* Input Field */
 .input-field {
   width: 100%;
   padding: 10px;
@@ -108,14 +45,16 @@
   font-size: 1rem;
 }
 
+/* Input Field on Focus */
 .input-field:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
+/* Search Button */
 .search-button {
-  flex: 1 1 100%;
+  flex: 1 1 100%; /* Full width button */
   background-color: #013b72;
   color: white;
   border: none;
@@ -124,12 +63,15 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 15px; /* Space between button and form fields */
 }
 
+/* Search Button Hover */
 .search-button:hover {
   background-color: #1d58a2;
 }
 
+/* Button Group */
 .button-group {
   display: flex;
   gap: 10px;
@@ -138,6 +80,7 @@
   width: 100%;
 }
 
+/* Action Buttons */
 .action-button {
   background-color: #f8f8f8;
   color: #013b72;
@@ -156,9 +99,24 @@
 
 /* Responsive Styles */
 @media (max-width: 1024px) {
+  /* Adjust the layout for medium screens (tablets) */
   .form-group {
     flex: 1 1 48%;
   }
+
+  .search-button {
+    flex: 1 1 100%; /* Full width for button on small screens */
+  }
 }
 
+@media (max-width: 768px) {
+  /* Adjust further for small screens */
+  .form-group {
+    flex: 1 1 100%;
+  }
+
+  .search-bar {
+    padding: 15px;
+  }
+}
 

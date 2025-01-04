@@ -3,7 +3,33 @@
   padding: 40px 20px;
   background-color: #f4f7fa;
   color: #333;
-  font-family: 'Roboto', sans-serif; /* A more professional font */
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Search Bar */
+.search-container {
+  max-width: 600px;
+  margin: 0 auto 20px auto;
+  text-align: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #1d58a2;
+}
+
+.search-input::placeholder {
+  color: #aaa;
 }
 
 /* Heading */
@@ -12,7 +38,7 @@
   font-size: 36px;
   margin-bottom: 40px;
   color: #1d58a2;
-  font-weight: 600; /* Stronger font weight */
+  font-weight: 600;
   letter-spacing: 1px;
 }
 
@@ -28,7 +54,7 @@
 /* Individual Card */
 .card {
   background: #ffffff;
-  border-radius: 12px; /* Slightly rounded corners */
+  border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -55,7 +81,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.8); /* Slight darkening of the image */
+  filter: brightness(0.8);
 }
 
 /* Overlay for the image (darkens image for better readability) */
