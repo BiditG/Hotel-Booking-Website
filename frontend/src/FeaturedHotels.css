@@ -1,43 +1,62 @@
 /* Featured Hotels Section */
 .Featured-container h2 {
   text-align: center;
-  font-size: 36px; /* Increased font size for better visibility */
-  font-weight: 600; /* Bold weight for prominence */
+  font-size: 36px;
+  /* Increased font size for better visibility */
+  font-weight: 600;
+  /* Bold weight for prominence */
   color: #222;
-  letter-spacing: 1.5px; /* Slightly wider spacing for balance */
-  text-transform: uppercase; /* Uppercase for a clean, modern look */
-  margin-bottom: 30px; /* Adds more space below the title */
+  letter-spacing: 1.5px;
+  /* Slightly wider spacing for balance */
+  text-transform: uppercase;
+  /* Uppercase for a clean, modern look */
+  margin-bottom: 30px;
+  /* Adds more space below the title */
   margin-top: 30px;
-  padding: 0 20px; /* Added horizontal padding */
-  font-family: 'Roboto', sans-serif; /* Use a modern font */
+  padding: 0 20px;
+  /* Added horizontal padding */
+  font-family: 'Roboto', sans-serif;
+  /* Use a modern font */
 }
 
 /* Featured Hotels Description */
 .Featured-container .section-description {
   text-align: center;
-  font-size: 18px; /* Increased font size for readability */
+  font-size: 18px;
+  /* Increased font size for readability */
   color: #666;
-  line-height: 1.6; /* Added line height for a more spacious feel */
-  max-width: 800px; /* Prevent text from becoming too wide */
+  line-height: 1.6;
+  /* Added line height for a more spacious feel */
+  max-width: 800px;
+  /* Prevent text from becoming too wide */
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 40px; /* Adds spacing below the description */
-  padding: 0 20px; /* Added padding for left and right */
-  font-family: 'Roboto', sans-serif; /* Use a modern, clean font */
-  font-weight: 400; /* Normal weight for description */
+  margin-bottom: 40px;
+  /* Adds spacing below the description */
+  padding: 0 20px;
+  /* Added padding for left and right */
+  font-family: 'Roboto', sans-serif;
+  /* Use a modern, clean font */
+  font-weight: 400;
+  /* Normal weight for description */
 }
 
 /* Main Hotel Container */
 .Featured-container h2 {
   text-align: center;
-  font-size: 40px; /* Increased font size for better visibility */
-  font-weight: 600; /* Bold weight for prominence */
+  font-size: 40px;
+  /* Increased font size for better visibility */
+  font-weight: 600;
+  /* Bold weight for prominence */
   color: #222;
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 30px; /* More space below the title */
-  padding: 0 20px; /* Added horizontal padding */
-  font-family: 'Roboto', sans-serif; /* Clean, modern font */
+  margin-bottom: 30px;
+  /* More space below the title */
+  padding: 0 20px;
+  /* Added horizontal padding */
+  font-family: 'Roboto', sans-serif;
+  /* Clean, modern font */
 }
 
 /* Hotel Container Layout */
@@ -46,36 +65,45 @@
   flex-wrap: nowrap;
   gap: 10px;
   justify-content: start;
-  overflow-x: auto; /* Enable horizontal scrolling */
-  overflow-y: hidden; /* Disable vertical scrolling */
+  overflow-x: auto;
+  /* Enable horizontal scrolling */
+  overflow-y: hidden;
+  /* Disable vertical scrolling */
   padding: 10px;
   margin-top: 60px;
   scroll-behavior: smooth;
-  position: relative; /* To handle the scroll buttons correctly */
+  position: relative;
+  /* To handle the scroll buttons correctly */
 }
 
 /* Custom Scrollbar Styling */
 .hotel-container::-webkit-scrollbar {
-  height: 8px; /* For horizontal scrollbar */
+  height: 8px;
+  /* For horizontal scrollbar */
 }
 
 .hotel-container::-webkit-scrollbar-track {
-  background-color: #f1f1f1; /* Light gray background for the track */
+  background-color: #f1f1f1;
+  /* Light gray background for the track */
   border-radius: 10px;
 }
 
 .hotel-container::-webkit-scrollbar-thumb {
-  background-color: #1d58a2; /* Deep blue color for the scrollbar thumb */
+  background-color: #1d58a2;
+  /* Deep blue color for the scrollbar thumb */
   border-radius: 10px;
-  border: 2px solid #fff; /* White border around the thumb */
+  border: 2px solid #fff;
+  /* White border around the thumb */
 }
 
 .hotel-container::-webkit-scrollbar-thumb:hover {
-  background-color: #155a8a; /* Darker blue on hover */
+  background-color: #155a8a;
+  /* Darker blue on hover */
 }
 
 .hotel-container::-webkit-scrollbar-thumb:active {
-  background-color: #123f60; /* Even darker blue when active */
+  background-color: #123f60;
+  /* Even darker blue when active */
 }
 
 /* Scroll Buttons */
@@ -87,7 +115,8 @@
   display: flex;
   justify-content: space-between;
   width: 82.5%;
-  transform: translateY(-50%); /* Center vertically */
+  transform: translateY(-50%);
+  /* Center vertically */
   z-index: 10;
 }
 
@@ -197,6 +226,11 @@
 .Seedetailsbutton:focus {
   outline: none;
   box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.4);
+}
+
+.hotel-title {
+  font-size: 10px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 /* Media Query for Tablet to Small Desktop (601px - 1025px) */

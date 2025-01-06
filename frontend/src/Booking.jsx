@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Booking.css";
+import RollingGallery from "./RollingGallery";
+import Masonry from "./Masonry";
 
 function Booking() {
   const location = useLocation();
@@ -90,11 +92,32 @@ function Booking() {
       navigate("/Checkout", { state: { hotel, roomType, numGuests, totalPrice, discount, bookingId: newBookingId } });
     }, 2000); // Redirect after 2 seconds to simulate a successful booking message
   };
+  const data = [
+    { id: 1, image: '/images/Aberdeen.jpg', height: 400 },
+    { id: 2, image: '/images/Belfast.jpg', height: 300 },
+    { id: 3, image: '/images/Birmingham.jpg', height: 300 },
+    { id: 4, image: '/images/Bristol.jpg', height: 300 },
+    { id: 5, image: '/images/Cardiff.jpg', height: 300 },
+    { id: 6, image: '/images/Edinburgh.jpg', height: 300 },
+    { id: 7, image: '/images/Glasgow.jpg', height: 200 },
+    { id: 8, image: '/images/London.jpg', height: 300 },
+    { id: 9, image: '/images/Manchester.jpg', height: 200 },
+    { id: 10, image: '/images/Newcastle.jpg', height: 400 },
+    { id: 11, image: '/images/Norwich.jpg', height: 350 },
+    { id: 12, image: '/images/Nottingham.jpg', height: 250 },
+    { id: 13, image: '/images/Oxford.jpg', height: 300 },
+    { id: 14, image: '/images/Plymouth.jpg', height: 300 },
+    { id: 15, image: '/images/Swansea.jpg', height: 250 },
+    { id: 16, image: '/images/Bournemouth.jpg', height: 350 },
+    { id: 17, image: '/images/Kent.jpg', height: 300 }
+  ];
 
   return (
     <div className="booking-container">
       <h2 className="hotel-title">{hotel.name}</h2>
       <p className="hotel-description">{hotel.description}</p>
+      <Masonry data={data}/>
+      
       <img src={hotel.image} alt={hotel.name} className="hotel-image" />
 
       {bookingSuccess && (

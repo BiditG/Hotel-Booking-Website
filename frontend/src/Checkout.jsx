@@ -5,19 +5,56 @@ import "./Checkout.css";
 function Checkout() {
   const location = useLocation();
   const { hotel, roomType, numGuests, totalPrice, discount, bookingId, cancellationCharges } = location.state || {};
+  const navigate = useNavigate();
 
   // If any values are undefined, set defaults
   const totalPriceFormatted = totalPrice ? totalPrice.toFixed(2) : "0.00";
   const cancellationChargesFormatted = cancellationCharges ? cancellationCharges.toFixed(2) : "0.00";
 
-  const navigate = useNavigate();
-
   // Handle confirmation of the booking
-  const handleConfirmBooking = () => {
-    alert("Your booking has been confirmed!");
-    // You can add logic here to save the booking to a database or perform other actions.
-    navigate("/"); // Navigate to the home page or any other page after confirmation.
+  const handleConfirmBooking = async () => {
+
+    const userResponse = await fetch("http://localhost:5000/api/user", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (userResponse.ok) {
+      const currentUser = await userResponse.json();
+      const bookingData = {
+        hotelId: hotel.id,
+        bookingDate: new Date().toISOString().split("T")[0],
+        status: "Confirmed",
+      };
+
+      try {
+        const response = await fetch("http://localhost:5000/api/bookings", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingData),
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          alert("Your booking has been confirmed!");
+          navigate("/bookings");
+        } else {
+          const errorData = await response.json();
+          alert(errorData.message || "Error confirming booking.");
+        }
+      } catch (error) {
+        console.error("Error confirming booking:", error);
+        alert("Error confirming booking.");
+      }
+    } else {
+      alert("Please log in to confirm your booking.");
+      navigate("/login");
+    }
   };
+
+
 
   return (
     <div className="checkout-container">

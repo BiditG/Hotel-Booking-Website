@@ -1,0 +1,80 @@
+/* Scoped Register Component Styling */
+.register {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: whitesmoke;
+  }
+  
+  .register-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Max width of the form */
+    text-align: center;
+  }
+  
+  .register h2 {
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+  }
+  
+  .register input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+  }
+  
+  .register input:focus {
+    border-color: #ff5c8d;
+    outline: none;
+    box-shadow: 0 0 5px rgba(255, 92, 141, 0.5);
+  }
+  
+  .register button {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff5c8d;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .register button:hover {
+    background-color: #e04f7d;
+  }
+  
+  .register button:focus {
+    outline: none;
+  }
+  
+  .register form {
+    margin-top: 20px;
+  }
+  
+  /* Styling for the inputs */
+  .register input[type='text'],
+  .register input[type='email'],
+  .register input[type='password'] {
+    margin-bottom: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .register-form {
+      width: 80%;
+      padding: 20px;
+    }
+  }
+  

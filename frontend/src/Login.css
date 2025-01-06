@@ -1,0 +1,97 @@
+/* Scoped Login Component Styling */
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: whitesmoke;
+  }
+  
+  .login-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Max width of the form */
+    text-align: center;
+  }
+  
+  .login h2 {
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+  }
+  
+  .login label {
+    font-size: 14px;
+    color: #555;
+    text-align: left;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .login input[type='email'],
+  .login input[type='password'] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+  }
+  
+  .login input[type='email']:focus,
+  .login input[type='password']:focus {
+    border-color: #4f9aff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(79, 154, 255, 0.5);
+  }
+  
+  .login input[type='checkbox'] {
+    margin-right: 10px;
+  }
+  
+  .login button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4f9aff;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login button:hover {
+    background-color: #357abd;
+  }
+  
+  .login button:focus {
+    outline: none;
+  }
+  
+  .login form {
+    margin-top: 20px;
+  }
+  
+  /* Styling for the "Remember Me" text */
+  .login label input[type='checkbox'] {
+    margin-right: 10px;
+  }
+  
+  .login label {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  @media (max-width: 768px) {
+    .login-box {
+      width: 80%;
+      padding: 20px;
+    }
+  }
+  

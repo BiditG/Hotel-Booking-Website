@@ -1,0 +1,90 @@
+
+/* Container for Book component */
+.book-container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transform: translateY(-30px);
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Title style */
+.book-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #4a90e2;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Style for Booking List */
+.booking-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+/* Style for each Booking item */
+.booking-item {
+    background: #ffffff;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 5px solid #3498db;
+}
+
+/* Hover effect for each booking item */
+.booking-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for each paragraph inside booking item */
+.booking-item p {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 5px 0;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+/* Hotel name style */
+.booking-item .hotel-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    letter-spacing: 1px;
+}
+
+/* Booking date and status style */
+.booking-item .booking-date,
+.booking-item .booking-status {
+    color: #7f8c8d;
+}
+
+/* No bookings available message */
+.no-bookings {
+    font-size: 1.2rem;
+    color: #95a5a6;
+    font-weight: 500;
+}
+
+/* Fade-in animation for the container */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

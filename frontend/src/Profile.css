@@ -1,52 +1,124 @@
+/* Scoped Profile Component Styling */
 .profile-container {
+    background-color: #f9f9f9;
+    padding: 40px;
+    border-radius: 8px;
+    max-width: 600px;
     margin: 50px auto;
-    width: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-container h2 {
     text-align: center;
-}
-
-.profile-details {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
+    font-size: 2rem;
+    color: #333;
     margin-bottom: 20px;
-}
-
-.profile-photo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 2px solid #ccc;
-}
-
-.change-password {
-    margin-top: 20px;
-}
-
-.change-password input {
-    margin: 10px 0;
-    padding: 8px;
+  }
+  
+  .profile-container p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  
+  .profile-container strong {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  /* Styling for the password change form */
+  .profile-container form {
+    margin-top: 30px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-container form div {
+    margin-bottom: 15px;
+  }
+  
+  .profile-container label {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .profile-container input {
     width: 100%;
-}
-
-.change-password button {
-    padding: 10px 15px;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border 0.3s ease;
+  }
+  
+  .profile-container input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+  }
+  
+  .profile-container button {
+    width: 100%;
+    padding: 12px;
     background-color: #007bff;
-    color: white;
+    color: #fff;
     border: none;
     border-radius: 5px;
+    font-size: 1.1rem;
     cursor: pointer;
-}
-
-.change-password button:hover {
+    transition: background-color 0.3s ease;
+  }
+  
+  .profile-container button:hover {
     background-color: #0056b3;
-}
-
-.error-message {
+  }
+  
+  .profile-container button:focus {
+    outline: none;
+  }
+  
+  /* Error message styling */
+  .profile-container p[style="color: red;"] {
     color: red;
-    margin-bottom: 10px;
-}
-
-.success-message {
-    color: green;
-    margin-bottom: 10px;
-}
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+  
+  /* Logout Button Styling */
+  .profile-container button.logout-btn {
+    background-color: #ff5c8d;
+    margin-top: 20px;
+  }
+  
+  .profile-container button.logout-btn:hover {
+    background-color: #e04f7d;
+  }
+  
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 20px;
+      margin: 20px;
+    }
+  
+    .profile-container h2 {
+      font-size: 1.8rem;
+    }
+  
+    .profile-container p {
+      font-size: 1rem;
+    }
+  
+    .profile-container form {
+      padding: 15px;
+    }
+  
+    .profile-container input,
+    .profile-container button {
+      font-size: 1rem;
+    }
+  }
+  

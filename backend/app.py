@@ -40,18 +40,6 @@ def load_user(user_id):
     return None
 
 
-# Function to calculate the discount based on days in advance
-def get_discount(days_in_advance):
-    if 80 <= days_in_advance <= 90:
-        return 30
-    elif 60 <= days_in_advance <= 79:
-        return 20
-    elif 45 <= days_in_advance <= 59:
-        return 10
-    else:
-        return 0
-
-
 # Route to fetch all hotels
 @app.route('/api/hotels', methods=['GET'])
 def get_hotels():
@@ -80,7 +68,17 @@ def get_hotels():
     return jsonify(hotel_list)
 
 
-# Route to get offers from the database
+def get_discount(days_in_advance):
+    # Example discount logic based on days_in_advance
+    if days_in_advance >= 30:
+        return 20  # 20% discount for bookings made 30 days in advance
+    elif days_in_advance >= 15:
+        return 10  # 10% discount for bookings made 15 days in advance
+    elif days_in_advance >= 7:
+        return 5  # 5% discount for bookings made 7 days in advance
+    else:
+        return 0  # No discount for bookings made less than 7 days in advance
+
 @app.route('/api/offers', methods=['GET'])
 def get_offers():
     cur = mysql.connection.cursor()
@@ -106,7 +104,6 @@ def get_offers():
 
     return jsonify(offer_list)
 
-
 # Route for user registration
 @app.route('/register', methods=['POST', 'OPTIONS'])
 def register():
@@ -123,7 +120,6 @@ def register():
     mysql.connection.commit()
     cur.close()
     return jsonify({'message': 'User registered successfully'})
-
 
 
 @app.route('/login', methods=['POST', 'OPTIONS'])
@@ -146,18 +142,15 @@ def login():
         remember = data.get('remember', False)  # Check if remember me is true
         user_obj = User(id=user[0], username=user[1], email=email)
         login_user(user_obj, remember=remember)  # Pass remember flag here
-        return jsonify({'message': 'Login successful'})
-    
+        
+        # Store user info in session
+        session['user_id'] = user_obj.id  # Store user ID in the session
+        return jsonify({'message': 'Login successful', 'user': {'id': user_obj.id, 'username': user_obj.username, 'email': user_obj.email}})
+
     return jsonify({'message': 'Invalid credentials'}), 401
-    
-    return jsonify({'message': 'Invalid credentials'}), 401
-
-@app.route('/api/logout', methods=['GET'])
-def logout():
-    logout_user()  # This will log the user out from the session
-    return jsonify({'message': 'Logged out successfully'})
 
 
+# Route to get user info (check if logged in)
 @app.route('/api/user', methods=['GET'])
 def get_user():
     if current_user.is_authenticated:
@@ -167,30 +160,67 @@ def get_user():
         })
     else:
         return jsonify({'message': 'Not logged in'}), 401
-    
 
-@app.route('/api/change-password', methods=['POST'])
-def change_password():
+
+
+
+# Route to logout
+@app.route('/api/logout', methods=['GET'])
+def logout():
+    logout_user()  # This will log the user out from the session
+    return jsonify({'message': 'Logged out successfully'})
+
+@app.route('/api/bookings', methods=['POST'])
+def create_booking():
     if not current_user.is_authenticated:
-        return jsonify({'message': 'User not authenticated'}), 401
+        return jsonify({'message': 'Please log in to make a booking.'}), 401
 
     data = request.json
-    new_password = data.get('newPassword')
+    hotel_id = data.get('hotelId')
+    booking_date = data.get('bookingDate')
+    status = data.get('status')
 
-    if not new_password:
-        return jsonify({'message': 'New password is required'}), 400
+    user_id = current_user.id  # Get the logged-in user's ID
 
-    # Hash the new password
-    hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-
-    # Update the password in the database
+    # Insert booking into the database
     cur = mysql.connection.cursor()
-    cur.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_password, current_user.id))
+    cur.execute("""
+        INSERT INTO bookings (hotel_id, user_id, booking_date, status)
+        VALUES (%s, %s, %s, %s)
+    """, (hotel_id, user_id, booking_date, status))
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message': 'Password updated successfully'})
+    return jsonify({'message': 'Booking created successfully.'})
 
+@app.route('/api/bookings/user', methods=['GET'])
+def get_user_bookings():
+    if not current_user.is_authenticated:
+        return jsonify({'message': 'Please log in to view your bookings.'}), 401
+
+    user_id = current_user.id  # Get the logged-in user's ID
+    cur = mysql.connection.cursor()
+    cur.execute("""
+    SELECT b.id, h.name AS hotel_name, b.booking_date, b.status
+    FROM bookings b
+    JOIN hotels h ON b.hotel_id = h.id
+    WHERE b.user_id = %s
+    """, (user_id,))
+
+
+    bookings = cur.fetchall()
+    cur.close()
+
+    booking_list = []
+    for booking in bookings:
+        booking_list.append({
+            'booking_id': booking[0],
+            'hotel_name': booking[1],
+            'booking_date': booking[2],
+            'status': booking[3]
+        })
+
+    return jsonify({'bookings': booking_list})
 
 
 if __name__ == '__main__':

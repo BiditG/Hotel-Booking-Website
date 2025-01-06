@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import "./SearchResults.css";
 import SearchBar from "./Search";
+import { Link } from "react-router-dom";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -32,8 +33,9 @@ const SearchResults = () => {
                   <div className="hotel-rating">Rating: {hotel.rating} ⭐</div>
                   <div className="hotel-price">Price: £{hotel.price}</div>
                   <div className="buttons">
-                    <button className="button book-now">Book Now</button>
-                    <button className="button details">See Details</button>
+                    <Link to="/Booking" state={hotel}>
+                      <button className="Booknowbutton">Book Now</button>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -1,0 +1,104 @@
+/* Container for the gallery */
+.gallery-container {
+  position: relative;
+  height: 500px;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Gradient effects for the edges of the gallery */
+.gallery-gradient {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 48px;
+  z-index: 10;
+}
+
+.gallery-gradient-left {
+  left: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, #060606 100%);
+}
+
+.gallery-gradient-right {
+  right: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, #060606 100%);
+}
+
+/* Content area of the gallery */
+.gallery-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Track containing the rotating items */
+.gallery-track {
+  display: flex;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  transform-style: preserve-3d;
+  width: 100%;
+  transition: transform 0.3s ease-out; /* Smooth transition on drag */
+}
+
+/* Each individual gallery item */
+.gallery-item {
+  position: absolute;
+  display: flex;
+  height: fit-content;
+  align-items: center;
+  justify-content: center;
+  padding: 8%; /* Adjust padding for spacing */
+  backface-visibility: hidden; /* Ensures items are not flipped */
+  transition: transform 0.3s ease-out; /* Smooth transformation */
+}
+
+/* Image styles */
+.gallery-img {
+  pointer-events: none;
+  height: 120px;
+  width: 300px;
+  border-radius: 15px;
+  border: 3px solid #fff;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* Hover effect for zooming in on images */
+.gallery-item:hover .gallery-img {
+  transform: scale(1.05); /* Slight zoom effect */
+  transition: transform 0.3s ease;
+}
+
+/* Mobile responsiveness: */
+@media (max-width: 768px) {
+  .gallery-item {
+    padding: 6%; /* Reduce padding for mobile */
+  }
+
+  .gallery-img {
+    height: 100px;
+    width: 220px; /* Adjust image size for smaller screens */
+  }
+}
+
+@media (max-width: 640px) {
+  .gallery-container {
+    height: 400px; /* Reduce container height for very small screens */
+  }
+
+  .gallery-item {
+    padding: 4%; /* Reduce padding even more */
+  }
+
+  .gallery-img {
+    height: 80px;
+    width: 180px; /* Adjust image size further for small screens */
+  }
+}

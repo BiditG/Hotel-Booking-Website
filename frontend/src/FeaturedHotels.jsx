@@ -36,7 +36,7 @@ function FeaturedHotels() {
         }}
       />
       <Card.Body>
-        <Card.Title className="hotel-title">{hotel.name}</Card.Title>
+        <Card.Title className="hotel-title" style={{fontSize: '24px'}}>{hotel.name}</Card.Title>
         <Card.Text className="hotel-description" style={{ fontSize: '16px' }}>
           {hotel.description || "No description available."}
         </Card.Text>

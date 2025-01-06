@@ -22,6 +22,12 @@ import Checkout from "./Checkout";
 import Login from "./Login";
 import Register from "./Register";
 import Profile from "./Profile";
+import RollingGallery from "./RollingGallery";
+import Masonry from "./Masonry";
+import Adminpanel from "./Adminpanel";
+import Book from "./Book";
+
+
 
 
 function App() {
@@ -94,6 +100,7 @@ function App() {
     { name: "Bournemouth", capacity: 90, peakRate: 130, offPeakRate: 70 , image: '/Bourne.jpg'},
     { name: "Kent", capacity: null, peakRate: null, offPeakRate: null, image: '/Kent.jpg'}  
   ];
+
   return (
     <>
       <Router>
@@ -120,6 +127,10 @@ function App() {
           <Route path="/city/:cityName" element={<CityDetail />} />
           <Route path="/Checkout" element={<Checkout/>}/>
           <Route path='/Profile' element={<Profile/>}/>
+          <Route path="/RollingGallery" element = {<RollingGallery/>}/>
+          <Route path="/Masonry" element = {<Masonry/>}/>
+          <Route path="/Adminpanel" element={<Adminpanel/>}/>
+          <Route path="/Book" element={<Book/>}/>
         </Routes>
       </Router>
       <Footer/>
