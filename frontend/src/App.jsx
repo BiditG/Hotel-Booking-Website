@@ -26,6 +26,9 @@ import RollingGallery from "./RollingGallery";
 import Masonry from "./Masonry";
 import Adminpanel from "./Adminpanel";
 import Book from "./Book";
+import Payment from "./Payment";
+import Transcript from "./Transcript";
+import Cart from "./Cart";
 
 
 
@@ -130,7 +133,11 @@ function App() {
           <Route path="/RollingGallery" element = {<RollingGallery/>}/>
           <Route path="/Masonry" element = {<Masonry/>}/>
           <Route path="/Adminpanel" element={<Adminpanel/>}/>
-          <Route path="/Book" element={<Book/>}/>
+          <Route path="/Book" element={<Book />} />
+          <Route path='/Payment' element={<Payment/>}/>
+          <Route path="/Transcript" element={<Transcript/>}/>
+          <Route path="/cart" element={<Cart />} /> 
+
         </Routes>
       </Router>
       <Footer/>

@@ -54,7 +54,7 @@ function Navibar() {
             </Nav.Link>
 
             {/* Bookings */}
-            <Nav.Link as={NavLink} to="/book" className="nav-link-item" activeClassName="active">
+            <Nav.Link as={NavLink} to="/cart" className="nav-link-item" activeClassName="active">
               <FaBook className="nav-icon" /> Bookings
             </Nav.Link>
 

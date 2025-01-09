@@ -32,41 +32,34 @@ function FeaturedHotels() {
           width: "100%",
           height: "180px",
           objectFit: "cover",
-          borderRadius: "10px 10px 0 0", // Rounded corners for images
+          borderRadius: "10px 10px 0 0",
         }}
       />
       <Card.Body>
-        <Card.Title className="hotel-title" style={{fontSize: '24px'}}>{hotel.name}</Card.Title>
+        <Card.Title className="hotel-title" style={{ fontSize: '24px' }}>{hotel.name}</Card.Title>
         <Card.Text className="hotel-description" style={{ fontSize: '16px' }}>
           {hotel.description || "No description available."}
         </Card.Text>
       </Card.Body>
       <ListGroup className="list-group-flush">
         <ListGroup.Item>
-          <strong>Amenities:</strong> {Array.isArray(hotel.amenities) ? hotel.amenities.join(", ") : hotel.amenities || "No amenities available"}
+          <strong>Amenities:</strong> {hotel.amenities
+            ? hotel.amenities.split(",").map(item => item.trim()).join(", ")
+            : "No amenities available"}
         </ListGroup.Item>
         <ListGroup.Item>
-          <strong>Rating:</strong> {hotel.rating}{" "}
+          <strong>Rating:</strong> {hotel.rating} 
           <ion-icon
             name="star-sharp"
             size="medium"
-            style={{
-              color: "#1d58a2",
-              position: "relative",
-              top: "1px",
-            }}
+            style={{ color: "#1d58a2", position: "relative", top: "1px" }}
           ></ion-icon>
         </ListGroup.Item>
         <ListGroup.Item>
-          <strong>Price:</strong> {hotel.price}{" "}
+          <strong>Price:</strong> {hotel.price} 
           <ion-icon
             name="cash-sharp"
-            style={{
-              color: "#1d58a2",
-              position: "relative",
-              top: "2px",
-              left: "5px",
-            }}
+            style={{ color: "#1d58a2", position: "relative", top: "2px", left: "5px" }}
           ></ion-icon>
         </ListGroup.Item>
       </ListGroup>
@@ -80,23 +73,23 @@ function FeaturedHotels() {
 
   return (
     <>
-    <br/>
-    <div className="Featured-container" style={{ backgroundColor: "whitesmoke" }}>
       <br />
-      <center>
-        <h2 className="section-title">Featured Hotels</h2>
-        <p className="section-description">
-          Explore the best hotels with top amenities, great prices, and stellar ratings. Whether you're looking for luxury or budget-friendly stays, we've got you covered.
-        </p>
-        <div className="hotel-container" ref={scrollContainerRef}>
-          {loading ? (
-            <div className="loading-spinner">Loading...</div>
-          ) : (
-            hotelCards
-          )}
-        </div>
-      </center>
-    </div>
+      <div className="Featured-container" style={{ backgroundColor: "whitesmoke" }}>
+        <br />
+        <center>
+          <h2 className="section-title">Featured Hotels</h2>
+          <p className="section-description">
+            Explore the best hotels with top amenities, great prices, and stellar ratings. Whether you're looking for luxury or budget-friendly stays, we've got you covered.
+          </p>
+          <div className="hotel-container" ref={scrollContainerRef}>
+            {loading ? (
+              <div className="loading-spinner">Loading...</div>
+            ) : (
+              hotelCards
+            )}
+          </div>
+        </center>
+      </div>
     </>
   );
 }

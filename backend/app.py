@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request, session
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -19,7 +20,6 @@ app.config['SECRET_KEY'] = '123'  # Replace with a secure key
 mysql = MySQL(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-
 
 # User class for Flask-Login
 class User(UserMixin):
@@ -79,6 +79,7 @@ def get_discount(days_in_advance):
     else:
         return 0  # No discount for bookings made less than 7 days in advance
 
+
 @app.route('/api/offers', methods=['GET'])
 def get_offers():
     cur = mysql.connection.cursor()
@@ -103,6 +104,7 @@ def get_offers():
         offer_list.append(offer_dict)
 
     return jsonify(offer_list)
+
 
 # Route for user registration
 @app.route('/register', methods=['POST', 'OPTIONS'])
@@ -162,65 +164,150 @@ def get_user():
         return jsonify({'message': 'Not logged in'}), 401
 
 
-
-
 # Route to logout
 @app.route('/api/logout', methods=['GET'])
 def logout():
     logout_user()  # This will log the user out from the session
     return jsonify({'message': 'Logged out successfully'})
 
+@app.route('/api/bookings', methods=['GET'])
+@login_required
+def get_bookings():
+    cursor = mysql.connection.cursor()
+    
+    # Fetch all bookings for the current user
+    cursor.execute("SELECT * FROM bookings WHERE user_id = %s", (current_user.id,))
+    bookings = cursor.fetchall()
+
+    # If no bookings are found, return an empty list
+    if bookings:
+        # Format bookings data as needed
+        formatted_bookings = [
+            {
+                "id": booking[0],  # Adjust according to your table schema
+                "hotel": {
+                    "name": booking[1],  # Example: Adjust based on how hotel data is structured
+                    "description": booking[2],
+                    "image": booking[3],
+                },
+                "roomType": booking[4],
+                "checkInDate": booking[5],
+                "checkOutDate": booking[6],
+                "totalPrice": booking[7],
+            }
+            for booking in bookings
+        ]
+        return jsonify({"bookings": formatted_bookings}), 200
+    else:
+        return jsonify({"bookings": []}), 200
+
+# Route for saving a booking
 @app.route('/api/bookings', methods=['POST'])
-def create_booking():
+@login_required  # Ensures the route is accessible only for logged-in users
+def save_booking():
+    print(f"Current User Authenticated: {current_user.is_authenticated}")
     if not current_user.is_authenticated:
-        return jsonify({'message': 'Please log in to make a booking.'}), 401
+        return jsonify({"message": "You must be logged in to make a booking."}), 401
 
-    data = request.json
-    hotel_id = data.get('hotelId')
-    booking_date = data.get('bookingDate')
-    status = data.get('status')
+    data = request.json  # Get JSON data sent from React
+    hotel_id = data.get('hotel_id')
+    room_type = data.get('room_type')
+    num_guests = data.get('num_guests')
+    total_price = data.get('total_price', 0)
+    discount = data.get('discount', 0)
+    cancellation_charges = data.get('cancellation_charges', 0)
+    check_in_date = datetime.strptime(data.get('check_in_date'), "%Y-%m-%d").date()
+    check_out_date = datetime.strptime(data.get('check_out_date'), "%Y-%m-%d").date()
 
-    user_id = current_user.id  # Get the logged-in user's ID
+    booking_date = datetime.now().date()
+    status = 'Pending'
 
-    # Insert booking into the database
-    cur = mysql.connection.cursor()
-    cur.execute("""
-        INSERT INTO bookings (hotel_id, user_id, booking_date, status)
-        VALUES (%s, %s, %s, %s)
-    """, (hotel_id, user_id, booking_date, status))
+    cursor = mysql.connection.cursor()
+    query = """INSERT INTO bookings (user_id, hotel_id, booking_date, status, cancellation_charge, check_in_date, check_out_date, total_price) 
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+    
+    cursor.execute(query, (current_user.id, hotel_id, booking_date, status, cancellation_charges, check_in_date, check_out_date, total_price))
     mysql.connection.commit()
-    cur.close()
+    cursor.close()
 
-    return jsonify({'message': 'Booking created successfully.'})
+    return jsonify({'message': 'Booking added successfully'}), 200
 
-@app.route('/api/bookings/user', methods=['GET'])
-def get_user_bookings():
-    if not current_user.is_authenticated:
-        return jsonify({'message': 'Please log in to view your bookings.'}), 401
 
-    user_id = current_user.id  # Get the logged-in user's ID
+
+# Route for viewing booking details
+@app.route('/api/bookings/<int:booking_id>', methods=['GET'])
+@login_required
+def get_booking_details(booking_id):
     cur = mysql.connection.cursor()
     cur.execute("""
-    SELECT b.id, h.name AS hotel_name, b.booking_date, b.status
-    FROM bookings b
-    JOIN hotels h ON b.hotel_id = h.id
-    WHERE b.user_id = %s
-    """, (user_id,))
-
-
-    bookings = cur.fetchall()
+        SELECT b.id, h.name, b.check_in_date, b.check_out_date, b.total_price, b.status
+        FROM bookings b
+        JOIN hotels h ON b.hotel_id = h.id
+        WHERE b.id = %s AND b.user_id = %s
+    """, (booking_id, current_user.id))
+    booking = cur.fetchone()
     cur.close()
 
-    booking_list = []
-    for booking in bookings:
-        booking_list.append({
-            'booking_id': booking[0],
-            'hotel_name': booking[1],
-            'booking_date': booking[2],
-            'status': booking[3]
-        })
+    if booking:
+        booking_data = {
+            "bookingId": booking[0],
+            "hotel_name": booking[1],
+            "checkInDate": booking[2],
+            "checkOutDate": booking[3],
+            "totalPrice": booking[4],
+            "status": booking[5]
+        }
+        return jsonify(booking_data)
+    else:
+        return jsonify({"message": "Booking not found"}), 404
 
-    return jsonify({'bookings': booking_list})
+
+# Route for canceling a booking
+@app.route('/api/bookings/<int:booking_id>', methods=['DELETE'])
+@login_required
+def cancel_booking(booking_id):
+    cursor = mysql.connection.cursor()
+
+    # Check if the booking belongs to the current user
+    cursor.execute("SELECT * FROM bookings WHERE id = %s AND user_id = %s", (booking_id, current_user.id))
+    booking = cursor.fetchone()
+
+    if booking:
+        # Proceed with cancellation
+        cursor.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({"message": "Booking cancelled successfully"}), 200
+    else:
+        cursor.close()
+        return jsonify({"message": "Booking not found or you are not authorized to cancel this booking."}), 404
+
+
+# Route for processing payments
+@app.route('/api/payments', methods=['POST'])
+def process_payment():
+    try:
+        data = request.json
+        booking_id = data['bookingId']
+        amount = float(data['amount'])
+        payment_method = data['paymentMethod']
+        payment_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # Using MySQLdb without manual connection handling
+        cur = mysql.connection.cursor()
+        sql = """
+        INSERT INTO payments (booking_id, amount, payment_method, payment_date)
+        VALUES (%s, %s, %s, %s)
+        """
+        cur.execute(sql, (booking_id, amount, payment_method, payment_date))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({"message": "Payment successful"}), 200
+
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':

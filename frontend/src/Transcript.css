@@ -1,0 +1,45 @@
+/* Transcript.css */
+.transcript-container {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 600px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+p {
+    font-size: 16px;
+    color: #333;
+    margin: 8px 0;
+}
+
+strong {
+    font-weight: bold;
+}
+
+.cancel-booking-button {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.cancel-booking-button:hover {
+    background-color: #d73737;
+}
+
+.cancel-booking-button:active {
+    background-color: #a12f2f;
+}

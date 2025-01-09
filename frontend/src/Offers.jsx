@@ -22,9 +22,9 @@ function Offers() {
   return (
     <>
       {/* Offer Title Container */}
-      <Container sx={{ mt: 5, mb: 5 }} style={{marginTop: '100px'}}>
+      <Container sx={{ mt: 5, mb: 5 }} style={{marginTop: '120px'}}>
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h4" gutterBottom style={{marginRight: '400px'}}>
             Travel Ideas and Discounts with World Hotels
           </Typography>
           <Typography sx={{ mt: 2, fontSize: "1.1rem", color: "#555" }}>
@@ -64,7 +64,8 @@ function Offers() {
                       src={offer.background_image}
                       alt={offer.title}
                       style={{
-                        height: "200px",
+                        height: "300px",
+                        width: '600px',
                         objectFit: "cover",
                         borderTopLeftRadius: "8px",
                         borderTopRightRadius: "8px",

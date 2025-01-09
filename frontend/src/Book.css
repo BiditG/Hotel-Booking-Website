@@ -1,61 +1,57 @@
-
-/* Container for Book component */
+/* General reset for container */
 .book-container {
-    background-color: #ffffff;
+    background-color: #fff;
     width: 100%;
     max-width: 900px;
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     text-align: center;
     transform: translateY(-30px);
-    animation: fadeIn 1s ease-in-out;
+
 }
 
 /* Title style */
 .book-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #4a90e2;
+    font-size: 30px;
+    color: black;
     margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
 }
 
-/* Style for Booking List */
+/* Booking list style */
 .booking-list {
-    list-style-type: none;
-    padding: 0;
+    list-style: none;
     margin-top: 20px;
+    padding: 0;
 }
 
-/* Style for each Booking item */
+/* Individual booking item */
 .booking-item {
-    background: #ffffff;
+    background-color: #fff;
     padding: 20px;
     margin: 15px 0;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
     border-left: 5px solid #3498db;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-/* Hover effect for each booking item */
+/* Hover effect for booking item */
 .booking-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Style for each paragraph inside booking item */
+/* Text inside booking item */
 .booking-item p {
     font-size: 1.1rem;
     color: #555;
     margin: 5px 0;
     letter-spacing: 0.5px;
-    transition: color 0.3s ease;
+    transition: color 0.3s;
 }
 
-/* Hotel name style */
+/* Hotel name styling */
 .booking-item .hotel-name {
     font-weight: 600;
     font-size: 1.2rem;
@@ -63,28 +59,49 @@
     letter-spacing: 1px;
 }
 
-/* Booking date and status style */
+/* Date and status styles */
 .booking-item .booking-date,
 .booking-item .booking-status {
     color: #7f8c8d;
 }
 
-/* No bookings available message */
+/* Message when no bookings are available */
 .no-bookings {
     font-size: 1.2rem;
     color: #95a5a6;
     font-weight: 500;
 }
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
-/* Fade-in animation for the container */
+/* Modal content */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* Fade-in animation */
 @keyframes fadeIn {
-    from {
+    0% {
         opacity: 0;
         transform: translateY(-50px);
     }
-    to {
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
 }
-

@@ -1,42 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import './Book.css'; // Make sure to import the CSS
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Book.css";
 
 function Book() {
     const [bookings, setBookings] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBookings = async () => {
-            const response = await fetch("http://localhost:5000/api/bookings/user", {
-                method: "GET",
-                credentials: "include",
-            });
+            try {
+                const response = await fetch("http://localhost:5000/api/bookings/user", {
+                    method: "GET",
+                    credentials: "include",
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                setBookings(data.bookings || []);
-            } else {
-                alert("Error fetching bookings");
+                if (response.ok) {
+                    const data = await response.json();
+                    setBookings(data);
+                } else {
+                    alert("Failed to fetch bookings.");
+                }
+            } catch (error) {
+                console.error("Error fetching bookings:", error);
+                alert("Error fetching bookings.");
             }
         };
 
         fetchBookings();
     }, []);
 
+    const handleViewBooking = (booking) => {
+        navigate(`/booking-details/${booking.id}`, { state: { booking } });
+    };
+
     return (
-        <div className="book-container" style={{marginTop: '80px'}}>
-            <h2 className="book-title">Your Bookings</h2>
-            {bookings.length === 0 ? (
-                <p className="no-bookings">No bookings available</p>
-            ) : (
+        <div className="book-container">
+            <h2>Your Bookings</h2>
+            {bookings.length > 0 ? (
                 <ul className="booking-list">
                     {bookings.map((booking) => (
-                        <li key={booking.booking_id} className="booking-item">
-                            <p className="hotel-name">Hotel: {booking.hotel_name}</p>
-                            <p className="booking-date">Booking Date: {booking.booking_date}</p>
-                            <p className="booking-status">Status: {booking.status}</p>
+                        <li key={booking.id} className="booking-item">
+                            <p><strong>Hotel Name:</strong> {booking.hotelName}</p>
+                            <p><strong>Check-in:</strong> {booking.checkInDate}</p>
+                            <p><strong>Check-out:</strong> {booking.checkOutDate}</p>
+                            <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
+                            <button onClick={() => handleViewBooking(booking)}>View Details</button>
                         </li>
                     ))}
                 </ul>
+            ) : (
+                <p>No bookings found.</p>
             )}
         </div>
     );

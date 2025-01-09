@@ -12,7 +12,7 @@
   max-width: 1200px; /* Limit width for large screens */
   margin: 40px auto; /* Center the container with top margin */
   padding: 20px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
   display: flex;
