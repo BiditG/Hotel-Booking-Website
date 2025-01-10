@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';  // Import the scoped CSS file
+import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false); // "Remember Me" state
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -15,13 +15,19 @@ const Login = () => {
     try {
       const response = await axios.post(
         'http://localhost:5000/login',
-        { email, password, remember: rememberMe }, // Send remember as part of the request
+        { email, password, remember: rememberMe },
         { withCredentials: true }
       );
 
       if (response.data.message === 'Login successful') {
-        // Redirect to profile or homepage after successful login
-        navigate('/profile');
+        // Check if the logged-in user is an admin
+        if (response.data.user.email === 'admin@example.com') {
+          // Redirect to the Admin Panel
+          navigate('/adminpanel');
+        } else {
+          // Redirect to the profile page for regular users
+          navigate('/profile');
+        }
       } else {
         alert('Login failed. Please check your credentials.');
       }
@@ -36,35 +42,34 @@ const Login = () => {
       <div className="login-box">
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label>Email</label>
+          <input
+            className="login-input"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+          />
+          <input
+            className="login-input"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            required
+          />
+          <label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              type="checkbox"
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+              className="login-checkbox"
             />
-          </div>
-          <div>
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-              Remember Me
-            </label>
-          </div>
-          <button type="submit">Login</button>
+            Remember me
+          </label>
+          <button type="submit" className="login-btn">
+            Login
+          </button>
         </form>
       </div>
     </div>

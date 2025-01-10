@@ -23,20 +23,24 @@ login_manager = LoginManager(app)
 
 # User class for Flask-Login
 class User(UserMixin):
-    def __init__(self, id, username, email):
+    def __init__(self, id, username, email, is_admin=False):
         self.id = id
         self.username = username
         self.email = email
+        self.is_admin = is_admin  # New attribute for checking if user is admin
+
+    def is_admin_user(self):
+        return self.is_admin
 
 
 @login_manager.user_loader
 def load_user(user_id):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT id, username, email FROM users WHERE id = %s", (user_id,))
+    cur.execute("SELECT id, username, email, is_admin FROM users WHERE id = %s", (user_id,))
     user = cur.fetchone()
     cur.close()
     if user:
-        return User(id=user[0], username=user[1], email=user[2])
+        return User(id=user[0], username=user[1], email=user[2], is_admin=user[3])
     return None
 
 
@@ -123,7 +127,6 @@ def register():
     cur.close()
     return jsonify({'message': 'User registered successfully'})
 
-
 @app.route('/login', methods=['POST', 'OPTIONS'])
 def login():
     if request.method == 'OPTIONS':
@@ -135,19 +138,31 @@ def login():
 
     # Fetch user from database
     cur = mysql.connection.cursor()
-    cur.execute("SELECT id, username, password FROM users WHERE email = %s", (email,))
+    cur.execute("SELECT id, username, password, email FROM users WHERE email = %s", (email,))
     user = cur.fetchone()
     cur.close()
 
     # Check if user exists and password is correct
     if user and bcrypt.check_password_hash(user[2], password):
         remember = data.get('remember', False)  # Check if remember me is true
-        user_obj = User(id=user[0], username=user[1], email=email)
+        user_obj = User(id=user[0], username=user[1], email=user[3])  # Include email in user object
         login_user(user_obj, remember=remember)  # Pass remember flag here
         
         # Store user info in session
         session['user_id'] = user_obj.id  # Store user ID in the session
-        return jsonify({'message': 'Login successful', 'user': {'id': user_obj.id, 'username': user_obj.username, 'email': user_obj.email}})
+        
+        # Check if the logged-in user is an admin
+        if email == 'admin@example.com':
+            return jsonify({
+                'message': 'Login successful',
+                'user': {'id': user_obj.id, 'username': user_obj.username, 'email': user_obj.email},
+                'role': 'admin'
+            })
+
+        return jsonify({
+            'message': 'Login successful',
+            'user': {'id': user_obj.id, 'username': user_obj.username, 'email': user_obj.email}
+        })
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
@@ -367,6 +382,177 @@ def confirm_booking():
         return jsonify({"message": "Booking not found or already confirmed."}), 404
 
     return jsonify({"message": "Booking confirmed!"}), 200
+
+
+
+
+
+#ADMINNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN-----------------
+
+
+# Route to get all hotels (for Admin)
+@app.route('/api/admin/hotels', methods=['GET'])
+@login_required
+def get_hotels_admin():
+    if not current_user.is_authenticated:
+        return jsonify({"message": "Admin must be logged in."}), 401
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM hotels")
+    hotels = cursor.fetchall()
+    cursor.close()
+
+    hotel_list = []
+    for hotel in hotels:
+        hotel_list.append({
+            "id": hotel[0],
+            "name": hotel[1],
+            "description": hotel[2],
+            "image": hotel[3],
+            "amenities": hotel[4],
+            "rating": hotel[5],
+            "price": hotel[6],
+            "city": hotel[7],
+            "room_capacity": hotel[8],
+            "standard_rate_peak": hotel[9],
+            "standard_rate_off_peak": hotel[10]
+        })
+
+    return jsonify(hotel_list)
+
+# Route to add a new hotel (for Admin)
+@app.route('/api/admin/hotels', methods=['POST'])
+@login_required
+def add_hotel():
+    if not current_user.is_authenticated:
+        return jsonify({"message": "Admin must be logged in."}), 401
+
+    data = request.json
+    name = data.get('name')
+    description = data.get('description')
+    image = data.get('image')
+    amenities = data.get('amenities')
+    rating = data.get('rating')
+    price = data.get('price')
+    city = data.get('city')
+    room_capacity = data.get('room_capacity')
+    standard_rate_peak = data.get('standard_rate_peak')
+    standard_rate_off_peak = data.get('standard_rate_off_peak')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("""
+        INSERT INTO hotels (name, description, image, amenities, rating, price, city, room_capacity, 
+        standard_rate_peak, standard_rate_off_peak)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """, (name, description, image, amenities, rating, price, city, room_capacity, standard_rate_peak, standard_rate_off_peak))
+    mysql.connection.commit()
+    cursor.close()
+
+    return jsonify({"message": "Hotel added successfully"}), 200
+
+# Route to update a hotel (for Admin)
+@app.route('/api/admin/hotels/<int:hotel_id>', methods=['PUT'])
+@login_required
+def update_hotel(hotel_id):
+    if not current_user.is_authenticated:
+        return jsonify({"message": "Admin must be logged in."}), 401
+
+    data = request.json
+    name = data.get('name')
+    description = data.get('description')
+    image = data.get('image')
+    amenities = data.get('amenities')
+    rating = data.get('rating')
+    price = data.get('price')
+    city = data.get('city')
+    room_capacity = data.get('room_capacity')
+    standard_rate_peak = data.get('standard_rate_peak')
+    standard_rate_off_peak = data.get('standard_rate_off_peak')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("""
+        UPDATE hotels SET name = %s, description = %s, image = %s, amenities = %s, rating = %s,
+        price = %s, city = %s, room_capacity = %s, standard_rate_peak = %s, standard_rate_off_peak = %s
+        WHERE id = %s
+    """, (name, description, image, amenities, rating, price, city, room_capacity, standard_rate_peak, standard_rate_off_peak, hotel_id))
+    mysql.connection.commit()
+    cursor.close()
+
+    return jsonify({"message": "Hotel updated successfully"}), 200
+
+@app.route('/api/admin/hotels/<int:hotel_id>', methods=['DELETE'])
+@login_required
+def delete_hotel(hotel_id):
+    if not current_user.is_authenticated:
+        return jsonify({"message": "Admin must be logged in."}), 401
+
+    try:
+        cursor = mysql.connection.cursor()
+
+        # Delete bookings associated with the hotel
+        cursor.execute("DELETE FROM bookings WHERE hotel_id = %s", (hotel_id,))
+        
+        # Delete the hotel
+        cursor.execute("DELETE FROM hotels WHERE id = %s", (hotel_id,))
+
+        mysql.connection.commit()
+        cursor.close()
+
+        return jsonify({"message": "Hotel and associated bookings deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"message": "Error deleting hotel", "error": str(e)}), 500
+
+
+    return jsonify({"message": "Hotel deleted successfully"}), 200
+# Route to get all users (for Admin)
+@app.route('/api/admin/users', methods=['GET'])
+@login_required
+def get_users_admin():
+    if not current_user.is_authenticated:
+        return jsonify({"message": "Admin must be logged in."}), 401
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    cursor.close()
+
+    user_list = []
+    for user in users:
+        user_list.append({
+            "id": user[0],
+            "username": user[1],
+            "email": user[2]
+        })
+
+    return jsonify(user_list)
+
+# Route to delete a user (for Admin)
+@app.route('/api/admin/users/<int:user_id>', methods=['DELETE'])
+@login_required
+def delete_user(user_id):
+    if not current_user.is_authenticated:
+        return jsonify({"message": "Admin must be logged in."}), 401
+
+    try:
+        cursor = mysql.connection.cursor()
+
+        # Delete bookings associated with the user
+        cursor.execute("DELETE FROM bookings WHERE user_id = %s", (user_id,))
+        
+        # Delete the user
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+
+        mysql.connection.commit()
+        cursor.close()
+
+        return jsonify({"message": "User and associated bookings deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"message": "Error deleting user", "error": str(e)}), 500
+
+
+
+
+
 
 
 if __name__ == '__main__':

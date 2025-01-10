@@ -132,7 +132,7 @@ function App() {
           <Route path='/Profile' element={<Profile/>}/>
           <Route path="/RollingGallery" element = {<RollingGallery/>}/>
           <Route path="/Masonry" element = {<Masonry/>}/>
-          <Route path="/Adminpanel" element={<Adminpanel/>}/>
+          <Route path="/adminpanel" element={<Adminpanel/>}/>
           <Route path="/Book" element={<Book />} />
           <Route path='/Payment' element={<Payment/>}/>
           <Route path="/Transcript" element={<Transcript/>}/>
