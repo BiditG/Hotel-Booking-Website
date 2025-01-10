@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Container, Typography, TextField, Button, Box, Alert } from '@mui/material';
+import { LockOutlined } from '@mui/icons-material';
 import './Profile.css'; // Import the scoped CSS file
 
 const Profile = () => {
@@ -71,7 +73,7 @@ const Profile = () => {
   };
 
   if (error) {
-    return <div>{error}</div>;
+    return <Alert severity="error">{error}</Alert>;
   }
 
   if (!user) {
@@ -79,39 +81,71 @@ const Profile = () => {
   }
 
   return (
-    <div className="profile-container">
-      <h2>User Profile</h2>
-      <p><strong>Username:</strong> {user.username}</p>
-      <p><strong>Email:</strong> {user.email}</p>
+    <Container maxWidth="sm" style={{marginTop: '120px'}}>
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h4" align="center" gutterBottom>User Profile</Typography>
 
-      {/* Password Change Form */}
-      <h3>Change Password</h3>
-      <form onSubmit={handlePasswordChange}>
-        <div>
-          <label>New Password</label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Confirm New Password</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        {passwordChangeError && <p style={{ color: 'red' }}>{passwordChangeError}</p>}
-        <button type="submit">Change Password</button>
-      </form>
+        <Typography variant="h6"><strong>Username:</strong> {user.username}</Typography>
+        <Typography variant="body1"><strong>Email:</strong> {user.email}</Typography>
 
-      {/* Logout Button */}
-      <button className="logout-btn" onClick={handleLogout}>Logout</button>
-    </div>
+        {/* Password Change Form */}
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h6">Change Password</Typography>
+          <form onSubmit={handlePasswordChange}>
+            <TextField
+              label="New Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+            <TextField
+              label="Confirm New Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+
+            {passwordChangeError && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {passwordChangeError}
+              </Alert>
+            )}
+
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              type="submit"
+              sx={{ mt: 3 }}
+            >
+              Change Password
+            </Button>
+          </form>
+        </Box>
+
+        {/* Logout Button */}
+        <Box sx={{ mt: 4 }}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            onClick={handleLogout}
+            sx={{ mt: 2 }}
+            startIcon={<LockOutlined />}
+          >
+            Logout
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 

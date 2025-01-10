@@ -1,8 +1,8 @@
+// Cart.js (Updated)
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Container, Row, Col, Card, Button, Spinner } from "react-bootstrap";
-import { FaHotel, FaMoneyBillWave, FaCalendarAlt, FaTrashAlt } from "react-icons/fa"; // Add React Icons for better visuals
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
+import { Container, Grid, Card, CardContent, CardMedia, Typography, Button, CircularProgress, IconButton } from "@mui/material";
+import { FaHotel, FaMoneyBillWave, FaCalendarAlt, FaTrashAlt } from "react-icons/fa";
 import "./Cart.css";
 
 function Cart() {
@@ -10,53 +10,43 @@ function Cart() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const location = useLocation();
+
+    const fetchCart = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/api/cart", {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setBookings(data.bookings || []);
+            } else {
+                setError("Failed to fetch bookings.");
+            }
+        } catch (err) {
+            setError("Error fetching bookings: " + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        if (location.state) {
-            setBookings([location.state]);
-            setLoading(false);
-        } else {
-            const fetchBookings = async () => {
-                try {
-                    const response = await fetch("http://localhost:5000/api/bookings", {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        credentials: "include",
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        setBookings(data.bookings || []);
-                    } else {
-                        setError("Failed to fetch bookings.");
-                    }
-                } catch (err) {
-                    setError("Error fetching bookings: " + err.message);
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            fetchBookings();
-        }
-    }, [location.state]);
+        fetchCart();
+    }, []);
 
     const handleCancelBooking = async (bookingId) => {
         if (window.confirm("Are you sure you want to cancel this booking?")) {
             try {
                 const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
                     method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                    headers: { "Content-Type": "application/json" },
                     credentials: "include",
                 });
 
                 if (response.ok) {
-                    setBookings(bookings.filter((booking) => booking.id !== bookingId));
+                    fetchCart();
                     alert("Booking cancelled successfully!");
                 } else {
                     alert("Failed to cancel booking.");
@@ -86,91 +76,52 @@ function Cart() {
 
     return (
         <Container className="cart-container">
-            {/* Title Section */}
             <div className="text-center mb-4">
-                <h1>Your Cart 🛒</h1>
-                <p>Review and manage your hotel bookings. You can proceed to payment or cancel bookings as needed. 🏨</p>
+                <Typography variant="h4" gutterBottom>Your Cart 🛒</Typography>
+                <Typography variant="body1">Review and manage your hotel bookings.</Typography>
             </div>
 
-            {/* Loading State */}
-            {loading && (
-                <div className="d-flex justify-content-center">
-                    <Spinner animation="border" variant="primary" />
-                </div>
-            )}
+            {loading && <CircularProgress />}
+            {error && <Typography color="error">{error}</Typography>}
 
-            {/* Error Handling */}
-            {error && <p className="text-danger">{error}</p>}
-
-            {/* If No Bookings */}
             {bookings.length === 0 ? (
-                <div className="text-center">
-                    <h4>No bookings found in your cart. 😢</h4>
-                </div>
+                <Typography variant="h6">No bookings found in your cart. 😢</Typography>
             ) : (
-                <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-                    {/* Booking List */}
+                <Grid container spacing={4}>
                     {bookings.map((booking) => (
-                        <Col key={booking.id}>
-                            <Card className="cart-card">
-                                {/* Card Image */}
-                                <Card.Img
-                                    variant="top"
-                                    src={booking.hotel?.image || "/default-image.jpg"}
+                        <Grid item xs={12} sm={6} md={4} key={booking.id}>
+                            <Card elevation={3}>
+                                <CardMedia
+                                    component="img"
+                                    height="200"
+                                    image={booking.hotel?.image || "/default-image.jpg"}
                                     alt={booking.hotel?.name || "Hotel Image"}
-                                    className="cart-card-img"
                                 />
-                                <Card.Body>
-                                    <Card.Title className="cart-card-title">
-                                        <span>{booking.hotel?.name || "Hotel Name"}</span>
-                                        <FaHotel className="cart-card-icon" />
-                                    </Card.Title>
-
-                                    <Card.Text>
-                                        <strong>Room Type:</strong> {booking.roomType || "Not specified"}
-                                        <br />
-                                        <strong>
-                                            <FaCalendarAlt className="me-2" />
-                                            Check-in:
-                                        </strong>{" "}
-                                        {formatDate(booking.checkInDate) || "Not specified"}
-                                        <br />
-                                        <strong>
-                                            <FaCalendarAlt className="me-2" />
-                                            Check-out:
-                                        </strong>{" "}
-                                        {formatDate(booking.checkOutDate) || "Not specified"}
-                                        <br />
-                                        <strong>
-                                            <FaMoneyBillWave className="me-2" />
-                                            Total Price:
-                                        </strong>{" "}
-                                        ${parseFloat(booking.totalPrice || "0").toFixed(2)}
-                                    </Card.Text>
-
-                                    {/* Actions */}
-                                    <div className="d-flex justify-content-between">
-                                        <Button
-                                            variant="primary"
-                                            onClick={() => handleProceedToPayment(booking)}
-                                            className="cart-btn"
-                                        >
-                                            Proceed to Payment 💳
-                                        </Button>
-                                        <Button
-                                            variant="danger"
-                                            onClick={() => handleCancelBooking(booking.id)}
-                                            className="cart-btn"
-                                        >
-                                            <FaTrashAlt className="me-2" />
-                                            Cancel Booking
-                                        </Button>
-                                    </div>
-                                </Card.Body>
+                                <CardContent>
+                                    <Typography variant="h6">
+                                        {booking.hotel?.name || "Hotel Name"} <FaHotel />
+                                    </Typography>
+                                    <Typography><strong>Status:</strong> {booking.status}</Typography>
+                                    <Typography><strong>Check-in:</strong> {formatDate(booking.checkInDate)}</Typography>
+                                    <Typography><strong>Check-out:</strong> {formatDate(booking.checkOutDate)}</Typography>
+                                    <Typography><strong>Total Price:</strong> ${parseFloat(booking.totalPrice).toFixed(2)}</Typography>
+                                </CardContent>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px' }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleProceedToPayment(booking)}
+                                    >
+                                        Proceed to Payment 💳
+                                    </Button>
+                                    <IconButton color="secondary" onClick={() => handleCancelBooking(booking.id)}>
+                                        <FaTrashAlt />
+                                    </IconButton>
+                                </div>
                             </Card>
-                        </Col>
+                        </Grid>
                     ))}
-                </Row>
+                </Grid>
             )}
         </Container>
     );

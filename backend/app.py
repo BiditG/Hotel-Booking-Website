@@ -310,5 +310,64 @@ def process_payment():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/cart', methods=['GET'])
+@login_required
+def get_cart():
+    cursor = mysql.connection.cursor()
+
+    # Fetch all bookings for the current user, along with hotel name
+    cursor.execute("""
+        SELECT bookings.id, bookings.user_id, bookings.hotel_id, hotels.name, bookings.status,
+               bookings.check_in_date, bookings.check_out_date, bookings.total_price
+        FROM bookings
+        JOIN hotels ON bookings.hotel_id = hotels.id
+        WHERE bookings.user_id = %s
+    """, (current_user.id,))
+    bookings = cursor.fetchall()
+
+    # If no bookings are found, return an empty list
+    if bookings:
+        # Format bookings data as needed
+        formatted_bookings = [
+            {
+                "id": booking[0],  # Booking ID
+                "hotel": {
+                    "name": booking[3],  # Hotel name from hotel table
+                },
+                "status": booking[4],  # Status of the booking
+                "checkInDate": booking[5],  # Check-in date
+                "checkOutDate": booking[6],  # Check-out date
+                "totalPrice": float(booking[7]),  # Convert total_price to float
+            }
+            for booking in bookings
+        ]
+        return jsonify({"bookings": formatted_bookings}), 200
+    else:
+        return jsonify({"bookings": []}), 200
+
+
+# Flask Route: confirm_booking
+@app.route('/api/confirm_booking', methods=['POST'])
+@login_required
+def confirm_booking():
+    data = request.get_json()
+    booking_id = data.get('bookingId')
+
+    if not booking_id:
+        return jsonify({"message": "Booking ID is required."}), 400
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE bookings SET status = 'Confirmed' WHERE id = %s AND user_id = %s AND status = 'Pending'",
+        (booking_id, current_user.id)
+    )
+    mysql.connection.commit()
+
+    if cursor.rowcount == 0:
+        return jsonify({"message": "Booking not found or already confirmed."}), 404
+
+    return jsonify({"message": "Booking confirmed!"}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)
