@@ -384,9 +384,43 @@ def confirm_booking():
     return jsonify({"message": "Booking confirmed!"}), 200
 
 
+# Currency Model - Fetch currencies from MySQL database
+@app.route('/api/currencies', methods=['GET'])
+def get_currencies():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT currency_code, rate FROM currency")
+    currencies = cur.fetchall()
+    
+    # Format data for JSON response
+    currency_list = [{"currency_code": currency[0], "rate": str(currency[1])} for currency in currencies]
+    return jsonify(currency_list)
 
+# Fetch a specific currency rate by currency code (e.g., /api/currencies/USD)
+@app.route('/api/currencies/<currency_code>', methods=['GET'])
+def get_currency(currency_code):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT currency_code, rate FROM currency WHERE currency_code = %s", (currency_code.upper(),))
+    currency = cur.fetchone()
 
+    if currency:
+        return jsonify({"currency_code": currency[0], "rate": str(currency[1])})
+    else:
+        return jsonify({"error": "Currency not found"}), 404
 
+# Update exchange rate for a specific currency
+@app.route('/api/currencies/<currency_code>', methods=['PUT'])
+def update_currency(currency_code):
+    new_rate = request.json.get('rate')
+    if not new_rate:
+        return jsonify({"error": "Rate is required"}), 400
+
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE currency SET rate = %s WHERE currency_code = %s", (new_rate, currency_code.upper()))
+        mysql.connection.commit()
+        return jsonify({"message": "Currency rate updated successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 #ADMINNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN-----------------
 
 
@@ -450,7 +484,6 @@ def add_hotel():
 
     return jsonify({"message": "Hotel added successfully"}), 200
 
-# Route to update a hotel (for Admin)
 @app.route('/api/admin/hotels/<int:hotel_id>', methods=['PUT'])
 @login_required
 def update_hotel(hotel_id):
@@ -468,17 +501,19 @@ def update_hotel(hotel_id):
     room_capacity = data.get('room_capacity')
     standard_rate_peak = data.get('standard_rate_peak')
     standard_rate_off_peak = data.get('standard_rate_off_peak')
+    status = data.get('status', 'available')  # Default to 'available'
 
     cursor = mysql.connection.cursor()
     cursor.execute("""
         UPDATE hotels SET name = %s, description = %s, image = %s, amenities = %s, rating = %s,
-        price = %s, city = %s, room_capacity = %s, standard_rate_peak = %s, standard_rate_off_peak = %s
+        price = %s, city = %s, room_capacity = %s, standard_rate_peak = %s, standard_rate_off_peak = %s, status = %s
         WHERE id = %s
-    """, (name, description, image, amenities, rating, price, city, room_capacity, standard_rate_peak, standard_rate_off_peak, hotel_id))
+    """, (name, description, image, amenities, rating, price, city, room_capacity, standard_rate_peak, standard_rate_off_peak, status, hotel_id))
     mysql.connection.commit()
     cursor.close()
 
     return jsonify({"message": "Hotel updated successfully"}), 200
+
 
 @app.route('/api/admin/hotels/<int:hotel_id>', methods=['DELETE'])
 @login_required
@@ -550,7 +585,35 @@ def delete_user(user_id):
         return jsonify({"message": "Error deleting user", "error": str(e)}), 500
 
 
+@app.route('/api/admin/users/<int:user_id>/password', methods=['PUT'])
+@login_required
+def update_user_password(user_id):
+    # Ensure that the logged-in user is an admin
+    if not current_user.is_authenticated or not current_user.is_admin:
+        return jsonify({"message": "Admin must be logged in."}), 401
 
+    # Admins can update passwords for any user
+    try:
+        # Get the new password from the request data
+        new_password = request.json.get('password')
+
+        if not new_password or len(new_password) < 6:  # Optional: enforce a password length requirement
+            return jsonify({"message": "Password must be at least 6 characters long."}), 400
+
+        # Hash the new password using Bcrypt
+        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+
+        cursor = mysql.connection.cursor()
+
+        # Update the user's password in the database
+        cursor.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_password, user_id))
+        mysql.connection.commit()
+        cursor.close()
+
+        return jsonify({"message": "Password updated successfully."}), 200
+    except Exception as e:
+        print(e)  # It's a good practice to log the error
+        return jsonify({"message": "An error occurred while updating the password."}), 500
 
 
 

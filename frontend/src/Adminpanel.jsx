@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Box, Button, Container, Grid, TextField, Typography, Alert, List, ListItem, ListItemText, IconButton, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
-const Adminpanel = () => {
+const AdminPanel = () => {
   const [hotels, setHotels] = useState([]);
   const [users, setUsers] = useState([]);
+  const [currencies, setCurrencies] = useState([]);
   const [newHotel, setNewHotel] = useState({
     name: '',
     description: '',
@@ -14,202 +20,304 @@ const Adminpanel = () => {
     city: '',
     room_capacity: '',
     standard_rate_peak: '',
-    standard_rate_off_peak: ''
+    standard_rate_off_peak: '',
+    status: 'available',
   });
+  const [newPassword, setNewPassword] = useState('');
+  const [newRate, setNewRate] = useState('');
+  const [editingHotel, setEditingHotel] = useState(null); 
+  const [openModal, setOpenModal] = useState(false); 
 
-  // Fetch hotels
   const fetchHotels = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/hotels', {
-        withCredentials: true, // Include credentials (cookies)
-      });
-      if (Array.isArray(response.data)) {
-        setHotels(response.data);
-      } else {
-        setHotels([]);
-      }
+      const response = await axios.get('http://localhost:5000/api/admin/hotels', { withCredentials: true });
+      setHotels(response.data);
     } catch (error) {
       console.error('Error fetching hotels:', error);
-      setHotels([]);
     }
   };
 
-  // Fetch users
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/users', {
-        withCredentials: true, // Include credentials (cookies)
-      });
-      if (Array.isArray(response.data)) {
-        setUsers(response.data);
-      } else {
-        setUsers([]);
-      }
+      const response = await axios.get('http://localhost:5000/api/admin/users', { withCredentials: true });
+      setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
-      setUsers([]);
     }
   };
 
-  // Add new hotel
-  const handleAddHotel = async () => {
+  const fetchCurrencies = async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/admin/hotels',
-        newHotel,
-        {
-          withCredentials: true, // Include credentials (cookies)
-        }
-      );
-      console.log(response.data);
-      fetchHotels(); // Refresh the list of hotels after adding a new one
+      const response = await axios.get('http://localhost:5000/api/currencies', { withCredentials: true });
+      setCurrencies(response.data);
+    } catch (error) {
+      console.error('Error fetching currencies:', error);
+    }
+  };
+
+  const handleChange = (e) => {
+    setNewHotel({
+      ...newHotel,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handlePasswordChange = (e) => {
+    setNewPassword(e.target.value);
+  };
+
+  const handleRateChange = (e) => {
+    setNewRate(e.target.value);
+  };
+
+  const handleAddHotel = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:5000/api/admin/hotels', newHotel, { withCredentials: true });
+      fetchHotels(); 
+      setNewHotel({
+        name: '',
+        description: '',
+        image: '',
+        amenities: '',
+        rating: '',
+        price: '',
+        city: '',
+        room_capacity: '',
+        standard_rate_peak: '',
+        standard_rate_off_peak: '',
+        status: 'available',
+      });
     } catch (error) {
       console.error('Error adding hotel:', error);
     }
   };
 
-  // Handle form changes
-  const handleChange = (e) => {
-    setNewHotel({
-      ...newHotel,
-      [e.target.name]: e.target.value
-    });
+  const handleEditHotel = (hotel) => {
+    setEditingHotel(hotel);
+    setNewHotel({ ...hotel });
+    setOpenModal(true);
   };
 
-  // Delete a hotel
+  const handleUpdateHotel = async () => {
+    try {
+      await axios.put(`http://localhost:5000/api/admin/hotels/${editingHotel.id}`, newHotel, { withCredentials: true });
+      fetchHotels(); 
+      setOpenModal(false); 
+      setEditingHotel(null); 
+    } catch (error) {
+      console.error('Error updating hotel:', error);
+    }
+  };
+
   const handleDeleteHotel = async (hotelId) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/api/admin/hotels/${hotelId}`,
-        { withCredentials: true } // Include credentials (cookies)
-      );
-      console.log(response.data);
-      fetchHotels(); // Refresh the list of hotels
+      await axios.delete(`http://localhost:5000/api/admin/hotels/${hotelId}`, { withCredentials: true });
+      fetchHotels(); 
     } catch (error) {
       console.error('Error deleting hotel:', error);
     }
   };
 
-  // Delete a user
   const handleDeleteUser = async (userId) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/api/admin/users/${userId}`,
-        { withCredentials: true } // Include credentials (cookies)
-      );
-      console.log(response.data);
-      fetchUsers(); // Refresh the list of users
+      await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, { withCredentials: true });
+      fetchUsers(); 
     } catch (error) {
       console.error('Error deleting user:', error);
     }
   };
 
-  // Use useEffect to fetch hotels and users when the component mounts
+  const handleUpdatePassword = async (userId) => {
+    try {
+      await axios.put(`http://localhost:5000/api/admin/users/${userId}/password`, { password: newPassword }, { withCredentials: true });
+      fetchUsers(); 
+      setNewPassword('');
+    } catch (error) {
+      console.error('Error updating password:', error);
+    }
+  };
+
+  const handleUpdateCurrency = async (currencyCode) => {
+    try {
+      await axios.put(`http://localhost:5000/api/currencies/${currencyCode}`, { rate: newRate }, { withCredentials: true });
+      fetchCurrencies();
+      setNewRate('');
+    } catch (error) {
+      console.error('Error updating currency rate:', error);
+    }
+  };
+
   useEffect(() => {
     fetchHotels();
     fetchUsers();
+    fetchCurrencies();
   }, []);
 
   return (
-    <div>
-      <h1>Admin Panel</h1>
+    <Container>
+      <Box mt={4}>
+        <Typography variant="h3" align="center" color="primary" gutterBottom>
+          🏨 Admin Panel 🛠️
+        </Typography>
 
-      <h2>Add New Hotel</h2>
-      <form onSubmit={(e) => { e.preventDefault(); handleAddHotel(); }}>
-        <input
-          type="text"
-          name="name"
-          value={newHotel.name}
-          onChange={handleChange}
-          placeholder="Hotel Name"
-        />
-        <input
-          type="text"
-          name="description"
-          value={newHotel.description}
-          onChange={handleChange}
-          placeholder="Hotel Description"
-        />
-        <input
-          type="text"
-          name="image"
-          value={newHotel.image}
-          onChange={handleChange}
-          placeholder="Hotel Image URL"
-        />
-        <input
-          type="text"
-          name="amenities"
-          value={newHotel.amenities}
-          onChange={handleChange}
-          placeholder="Hotel Amenities"
-        />
-        <input
-          type="number"
-          name="rating"
-          value={newHotel.rating}
-          onChange={handleChange}
-          placeholder="Hotel Rating"
-        />
-        <input
-          type="number"
-          name="price"
-          value={newHotel.price}
-          onChange={handleChange}
-          placeholder="Hotel Price"
-        />
-        <input
-          type="text"
-          name="city"
-          value={newHotel.city}
-          onChange={handleChange}
-          placeholder="Hotel City"
-        />
-        <input
-          type="number"
-          name="room_capacity"
-          value={newHotel.room_capacity}
-          onChange={handleChange}
-          placeholder="Room Capacity"
-        />
-        <input
-          type="number"
-          name="standard_rate_peak"
-          value={newHotel.standard_rate_peak}
-          onChange={handleChange}
-          placeholder="Standard Rate (Peak)"
-        />
-        <input
-          type="number"
-          name="standard_rate_off_peak"
-          value={newHotel.standard_rate_off_peak}
-          onChange={handleChange}
-          placeholder="Standard Rate (Off Peak)"
-        />
-        <button type="submit">Add Hotel</button>
-      </form>
+        <Tabs>
+          <TabList>
+            <Tab>Hotels</Tab>
+            <Tab>Add Hotel</Tab>
+            <Tab>Users</Tab>
+            <Tab>Currency Exchange</Tab>
+          </TabList>
 
-      <h2>Hotels</h2>
-      <ul>
-        {hotels.map(hotel => (
-          <li key={hotel.id}>
-            {hotel.name} ({hotel.city}) - {hotel.rating} stars
-            <button onClick={() => handleDeleteHotel(hotel.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+          {/* Tab Panel for Hotels */}
+          <TabPanel>
+            <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
+              🏨 Hotels List 🏨
+            </Typography>
+            <List sx={{ mb: 4 }}>
+              {hotels.map((hotel) => (
+                <ListItem key={hotel.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <ListItemText
+                    primary={`${hotel.name} (${hotel.city})`}
+                    secondary={`Rating: ${hotel.rating} ⭐ | Status: ${hotel.status}`}
+                  />
+                  <IconButton edge="end" color="primary" onClick={() => handleEditHotel(hotel)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton edge="end" color="error" onClick={() => handleDeleteHotel(hotel.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItem>
+              ))}
+            </List>
+          </TabPanel>
 
-      <h2>Users</h2>
-      <ul>
-        {users.map(user => (
-          <li key={user.id}>
-            {user.username} ({user.email})
-            <button onClick={() => handleDeleteUser(user.id)}>Delete User</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+          {/* Tab Panel for Add Hotel */}
+          <TabPanel>
+            <Card sx={{ mb: 4 }}>
+              <CardContent>
+                <Typography variant="h5" color="secondary" gutterBottom>
+                  🌟 Add New Hotel 🌟
+                </Typography>
+                <form onSubmit={handleAddHotel}>
+                  <Grid container spacing={2}>
+                    {/* Hotel Details */}
+                    {Object.keys(newHotel).map((key) => (
+                      key !== 'status' && (
+                        <Grid item xs={12} sm={6} key={key}>
+                          <TextField
+                            fullWidth
+                            label={`Hotel ${key.charAt(0).toUpperCase() + key.slice(1)}`}
+                            name={key}
+                            value={newHotel[key]}
+                            onChange={handleChange}
+                            required
+                            variant="outlined"
+                          />
+                        </Grid>
+                      )
+                    ))}
+                  </Grid>
+                  <Button variant="contained" color="primary" type="submit" sx={{ mt: 3 }}>
+                    Add Hotel
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabPanel>
+
+          {/* Tab Panel for Users */}
+          <TabPanel>
+            <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
+              👥 Users List 👥
+            </Typography>
+            <List sx={{ mb: 4 }}>
+              {users.map((user) => (
+                <ListItem key={user.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <ListItemText primary={user.username} secondary={user.email} />
+                  <IconButton edge="end" color="primary" onClick={() => handleUpdatePassword(user.id)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton edge="end" color="error" onClick={() => handleDeleteUser(user.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItem>
+              ))}
+            </List>
+            <TextField
+              label="New Password"
+              value={newPassword}
+              onChange={handlePasswordChange}
+              variant="outlined"
+              type="password"
+              fullWidth
+              sx={{ mb: 2 }}
+            />
+          </TabPanel>
+
+          {/* Tab Panel for Currency Exchange */}
+          <TabPanel>
+            <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
+              💸 Currency Exchange Rates 💸
+            </Typography>
+            <List sx={{ mb: 4 }}>
+              {currencies.map((currency) => (
+                <ListItem key={currency.currency_code} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <ListItemText
+                    primary={`${currency.currency_code}`}
+                    secondary={`Rate: ${currency.rate}`}
+                  />
+                  <Grid item xs={4}>
+                    <TextField
+                      fullWidth
+                      label="New Rate"
+                      value={newRate}
+                      onChange={handleRateChange}
+                      variant="outlined"
+                      type="number"
+                    />
+                  </Grid>
+                  <IconButton edge="end" color="primary" onClick={() => handleUpdateCurrency(currency.currency_code)}>
+                    <EditIcon />
+                  </IconButton>
+                </ListItem>
+              ))}
+            </List>
+          </TabPanel>
+        </Tabs>
+
+        {/* Modal for Editing Hotel */}
+        <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+          <DialogTitle>📝 Edit Hotel</DialogTitle>
+          <DialogContent>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateHotel(); }}>
+              <Grid container spacing={2}>
+                {Object.keys(newHotel).map((key) => (
+                  key !== 'status' && (
+                    <Grid item xs={12} sm={6} key={key}>
+                      <TextField
+                        fullWidth
+                        label={`Hotel ${key.charAt(0).toUpperCase() + key.slice(1)}`}
+                        name={key}
+                        value={newHotel[key]}
+                        onChange={handleChange}
+                        required
+                        variant="outlined"
+                      />
+                    </Grid>
+                  )
+                ))}
+              </Grid>
+              <DialogActions>
+                <Button onClick={() => setOpenModal(false)} color="secondary">Cancel</Button>
+                <Button type="submit" color="primary">Update Hotel</Button>
+              </DialogActions>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </Box>
+    </Container>
   );
 };
 
-export default Adminpanel;
+export default AdminPanel;

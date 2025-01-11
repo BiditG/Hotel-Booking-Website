@@ -120,3 +120,30 @@
   }
 }
 
+.map-container {
+  position: relative;
+  width: 100%; /* Full width of the container */
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio (height is 56.25% of the width) */
+  background: #eee; /* Optional background color */
+}
+
+.map-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .map-container {
+    padding-bottom: 75%; /* 4:3 aspect ratio for smaller screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .map-container {
+    padding-bottom: 75%; /* 4:3 aspect ratio */
+  }
+}

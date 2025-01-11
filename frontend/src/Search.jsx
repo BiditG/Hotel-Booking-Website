@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaFilter, FaMap, FaMoneyBillWave } from "react-icons/fa";
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Button, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import "./Search.css";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import Form from "react-bootstrap/Form";
 
 const SearchBar = () => {
   const [hotels, setHotels] = useState([]);
@@ -19,14 +16,56 @@ const SearchBar = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [mapLocation, setMapLocation] = useState("");
+  const [selectedCurrency, setSelectedCurrency] = useState("USD");
+  const [minPrice, setMinPrice] = useState(""); // Minimum price state
+  const [maxPrice, setMaxPrice] = useState(""); // Maximum price state
+  const [exchangeRates, setExchangeRates] = useState({});
   const navigate = useNavigate();
 
-  // Sample UK cities
-  const ukCities = [
-    "Aberdeen", "Belfast", "Birmingham", "Bristol", "Cardiff", "Edinburgh", "Glasgow",
-    "London", "Manchester", "Newcastle", "Norwich", "Nottingham", "Oxford", "Plymouth",
-    "Swansea", "Bournemouth", "Kent"
-  ];
+  // Sample UK cities and their corresponding coordinates for mapping
+  const cityCoordinates = {
+    Aberdeen: { lat: 57.1497, lng: -2.0943 },
+    Belfast: { lat: 54.5973, lng: -5.9301 },
+    Birmingham: { lat: 52.4862, lng: -1.8904 },
+    Bristol: { lat: 51.4545, lng: -2.5879 },
+    Cardiff: { lat: 51.5074, lng: -3.1791 },
+    Edinburgh: { lat: 55.9533, lng: -3.1883 },
+    Glasgow: { lat: 55.8642, lng: -4.2518 },
+    London: { lat: 51.5074, lng: -0.1278 },
+    Manchester: { lat: 53.4808, lng: -2.2426 },
+    Newcastle: { lat: 54.9784, lng: -1.6177 },
+    Norwich: { lat: 52.6282, lng: 1.2993 },
+    Nottingham: { lat: 52.9548, lng: -1.1581 },
+    Oxford: { lat: 51.7546, lng: -1.2549 },
+    Plymouth: { lat: 50.3755, lng: -4.1426 },
+    Swansea: { lat: 51.6214, lng: -3.9436 },
+    Bournemouth: { lat: 50.7196, lng: -1.8808 },
+    Kent: { lat: 51.2780, lng: 0.5141 },
+  };
+
+  // Fetch exchange rates from API
+  useEffect(() => {
+    const fetchExchangeRates = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/currencies");
+        if (!response.ok) {
+          throw new Error("Failed to fetch exchange rates.");
+        }
+        const data = await response.json();
+        const rates = data.reduce((acc, { currency_code, rate }) => {
+          acc[currency_code] = parseFloat(rate);
+          return acc;
+        }, {});
+        setExchangeRates(rates); // Store the fetched exchange rates
+      } catch (error) {
+        console.error("Error fetching exchange rates:", error);
+      }
+    };
+
+    fetchExchangeRates();
+  }, []);
 
   // Fetch hotels from the API
   useEffect(() => {
@@ -35,7 +74,6 @@ const SearchBar = () => {
       setErrorMessage(""); // Reset error message before fetching
 
       try {
-        // Replace with your actual API endpoint
         const response = await fetch("http://localhost:5000/api/hotels");
 
         if (!response.ok) {
@@ -43,7 +81,7 @@ const SearchBar = () => {
         }
 
         const data = await response.json();
-        setHotels(data);  // Assuming the API response returns an array of hotels
+        setHotels(data); // Assuming the API response returns an array of hotels
       } catch (error) {
         setErrorMessage("Error fetching hotel data: " + error.message);
       } finally {
@@ -53,6 +91,12 @@ const SearchBar = () => {
 
     fetchHotels();
   }, []);
+
+  // Convert hotel price to selected currency using fetched exchange rates
+  const convertPrice = (price) => {
+    if (!exchangeRates[selectedCurrency]) return price; // Return original price if conversion rate is not available
+    return (price * exchangeRates[selectedCurrency]).toFixed(2);
+  };
 
   // Handle form submission
   const handleSearchSubmit = (e) => {
@@ -82,7 +126,7 @@ const SearchBar = () => {
       return;
     }
 
-    // Filter hotels based on destination, dates, and number of guests
+    // Filter hotels based on destination, dates, number of guests, rating, and price range
     const filtered = hotels.filter((hotel) => {
       const city = hotel.city ? hotel.city.toLowerCase() : "";
       const destinationMatch = city.includes(destination.trim().toLowerCase());
@@ -90,22 +134,40 @@ const SearchBar = () => {
       // For simplicity, we assume that the hotel has availability for the given dates and number of guests
       const dateMatch = true; // Placeholder for actual date availability logic
       const guestsMatch = true; // Placeholder for actual guest count logic
+      const ratingMatch = hotel.rating >= selectedRating;  // Rating filter logic
 
-      return destinationMatch && dateMatch && guestsMatch;
+      // Price range match
+      const priceMatch =
+        (!minPrice || hotel.price >= minPrice) &&
+        (!maxPrice || hotel.price <= maxPrice);
+
+      return destinationMatch && dateMatch && guestsMatch && ratingMatch && priceMatch;
     });
 
     if (filtered.length === 0) {
       setErrorMessage("No hotels found for the given search criteria.");
     } else {
       setFilteredHotels(filtered);
-      navigate("/SearchResults", { state: { hotels: filtered } });
+      navigate("/SearchResults", {
+        state: { hotels: filtered, selectedCurrency: selectedCurrency, exchangeRates: exchangeRates }
+      });
     }
   };
 
   // Modal handlers
   const handleShowFilter = () => setShowFilterModal(true);
   const handleCloseFilter = () => setShowFilterModal(false);
-  const handleShowMap = () => setShowMapModal(true);
+  const handleShowMap = () => {
+    setShowMapModal(true);
+
+    // Set the map location based on the destination
+    const location = cityCoordinates[destination];
+    if (location) {
+      setMapLocation(`https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14130.859891299282!2d${location.lng}!3d${location.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2snp!4v1736569479768!5m2!1sen!2snp`);
+    } else {
+      setMapLocation("");  // Handle case where coordinates are not available
+    }
+  };
   const handleCloseMap = () => setShowMapModal(false);
   const handleShowCurrency = () => setShowCurrencyModal(true);
   const handleCloseCurrency = () => setShowCurrencyModal(false);
@@ -118,10 +180,10 @@ const SearchBar = () => {
           <Autocomplete
             value={destination}
             onChange={(event, newValue) => setDestination(newValue)}
-            options={ukCities}
+            options={Object.keys(cityCoordinates)} // Use keys from cityCoordinates for suggestions
             renderInput={(params) => (
               <TextField
-              style={{backgroundColor: 'white'}}
+                style={{ backgroundColor: "white" }}
                 {...params}
                 label="🔍 Destination"
                 className="input-field"
@@ -174,10 +236,8 @@ const SearchBar = () => {
         </button>
       </form>
 
-      {/* Show error message if there is any */}
+      {/* Error Message */}
       {errorMessage && <div className="error-message">{errorMessage}</div>}
-
-      {/* Show loading state */}
       {loading && <div className="loading-message">Loading hotels...</div>}
 
       <div className="button-group">
@@ -192,59 +252,97 @@ const SearchBar = () => {
         </button>
       </div>
 
-      {/* Modals for Filters, Map, and Currency */}
-      <Modal show={showFilterModal} onHide={handleCloseFilter} centered>
-        <Modal.Header closeButton>
-          <Modal.Title><FaFilter className="icon" /> Filters</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId="filter-type">
-              <Form.Label>Type of Property</Form.Label>
-              <Form.Control as="select">
-                <option>Hotel</option>
-                <option>Apartment</option>
-                <option>Hostel</option>
-                <option>Resort</option>
-              </Form.Control>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseFilter}>Close</Button>
-        </Modal.Footer>
-      </Modal>
+      {/* Filter Modal */}
+      <Dialog open={showFilterModal} onClose={handleCloseFilter}>
+        <DialogTitle>🔧 Filter Options</DialogTitle>
+        <DialogContent>
+          <div className="form-group">
+            <InputLabel>Price Range 💸</InputLabel>
+            <div className="price-range">
+              <input
+                type="number"
+                className="price-input"
+                placeholder="Min Price"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+              />
+              <input
+                type="number"
+                className="price-input"
+                placeholder="Max Price"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="form-group">
+            <InputLabel>Rating 🌟</InputLabel>
+            <FormControl fullWidth>
+              <Select
+                value={selectedRating}
+                onChange={(e) => setSelectedRating(Number(e.target.value))}
+              >
+                <MenuItem value={0}>All</MenuItem>
+                <MenuItem value={1}>1 Star</MenuItem>
+                <MenuItem value={2}>2 Stars</MenuItem>
+                <MenuItem value={3}>3 Stars</MenuItem>
+                <MenuItem value={4}>4 Stars</MenuItem>
+                <MenuItem value={5}>5 Stars</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseFilter}>Close</Button>
+          <Button onClick={handleCloseFilter}>Apply Filters</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Map Modal */}
-      <Modal show={showMapModal} onHide={handleCloseMap} centered>
-        <Modal.Header closeButton>
-          <Modal.Title><FaMap className="icon" /> Map</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Map Content Goes Here</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseMap}>Close</Button>
-        </Modal.Footer>
-      </Modal>
+      <Dialog open={showMapModal} onClose={handleCloseMap}>
+        <DialogTitle>📍 Hotel Location Map</DialogTitle>
+        <DialogContent>
+          {mapLocation ? (
+            <iframe
+              src={mapLocation}
+              width="100%"
+              height="300"
+              frameBorder="0"
+              allowFullScreen=""
+              aria-hidden="false"
+              tabIndex="0"
+            ></iframe>
+          ) : (
+            <p>Map location not available for this destination.</p>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseMap}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Currency Modal */}
-      <Modal show={showCurrencyModal} onHide={handleCloseCurrency} centered>
-        <Modal.Header closeButton>
-          <Modal.Title><FaMoneyBillWave className="icon" /> Currency</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group controlId="currency-select">
-            <Form.Label>Select Currency</Form.Label>
-            <Form.Control as="select">
-              <option>USD</option>
-              <option>EUR</option>
-              <option>GBP</option>
-            </Form.Control>
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseCurrency}>Close</Button>
-        </Modal.Footer>
-      </Modal>
+      <Dialog open={showCurrencyModal} onClose={handleCloseCurrency}>
+        <DialogTitle>💰 Select Currency</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth>
+            <Select
+              value={selectedCurrency}
+              onChange={(e) => setSelectedCurrency(e.target.value)}
+            >
+              <MenuItem value="USD">USD</MenuItem>
+              <MenuItem value="GBP">GBP</MenuItem>
+              <MenuItem value="EUR">EUR</MenuItem>
+              <MenuItem value="INR">INR</MenuItem>
+              {/* Add more currencies as needed */}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCurrency}>Close</Button>
+          <Button onClick={handleCloseCurrency}>Apply Currency</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
