@@ -1,15 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Button, Container, Grid, TextField, Typography, Alert, List, ListItem, ListItemText, IconButton, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  TextField,
+  Typography,
+  Alert,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Card,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  CircularProgress
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import Hotelmanagement from './Hotelmanagement';
+import UserCurrencyManagement from './Usercurrencymanagement';
+import TopPayingCustomers from './toppayingcustomers';
+import DashboardAnalytics from './Dashboardanalytics';
 
-const AdminPanel = () => {
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+const Adminpanel = () => {
   const [hotels, setHotels] = useState([]);
   const [users, setUsers] = useState([]);
   const [currencies, setCurrencies] = useState([]);
+  const [topPayingCustomers, setTopPayingCustomers] = useState([]);
+  const [topPaidHotels, setTopPaidHotels] = useState([]);
+  const [salesChartData, setSalesChartData] = useState([]);
   const [newHotel, setNewHotel] = useState({
     name: '',
     description: '',
@@ -25,36 +56,54 @@ const AdminPanel = () => {
   });
   const [newPassword, setNewPassword] = useState('');
   const [newRate, setNewRate] = useState('');
-  const [editingHotel, setEditingHotel] = useState(null); 
-  const [openModal, setOpenModal] = useState(false); 
+  const [editingHotel, setEditingHotel] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false); // For loading state
 
+  // Fetch data
   const fetchHotels = async () => {
+    setLoading(true);
     try {
       const response = await axios.get('http://localhost:5000/api/admin/hotels', { withCredentials: true });
       setHotels(response.data);
     } catch (error) {
       console.error('Error fetching hotels:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
       const response = await axios.get('http://localhost:5000/api/admin/users', { withCredentials: true });
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchCurrencies = async () => {
+    setLoading(true);
     try {
       const response = await axios.get('http://localhost:5000/api/currencies', { withCredentials: true });
       setCurrencies(response.data);
     } catch (error) {
       console.error('Error fetching currencies:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchHotels();
+    fetchUsers();
+    fetchCurrencies();
+  }, []);
+
+  // Handle form changes
   const handleChange = (e) => {
     setNewHotel({
       ...newHotel,
@@ -72,9 +121,10 @@ const AdminPanel = () => {
 
   const handleAddHotel = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await axios.post('http://localhost:5000/api/admin/hotels', newHotel, { withCredentials: true });
-      fetchHotels(); 
+      fetchHotels();
       setNewHotel({
         name: '',
         description: '',
@@ -90,72 +140,87 @@ const AdminPanel = () => {
       });
     } catch (error) {
       console.error('Error adding hotel:', error);
-    }
-  };
-
-  const handleEditHotel = (hotel) => {
-    setEditingHotel(hotel);
-    setNewHotel({ ...hotel });
-    setOpenModal(true);
-  };
-
-  const handleUpdateHotel = async () => {
-    try {
-      await axios.put(`http://localhost:5000/api/admin/hotels/${editingHotel.id}`, newHotel, { withCredentials: true });
-      fetchHotels(); 
-      setOpenModal(false); 
-      setEditingHotel(null); 
-    } catch (error) {
-      console.error('Error updating hotel:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeleteHotel = async (hotelId) => {
+    setLoading(true);
     try {
       await axios.delete(`http://localhost:5000/api/admin/hotels/${hotelId}`, { withCredentials: true });
-      fetchHotels(); 
+      fetchHotels();
     } catch (error) {
       console.error('Error deleting hotel:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeleteUser = async (userId) => {
+    setLoading(true);
     try {
       await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, { withCredentials: true });
-      fetchUsers(); 
+      fetchUsers();
     } catch (error) {
       console.error('Error deleting user:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdatePassword = async (userId) => {
+    setLoading(true);
     try {
       await axios.put(`http://localhost:5000/api/admin/users/${userId}/password`, { password: newPassword }, { withCredentials: true });
-      fetchUsers(); 
+      fetchUsers();
       setNewPassword('');
     } catch (error) {
       console.error('Error updating password:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdateCurrency = async (currencyCode) => {
+    setLoading(true);
     try {
       await axios.put(`http://localhost:5000/api/currencies/${currencyCode}`, { rate: newRate }, { withCredentials: true });
       fetchCurrencies();
       setNewRate('');
     } catch (error) {
       console.error('Error updating currency rate:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchHotels();
-    fetchUsers();
-    fetchCurrencies();
-  }, []);
+  const handleEditHotel = (hotel) => {
+    setEditingHotel(hotel);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setEditingHotel(null);
+  };
+
+  const handleUpdateHotel = async () => {
+    setLoading(true);
+    try {
+      await axios.put(`http://localhost:5000/api/admin/hotels/${editingHotel.id}`, editingHotel, { withCredentials: true });
+      fetchHotels();
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error updating hotel:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Container>
+    <Container style={{ marginTop: '50px' }}>
+      <h2>ADMIN PANEL</h2>
       <Box mt={4}>
         <Typography variant="h3" align="center" color="primary" gutterBottom>
           🏨 Admin Panel 🛠️
@@ -167,29 +232,12 @@ const AdminPanel = () => {
             <Tab>Add Hotel</Tab>
             <Tab>Users</Tab>
             <Tab>Currency Exchange</Tab>
+            <Tab>Financial Analytics</Tab>
           </TabList>
 
           {/* Tab Panel for Hotels */}
           <TabPanel>
-            <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
-              🏨 Hotels List 🏨
-            </Typography>
-            <List sx={{ mb: 4 }}>
-              {hotels.map((hotel) => (
-                <ListItem key={hotel.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <ListItemText
-                    primary={`${hotel.name} (${hotel.city})`}
-                    secondary={`Rating: ${hotel.rating} ⭐ | Status: ${hotel.status}`}
-                  />
-                  <IconButton edge="end" color="primary" onClick={() => handleEditHotel(hotel)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton edge="end" color="error" onClick={() => handleDeleteHotel(hotel.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItem>
-              ))}
-            </List>
+            <Hotelmanagement />
           </TabPanel>
 
           {/* Tab Panel for Add Hotel */}
@@ -229,95 +277,45 @@ const AdminPanel = () => {
           {/* Tab Panel for Users */}
           <TabPanel>
             <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
-              👥 Users List 👥
+              👥 Users Management 👥
             </Typography>
-            <List sx={{ mb: 4 }}>
-              {users.map((user) => (
-                <ListItem key={user.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <ListItemText primary={user.username} secondary={user.email} />
-                  <IconButton edge="end" color="primary" onClick={() => handleUpdatePassword(user.id)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton edge="end" color="error" onClick={() => handleDeleteUser(user.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItem>
-              ))}
-            </List>
-            <TextField
-              label="New Password"
-              value={newPassword}
-              onChange={handlePasswordChange}
-              variant="outlined"
-              type="password"
-              fullWidth
-              sx={{ mb: 2 }}
-            />
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <List sx={{ mb: 4 }}>
+                {users.map((user) => (
+                  <ListItem key={user.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <ListItemText
+                      primary={`${user.username}`}
+                      secondary={`Email: ${user.email}`}
+                    />
+                    <IconButton edge="end" color="primary" onClick={() => handleUpdatePassword(user.id)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton edge="end" color="error" onClick={() => handleDeleteUser(user.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </TabPanel>
 
           {/* Tab Panel for Currency Exchange */}
           <TabPanel>
-            <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
-              💸 Currency Exchange Rates 💸
-            </Typography>
-            <List sx={{ mb: 4 }}>
-              {currencies.map((currency) => (
-                <ListItem key={currency.currency_code} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <ListItemText
-                    primary={`${currency.currency_code}`}
-                    secondary={`Rate: ${currency.rate}`}
-                  />
-                  <Grid item xs={4}>
-                    <TextField
-                      fullWidth
-                      label="New Rate"
-                      value={newRate}
-                      onChange={handleRateChange}
-                      variant="outlined"
-                      type="number"
-                    />
-                  </Grid>
-                  <IconButton edge="end" color="primary" onClick={() => handleUpdateCurrency(currency.currency_code)}>
-                    <EditIcon />
-                  </IconButton>
-                </ListItem>
-              ))}
-            </List>
+            <UserCurrencyManagement />
+          </TabPanel>
+
+          {/* Tab Panel for Sales Chart */}
+          <TabPanel>
+            <DashboardAnalytics />
           </TabPanel>
         </Tabs>
-
-        {/* Modal for Editing Hotel */}
-        <Dialog open={openModal} onClose={() => setOpenModal(false)}>
-          <DialogTitle>📝 Edit Hotel</DialogTitle>
-          <DialogContent>
-            <form onSubmit={(e) => { e.preventDefault(); handleUpdateHotel(); }}>
-              <Grid container spacing={2}>
-                {Object.keys(newHotel).map((key) => (
-                  key !== 'status' && (
-                    <Grid item xs={12} sm={6} key={key}>
-                      <TextField
-                        fullWidth
-                        label={`Hotel ${key.charAt(0).toUpperCase() + key.slice(1)}`}
-                        name={key}
-                        value={newHotel[key]}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                      />
-                    </Grid>
-                  )
-                ))}
-              </Grid>
-              <DialogActions>
-                <Button onClick={() => setOpenModal(false)} color="secondary">Cancel</Button>
-                <Button type="submit" color="primary">Update Hotel</Button>
-              </DialogActions>
-            </form>
-          </DialogContent>
-        </Dialog>
       </Box>
     </Container>
   );
 };
 
-export default AdminPanel;
+export default Adminpanel;

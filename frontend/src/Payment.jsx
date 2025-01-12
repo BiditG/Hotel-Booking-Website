@@ -1,4 +1,3 @@
-// Payment.js (Updated)
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Typography, RadioGroup, FormControlLabel, Radio, Checkbox, FormControl, FormLabel, Box } from '@mui/material';
@@ -6,11 +5,11 @@ import "./Payment.css";
 
 function Payment() {
     const location = useLocation();
-    const { hotel, totalPrice, bookingId } = location.state || {};
+    const { hotel, totalPrice, bookingId, selectedCurrency } = location.state || {};  // Get totalPrice from Cart.js (now converted)
     const [paymentMethod, setPaymentMethod] = useState("");
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const navigate = useNavigate();
-    const numericTotalPrice = parseFloat(totalPrice);
+    const numericTotalPrice = parseFloat(totalPrice);  // Converted total price already passed from Cart.js
 
     const handlePayment = async () => {
         if (!paymentMethod || !acceptedTerms) {
@@ -21,7 +20,7 @@ function Payment() {
         try {
             const paymentData = {
                 bookingId,
-                amount: numericTotalPrice.toFixed(2),
+                amount: numericTotalPrice.toFixed(2),  // Use the converted price here
                 paymentMethod,
                 date: new Date().toISOString(),
             };
@@ -56,7 +55,7 @@ function Payment() {
             <Box sx={{ textAlign: 'center', marginBottom: 3 }}>
                 <Typography variant="h4" gutterBottom>🏨 Payment Page 🏨</Typography>
                 <Typography variant="h6">Hotel: {hotel?.name}</Typography>
-                <Typography><strong>Total Amount:</strong> ${numericTotalPrice.toFixed(2)}</Typography>
+                <Typography><strong>Total Amount:</strong> {numericTotalPrice.toFixed(2)} {selectedCurrency}</Typography>  {/* Display the converted price with currency */}
                 <Typography><strong>Booking ID:</strong> {bookingId}</Typography>
             </Box>
 

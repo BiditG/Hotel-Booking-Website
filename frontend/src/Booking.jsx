@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Grid, Card, CardContent } from "@mui/material";
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Card, CardContent } from "@mui/material";
 import Masonry from "./Masonry";
 import "./Booking.css";
 
@@ -20,41 +20,79 @@ function Booking() {
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [isLongStay, setIsLongStay] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState("USD"); // Currency state
+  const [exchangeRates, setExchangeRates] = useState({}); // Exchange rates state
+
+  // Peak season months (June, July, August, and December)
+  const peakSeasonMonths = [6, 7, 8, 12];
 
   const currentDate = new Date();
   const daysInAdvance = (new Date(checkInDate) - currentDate) / (1000 * 60 * 60 * 24);
 
+  // Fetch exchange rates from API
   useEffect(() => {
-    let discountPercentage = 0;
-    if (daysInAdvance >= 80) {
-      discountPercentage = 30;
-    } else if (daysInAdvance >= 60) {
-      discountPercentage = 20;
-    } else if (daysInAdvance >= 45) {
-      discountPercentage = 10;
-    }
-    setDiscount(discountPercentage);
-  }, [checkInDate]);
+    const fetchExchangeRates = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/currencies");
+        if (!response.ok) {
+          throw new Error("Failed to fetch exchange rates.");
+        }
+        const data = await response.json();
+        const rates = data.reduce((acc, { currency_code, rate }) => {
+          acc[currency_code] = parseFloat(rate);
+          return acc;
+        }, {});
+        setExchangeRates(rates); // Store the fetched exchange rates
+      } catch (error) {
+        console.error("Error fetching exchange rates:", error);
+      }
+    };
+
+    fetchExchangeRates();
+  }, []);
+
+  // Convert price to selected currency
+  const convertPrice = (price) => {
+    if (!exchangeRates[selectedCurrency]) return price; // Return original price if conversion rate is not available
+    return (price * exchangeRates[selectedCurrency]).toFixed(2);
+  };
+
+  // Logic to determine if the selected check-in date is in the peak or off-peak season
+  const checkSeason = (date) => {
+    const checkIn = new Date(date);
+    const month = checkIn.getMonth() + 1; // Months are 0-indexed, so adding 1
+    return peakSeasonMonths.includes(month) ? "peak" : "off-peak";
+  };
 
   useEffect(() => {
     let basePrice = hotel.price;
     let roomPrice = basePrice;
 
+    // Determine if the selected date is in peak or off-peak season
+    const season = checkSeason(checkInDate);
+    let priceToUse = season === "peak" ? hotel.standard_rate_peak : hotel.standard_rate_off_peak;
+
+    // Apply the appropriate rate
+    roomPrice = priceToUse;
+
+    // Adjust for room type and number of guests
     if (roomType === "Double") {
-      roomPrice = basePrice * 1.2;
+      roomPrice = roomPrice * 1.2;
       if (numGuests > 1) {
-        roomPrice += basePrice * 0.1;
+        roomPrice += roomPrice * 0.1;
       }
     } else if (roomType === "Family") {
-      roomPrice = basePrice * 1.5;
+      roomPrice = roomPrice * 1.5;
       if (numGuests > 2) {
-        roomPrice += basePrice * 0.1 * (numGuests - 2);
+        roomPrice += roomPrice * 0.1 * (numGuests - 2);
       }
     }
 
+    // Apply discount
     roomPrice -= roomPrice * (discount / 100);
+
     setTotalPrice(roomPrice);
-  }, [roomType, numGuests, discount, hotel.price]);
+  }, [roomType, numGuests, discount, hotel.price, checkInDate, hotel.standard_rate_peak, hotel.standard_rate_off_peak]);
 
   useEffect(() => {
     let charge = 0;
@@ -94,6 +132,10 @@ function Booking() {
     }
   };
 
+  const handleCurrencyChange = (event) => {
+    setSelectedCurrency(event.target.value);
+  };
+
   const handleBookNow = () => {
     const newBookingId = Math.floor(Math.random() * 1000000);
     setBookingId(newBookingId);
@@ -111,6 +153,8 @@ function Booking() {
           checkOutDate,
           cancellationCharges,
           amenities: Array.isArray(hotel.amenities) ? hotel.amenities : [],
+          selectedCurrency, // Pass selected currency
+          exchangeRates,
         },
       });
     }, 2000);
@@ -137,7 +181,7 @@ function Booking() {
   ];
 
   return (
-    <div className="booking-container" style={{marginTop: '120px'}}>
+    <div className="booking-container" style={{ marginTop: '120px' }}>
       <h2 className="hotel-title">{hotel.name}</h2>
       <p className="hotel-description">{hotel.description}</p>
 
@@ -202,13 +246,24 @@ function Booking() {
               {isLongStay && <p className="warning-message">You can only book a maximum of 30 days in one booking. Please make separate bookings if you need a longer stay.</p>}
 
               <h3>Total Price:</h3>
-              <p>{totalPrice.toFixed(2)} USD</p>
+              <p>{convertPrice(totalPrice)} {selectedCurrency}</p>
 
               <h3>Discount:</h3>
               <p>{discount}% (Applied {daysInAdvance} days in advance)</p>
 
               <h3>Cancellation Charges (if applicable):</h3>
-              <p>{cancellationCharges.toFixed(2)} USD</p>
+              <p>{convertPrice(cancellationCharges)} {selectedCurrency}</p>
+
+              <FormControl fullWidth>
+                <InputLabel>Currency</InputLabel>
+                <Select value={selectedCurrency} onChange={handleCurrencyChange}>
+                  <MenuItem value="USD">USD</MenuItem>
+                  <MenuItem value="EUR">EUR</MenuItem>
+                  <MenuItem value="GBP">GBP</MenuItem>
+                  <MenuItem value="INR">INR</MenuItem>
+                  {/* Add more currencies as needed */}
+                </Select>
+              </FormControl>
 
               <Button
                 variant="contained"

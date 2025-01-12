@@ -29,6 +29,11 @@ import Book from "./Book";
 import Payment from "./Payment";
 import Transcript from "./Transcript";
 import Cart from "./Cart";
+import AdminUser from "./Adminuser";
+import Hotelmanagement from "./Hotelmanagement";
+import UserCurrencyManagement from "./Usercurrencymanagement";
+import TopPayingCustomers from "./toppayingcustomers";
+import DashboardAnalytics from "./Dashboardanalytics";
 
 
 
@@ -137,7 +142,11 @@ function App() {
           <Route path='/Payment' element={<Payment/>}/>
           <Route path="/Transcript" element={<Transcript/>}/>
           <Route path="/cart" element={<Cart />} /> 
-
+          <Route path="Adminuser" element={<AdminUser/>}/>
+          <Route path="Hotelmanagement" element={<Hotelmanagement/>} />
+          <Route path="UserCurrencyManagement" element={<UserCurrencyManagement/>}/>
+          <Route path="toppayingcustomers" element={<TopPayingCustomers/>}/>
+          <Route path="dashboardanalytics" element={<DashboardAnalytics/>}/>
         </Routes>
       </Router>
       <Footer/>

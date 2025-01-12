@@ -6,9 +6,15 @@ function Checkout() {
     const location = useLocation();
     const {
         hotel, roomType, numGuests, totalPrice, discount, bookingId,
-        cancellationCharges, checkInDate, checkOutDate
+        cancellationCharges, checkInDate, checkOutDate, selectedCurrency,
+        exchangeRates
     } = location.state || {};
     const navigate = useNavigate();
+
+    const convertPrice = (price, currency) => {
+        if (!exchangeRates || !exchangeRates[currency]) return price; // Return original price if conversion is not possible
+        return (price * exchangeRates[currency]).toFixed(2);
+    };
 
     const formattedAmenities = Array.isArray(hotel?.amenities) && hotel.amenities.length > 0
         ? hotel.amenities.join(", ")
@@ -16,9 +22,8 @@ function Checkout() {
             ? hotel.amenities.split(",").map(item => item.trim()).join(", ")
             : "No amenities available";
 
-    const totalPriceFormatted = Number(totalPrice || 0).toFixed(2);
-
-    const cancellationChargesFormatted = cancellationCharges ? cancellationCharges.toFixed(2) : "0.00";
+    const totalPriceFormatted = convertPrice(Number(totalPrice || 0), selectedCurrency);
+    const cancellationChargesFormatted = cancellationCharges ? convertPrice(cancellationCharges, selectedCurrency) : "0.00";
     const formattedCheckInDate = checkInDate || "Not specified";
     const formattedCheckOutDate = checkOutDate || "Not specified";
 
@@ -79,9 +84,9 @@ function Checkout() {
                     <p><strong>Booking ID:</strong> {bookingId || "N/A"}</p>
                     <p><strong>Room Type:</strong> {roomType || "Standard Room"}</p>
                     <p><strong>Number of Guests:</strong> {numGuests || "N/A"}</p>
-                    <p><strong>Total Price:</strong> {totalPriceFormatted} USD</p>
+                    <p><strong>Total Price:</strong> {totalPriceFormatted} {selectedCurrency}</p>
                     <p><strong>Discount Applied:</strong> {discount || "0"}%</p>
-                    <p><strong>Cancellation Charges:</strong> {cancellationChargesFormatted} USD</p>
+                    <p><strong>Cancellation Charges:</strong> {cancellationChargesFormatted} {selectedCurrency}</p>
                     <p><strong>Check-in Date:</strong> {formattedCheckInDate}</p>
                     <p><strong>Check-out Date:</strong> {formattedCheckOutDate}</p>
                     <p><strong>Amenities:</strong> {formattedAmenities}</p>

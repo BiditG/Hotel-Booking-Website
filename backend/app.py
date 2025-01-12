@@ -1,9 +1,11 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session,send_file
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from datetime import datetime
+from fpdf import FPDF
+from io import BytesIO
 
 app = Flask(__name__)
 
@@ -352,7 +354,7 @@ def get_cart():
                 "status": booking[4],  # Status of the booking
                 "checkInDate": booking[5],  # Check-in date
                 "checkOutDate": booking[6],  # Check-out date
-                "totalPrice": float(booking[7]),  # Convert total_price to float
+                "totalPrice": float(booking[7]) if booking[7] is not None else 0.0,  # Handle None for total_price
             }
             for booking in bookings
         ]
@@ -360,6 +362,85 @@ def get_cart():
     else:
         return jsonify({"bookings": []}), 200
 
+@app.route('/api/bookings/<int:booking_id>/receipt', methods=['GET'])
+@login_required
+def download_receipt(booking_id):
+    cursor = mysql.connection.cursor()
+
+    # Fetch booking details along with user information (username, email)
+    cursor.execute("""
+        SELECT bookings.id, hotels.name, bookings.status, bookings.check_in_date, 
+               bookings.check_out_date, bookings.total_price, users.username, users.email
+        FROM bookings
+        JOIN hotels ON bookings.hotel_id = hotels.id
+        JOIN users ON bookings.user_id = users.id
+        WHERE bookings.id = %s AND bookings.user_id = %s
+    """, (booking_id, current_user.id))
+    booking = cursor.fetchone()
+
+    if not booking:
+        return jsonify({"error": "Booking not found"}), 404
+
+    # Create PDF receipt with refined design
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+
+    # Set Title font for the header
+    pdf.set_font("Arial", 'B', 18)
+    pdf.cell(200, 10, txt="Booking Receipt", ln=True, align='C')
+    
+    # Add a separator line below the title
+    pdf.set_line_width(0.5)
+    pdf.line(10, 20, 200, 20)
+    
+    pdf.ln(10)
+
+    # Hotel and Booking Details Section (with borders)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(200, 10, txt="Hotel & Booking Details", ln=True)
+    pdf.set_font("Arial", size=12)
+    pdf.multi_cell(0, 10, txt=f"""
+        Hotel Name: {booking[1]}
+        Booking ID: {booking[0]}
+        Booking Status: {booking[2]}
+        Check-in Date: {booking[3]}
+        Check-out Date: {booking[4]}
+        Total Price: ${booking[5]:.2f}
+    """)
+    
+
+
+    # User Information Section (separate with line)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(200, 10, txt="User Information", ln=True)
+    pdf.set_font("Arial", size=12)
+    pdf.multi_cell(0, 10, txt=f"""
+        Username: {booking[6]}
+        Email: {booking[7]}
+    """)
+
+
+    # Add a footer with the current date and time
+    pdf.set_y(-25)
+    pdf.set_font("Arial", 'I', 10)
+    pdf.cell(0, 10, txt=f"Receipt generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", align='C')
+
+    # Add a subtle line at the bottom (footer separator)
+    pdf.set_line_width(0.5)
+    pdf.line(10, 290, 200, 290)
+
+    # Optional: Add contact info or company branding (like logo) here if necessary
+    # pdf.image('path_to_logo.png', 10, 8, 33)  # For logo, adjust position and size
+
+    # Save PDF to memory (as a byte stream)
+    pdf_output = BytesIO()
+    pdf_data = pdf.output(dest='S').encode('latin1')  # Use 'S' to return the PDF as a string
+    pdf_output.write(pdf_data)
+    pdf_output.seek(0)
+
+    # Send the PDF as a downloadable file
+    return send_file(pdf_output, as_attachment=True, download_name=f"receipt_{booking_id}.pdf", mimetype="application/pdf")
 
 # Flask Route: confirm_booking
 @app.route('/api/confirm_booking', methods=['POST'])
@@ -449,7 +530,8 @@ def get_hotels_admin():
             "city": hotel[7],
             "room_capacity": hotel[8],
             "standard_rate_peak": hotel[9],
-            "standard_rate_off_peak": hotel[10]
+            "standard_rate_off_peak": hotel[10],
+            "status": hotel[11]
         })
 
     return jsonify(hotel_list)
@@ -472,13 +554,14 @@ def add_hotel():
     room_capacity = data.get('room_capacity')
     standard_rate_peak = data.get('standard_rate_peak')
     standard_rate_off_peak = data.get('standard_rate_off_peak')
+    status = data.get('status')
 
     cursor = mysql.connection.cursor()
     cursor.execute("""
         INSERT INTO hotels (name, description, image, amenities, rating, price, city, room_capacity, 
-        standard_rate_peak, standard_rate_off_peak)
+        standard_rate_peak, standard_rate_off_peak, status)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """, (name, description, image, amenities, rating, price, city, room_capacity, standard_rate_peak, standard_rate_off_peak))
+    """, (name, description, image, amenities, rating, price, city, room_capacity, standard_rate_peak, standard_rate_off_peak, status))
     mysql.connection.commit()
     cursor.close()
 
@@ -501,8 +584,17 @@ def update_hotel(hotel_id):
     room_capacity = data.get('room_capacity')
     standard_rate_peak = data.get('standard_rate_peak')
     standard_rate_off_peak = data.get('standard_rate_off_peak')
-    status = data.get('status', 'available')  # Default to 'available'
-
+    
+    # Get status, default to 'available' if not provided
+    status = data.get('status', 'available')
+    
+    # Debugging: Print out status value to make sure it's correct
+    print(f"Status being updated: {status}")
+    
+    # Validate status value
+    if status not in ['available', 'packed']:
+        return jsonify({"error": "Invalid status value"}), 400
+    
     cursor = mysql.connection.cursor()
     cursor.execute("""
         UPDATE hotels SET name = %s, description = %s, image = %s, amenities = %s, rating = %s,
@@ -513,6 +605,7 @@ def update_hotel(hotel_id):
     cursor.close()
 
     return jsonify({"message": "Hotel updated successfully"}), 200
+
 
 
 @app.route('/api/admin/hotels/<int:hotel_id>', methods=['DELETE'])
@@ -589,7 +682,7 @@ def delete_user(user_id):
 @login_required
 def update_user_password(user_id):
     # Ensure that the logged-in user is an admin
-    if not current_user.is_authenticated or not current_user.is_admin:
+    if not current_user.is_authenticated:
         return jsonify({"message": "Admin must be logged in."}), 401
 
     # Admins can update passwords for any user
@@ -614,6 +707,58 @@ def update_user_password(user_id):
     except Exception as e:
         print(e)  # It's a good practice to log the error
         return jsonify({"message": "An error occurred while updating the password."}), 500
+
+@app.route('/api/admin/dashboard', methods=['GET'])
+@login_required
+def get_dashboard_data():
+    cur = mysql.connection.cursor()
+
+    # 1. Calculate the total amount of sales done, treating NULL total_price as 0
+    cur.execute('''
+        SELECT SUM(IFNULL(total_price, 0)) 
+        FROM bookings 
+        WHERE status IN ('Confirmed', 'Pending') 
+        AND total_price IS NOT NULL
+    ''')
+    total_sales = cur.fetchone()[0] or 0  # Default to 0 if None is returned
+    print(f"Total Sales: {total_sales}")
+
+    # 2. Fetch usernames ordered by highest amount paid
+    cur.execute('''
+        SELECT u.username, SUM(IFNULL(b.total_price, 0)) as total_amount 
+        FROM bookings b
+        JOIN users u ON b.user_id = u.id
+        WHERE b.status IN ('Confirmed', 'Pending')
+        GROUP BY u.username
+        ORDER BY total_amount DESC
+    ''')
+    users = cur.fetchall()
+    print(f"Users: {users}")
+
+    # 3. Fetch hotel names ordered by highest amount received
+    cur.execute('''
+        SELECT h.name, SUM(IFNULL(b.total_price, 0)) as total_amount 
+        FROM bookings b
+        JOIN hotels h ON b.hotel_id = h.id
+        WHERE b.status IN ('Confirmed', 'Pending')
+        GROUP BY h.name
+        ORDER BY total_amount DESC
+    ''')
+    hotels = cur.fetchall()
+    print(f"Hotels: {hotels}")
+
+    # Close the cursor
+    cur.close()
+
+    # Prepare the response data, replacing None with 0.0
+    users_data = [{'username': user[0], 'total_amount': float(user[1]) if user[1] is not None else 0.0} for user in users]
+    hotels_data = [{'hotel_name': hotel[0], 'total_amount': float(hotel[1]) if hotel[1] is not None else 0.0} for hotel in hotels]
+
+    return jsonify({
+        'total_sales': total_sales,
+        'users': users_data,
+        'hotels': hotels_data
+    })
 
 
 
