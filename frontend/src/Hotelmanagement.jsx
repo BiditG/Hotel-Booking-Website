@@ -13,7 +13,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  MenuItem
+  MenuItem,
+  useMediaQuery,
+  Box,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -30,9 +32,12 @@ const HotelManagement = () => {
     price: '',
     amenities: '',
     rating: '',
-    status: '' // Added status field
+    status: '', // Added status field
   });
+  const [searchQuery, setSearchQuery] = useState(''); // State for the search query
 
+  const isMobile = useMediaQuery('(max-width:600px)');
+  
   useEffect(() => {
     const fetchHotels = async () => {
       setLoading(true);
@@ -58,7 +63,7 @@ const HotelManagement = () => {
       price: hotel.price,
       amenities: hotel.amenities,
       rating: hotel.rating,
-      status: hotel.status // Fetch existing status
+      status: hotel.status, // Fetch existing status
     });
     setOpenEditModal(true);
   };
@@ -91,7 +96,7 @@ const HotelManagement = () => {
         price: '',
         amenities: '',
         rating: '',
-        status: ''
+        status: '',
       });
     } catch (error) {
       console.error('Error updating hotel:', error);
@@ -106,19 +111,44 @@ const HotelManagement = () => {
     setEditingHotel(null);
   };
 
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Filter hotels based on search query
+  const filteredHotels = hotels.filter((hotel) =>
+    hotel.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    hotel.city.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div>
+    <Box sx={{ padding: isMobile ? 2 : 3 }}>
       <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
         🏨 Hotels List 🏨
       </Typography>
 
+      {/* Search Input */}
+      <TextField
+        label="Search Hotels"
+        variant="outlined"
+        fullWidth
+        value={searchQuery}
+        onChange={handleSearchChange}
+        sx={{ mb: 3 }}
+      />
+
       {loading ? (
         <CircularProgress />
-      ) : hotels.length > 0 ? (
+      ) : filteredHotels.length > 0 ? (
         <List>
-          {hotels.map((hotel) => (
-            <ListItem key={hotel.id}>
-              <ListItemText primary={hotel.name} secondary={`City: ${hotel.city}`} />
+          {filteredHotels.map((hotel) => (
+            <ListItem key={hotel.id} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+              <ListItemText
+                primary={hotel.name}
+                secondary={`City: ${hotel.city}`}
+                sx={{ flex: 1 }}
+              />
               <IconButton edge="end" color="primary" onClick={() => handleEditHotel(hotel)}>
                 <EditIcon />
               </IconButton>
@@ -133,7 +163,12 @@ const HotelManagement = () => {
       )}
 
       {/* Edit Hotel Modal */}
-      <Dialog open={openEditModal} onClose={handleCloseModal}>
+      <Dialog
+        open={openEditModal}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle>Edit Hotel</DialogTitle>
         <DialogContent>
           <TextField
@@ -200,9 +235,8 @@ const HotelManagement = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 };
 
 export default HotelManagement;
-

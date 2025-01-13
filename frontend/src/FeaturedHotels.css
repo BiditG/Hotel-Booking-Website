@@ -69,12 +69,12 @@
   /* Enable horizontal scrolling */
   overflow-y: hidden;
   /* Disable vertical scrolling */
-  padding: 10px;
+  padding: 20px;
   margin-top: 60px;
   scroll-behavior: smooth;
   position: relative;
-  /* To handle the scroll buttons correctly */
 }
+
 
 /* Custom Scrollbar Styling */
 .hotel-container::-webkit-scrollbar {
@@ -147,7 +147,7 @@
 
 /* Card Container */
 .Card-container {
-  width: 400px;
+  width: 300px;
   flex-shrink: 0;
   max-width: 1000px;
   margin: 0 auto;
@@ -235,9 +235,22 @@
 
 /* Media Query for Tablet to Small Desktop (601px - 1025px) */
 @media (min-width: 601px) and (max-width: 1025px) {
+  .Card-container {
+    width: 400px;
+    height: 700px;
+    flex-shrink: 0;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    padding: 20px;
+    border: 2px solid #e0e0e0;
+  }
+  
   .hotel-container {
     width: 84%;
-    height: 600px;
+    height: 700px;
     display: flex;
     flex-wrap: nowrap;
     gap: 10px;
@@ -275,6 +288,18 @@
 
 /* Media Query for Large Desktop (1025px and above) */
 @media (min-width: 1025px) {
+  .Card-container {
+    width: 400px;
+    flex-shrink: 0;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    padding: 20px;
+    border: 2px solid #e0e0e0;
+  }
+  
   .hotel-container {
     width: 84%;
     height: 650px;

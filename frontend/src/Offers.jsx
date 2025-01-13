@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Container, Typography, Grid, Tab, Tabs } from "@mui/material";
+import { Button, Card, Container, Typography, Grid, Tab, Tabs, Box } from "@mui/material";
 import axios from "axios"; // Import axios for making requests
 import { Link } from "react-router-dom";
 
@@ -22,9 +22,9 @@ function Offers() {
   return (
     <>
       {/* Offer Title Container */}
-      <Container sx={{ mt: 5, mb: 5 }} style={{marginTop: '120px'}}>
+      <Container sx={{ mt: 5, mb: 5 }} style={{ marginTop: "120px" }}>
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
-          <Typography variant="h4" gutterBottom style={{marginRight: '400px'}}>
+          <Typography variant="h4" gutterBottom sx={{ marginRight: { xs: 0, md: "400px" } }}>
             Travel Ideas and Discounts with World Hotels
           </Typography>
           <Typography sx={{ mt: 2, fontSize: "1.1rem", color: "#555" }}>
@@ -32,25 +32,33 @@ function Offers() {
           </Typography>
         </div>
 
-        {/* Tabs for Offers */}
-        <Tabs
-          value={key}
-          onChange={(event, newValue) => setKey(newValue)}
-          indicatorColor="primary"
-          textColor="primary"
-          centered // Only center the tabs
-        >
-          {offers.map((offer, index) => (
-            <Tab key={offer.id} label={offer.title} value={index.toString()} />
-          ))}
-        </Tabs>
-
+        {/* Box wrapper for the Tabs */}
+        <Box sx={{ width: "100%", overflowX: "auto", mb: 4 }}>
+          <Tabs
+            value={key}
+            onChange={(event, newValue) => setKey(newValue)}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+            scrollButtons="auto" // Enable scroll buttons if needed
+            variant="scrollable" // Enable scrolling when tabs overflow
+            sx={{
+              "& .MuiTabs-scroller": {
+                overflowX: "auto", // Ensure the scroller is scrollable
+              },
+            }}
+          >
+            {offers.map((offer, index) => (
+              <Tab key={offer.id} label={offer.title} value={index.toString()} />
+            ))}
+          </Tabs>
+        </Box>
 
         <div style={{ backgroundColor: "whitesmoke", padding: "24px", borderRadius: "8px" }}>
           {offers.map((offer, index) => (
             <div role="tabpanel" hidden={key !== index.toString()} key={offer.id}>
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={6} lg={4}>
                   <Card
                     sx={{
                       transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
@@ -64,8 +72,8 @@ function Offers() {
                       src={offer.background_image}
                       alt={offer.title}
                       style={{
-                        height: "300px",
-                        width: '600px',
+                        height: "200px",
+                        width: "100%",
                         objectFit: "cover",
                         borderTopLeftRadius: "8px",
                         borderTopRightRadius: "8px",
@@ -93,6 +101,7 @@ function Offers() {
                         }}
                         component={Link}
                         to="/"
+                        fullWidth
                       >
                         Book Now
                       </Button>
@@ -109,4 +118,3 @@ function Offers() {
 }
 
 export default Offers;
-

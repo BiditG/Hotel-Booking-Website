@@ -536,7 +536,6 @@ def get_hotels_admin():
 
     return jsonify(hotel_list)
 
-# Route to add a new hotel (for Admin)
 @app.route('/api/admin/hotels', methods=['POST'])
 @login_required
 def add_hotel():
@@ -544,6 +543,13 @@ def add_hotel():
         return jsonify({"message": "Admin must be logged in."}), 401
 
     data = request.json
+    
+    # Extract and validate data
+    required_fields = ['name', 'description', 'image', 'amenities', 'rating', 'price', 'city', 'room_capacity', 'standard_rate_peak', 'standard_rate_off_peak', 'status']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"message": f"Missing required field: {field}"}), 400
+    
     name = data.get('name')
     description = data.get('description')
     image = data.get('image')
@@ -557,15 +563,23 @@ def add_hotel():
     status = data.get('status')
 
     cursor = mysql.connection.cursor()
-    cursor.execute("""
-        INSERT INTO hotels (name, description, image, amenities, rating, price, city, room_capacity, 
-        standard_rate_peak, standard_rate_off_peak, status)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """, (name, description, image, amenities, rating, price, city, room_capacity, standard_rate_peak, standard_rate_off_peak, status))
-    mysql.connection.commit()
-    cursor.close()
+    
+    try:
+        # Ensure the query uses the correct number of placeholders and values
+        cursor.execute("""
+            INSERT INTO hotels (name, description, image, amenities, rating, price, city, room_capacity, 
+            standard_rate_peak, standard_rate_off_peak, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (name, description, image, amenities, rating, price, city, room_capacity, standard_rate_peak, standard_rate_off_peak, status))
 
-    return jsonify({"message": "Hotel added successfully"}), 200
+        mysql.connection.commit()
+        return jsonify({"message": "Hotel added successfully"}), 200
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({"message": f"Error adding hotel: {str(e)}"}), 500
+    finally:
+        cursor.close()
+
 
 @app.route('/api/admin/hotels/<int:hotel_id>', methods=['PUT'])
 @login_required
@@ -707,6 +721,44 @@ def update_user_password(user_id):
     except Exception as e:
         print(e)  # It's a good practice to log the error
         return jsonify({"message": "An error occurred while updating the password."}), 500
+
+
+# Route to update user details (username, email) for Admin
+@app.route('/api/admin/users/<int:user_id>', methods=['PUT'])
+@login_required
+def update_user_details(user_id):
+    if not current_user.is_authenticated:
+        return jsonify({"message": "Admin must be logged in."}), 401
+
+    try:
+        # Get the new user details from the request data
+        new_username = request.json.get('username')
+        new_email = request.json.get('email')
+        new_password = request.json.get('password', None)  # Optional password field
+
+        if not new_username or not new_email:
+            return jsonify({"message": "Username and email are required."}), 400
+
+        cursor = mysql.connection.cursor()
+
+        # Prepare the SQL query for updating user details
+        if new_password:  # If a password is provided, include it in the update
+            hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+            cursor.execute("UPDATE users SET username = %s, email = %s, password = %s WHERE id = %s", 
+                           (new_username, new_email, hashed_password, user_id))
+        else:
+            cursor.execute("UPDATE users SET username = %s, email = %s WHERE id = %s", 
+                           (new_username, new_email, user_id))
+        
+        mysql.connection.commit()
+        cursor.close()
+
+        return jsonify({"message": "User details updated successfully."}), 200
+    except Exception as e:
+        print(e)  # Log the error for debugging
+        return jsonify({"message": "An error occurred while updating the user details.", "error": str(e)}), 500
+
+
 
 @app.route('/api/admin/dashboard', methods=['GET'])
 @login_required

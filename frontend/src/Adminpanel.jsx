@@ -1,46 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  TextField,
-  Typography,
-  Alert,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Card,
-  CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  CircularProgress
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Container, Row, Col, Card, Button, Form, Navbar, Nav, Offcanvas, Stack, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import Hotelmanagement from './Hotelmanagement';
 import UserCurrencyManagement from './Usercurrencymanagement';
-import TopPayingCustomers from './toppayingcustomers';
 import DashboardAnalytics from './Dashboardanalytics';
-
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+import Usermanagement from './Usermanagement';
+import Updateoffer from './Updateoffer';
+import './Adminpanel.css'; // External CSS file for styling
 
 const Adminpanel = () => {
   const [hotels, setHotels] = useState([]);
   const [users, setUsers] = useState([]);
   const [currencies, setCurrencies] = useState([]);
-  const [topPayingCustomers, setTopPayingCustomers] = useState([]);
-  const [topPaidHotels, setTopPaidHotels] = useState([]);
-  const [salesChartData, setSalesChartData] = useState([]);
   const [newHotel, setNewHotel] = useState({
     name: '',
     description: '',
@@ -54,13 +26,12 @@ const Adminpanel = () => {
     standard_rate_off_peak: '',
     status: 'available',
   });
-  const [newPassword, setNewPassword] = useState('');
-  const [newRate, setNewRate] = useState('');
-  const [editingHotel, setEditingHotel] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [loading, setLoading] = useState(false); // For loading state
+  const [loading, setLoading] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [showSidebar, setShowSidebar] = useState(false);
 
-  // Fetch data
+  const navigate = useNavigate();
+
   const fetchHotels = async () => {
     setLoading(true);
     try {
@@ -103,20 +74,11 @@ const Adminpanel = () => {
     fetchCurrencies();
   }, []);
 
-  // Handle form changes
   const handleChange = (e) => {
     setNewHotel({
       ...newHotel,
       [e.target.name]: e.target.value,
     });
-  };
-
-  const handlePasswordChange = (e) => {
-    setNewPassword(e.target.value);
-  };
-
-  const handleRateChange = (e) => {
-    setNewRate(e.target.value);
   };
 
   const handleAddHotel = async (e) => {
@@ -145,177 +107,154 @@ const Adminpanel = () => {
     }
   };
 
-  const handleDeleteHotel = async (hotelId) => {
-    setLoading(true);
-    try {
-      await axios.delete(`http://localhost:5000/api/admin/hotels/${hotelId}`, { withCredentials: true });
-      fetchHotels();
-    } catch (error) {
-      console.error('Error deleting hotel:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteUser = async (userId) => {
-    setLoading(true);
-    try {
-      await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, { withCredentials: true });
-      fetchUsers();
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdatePassword = async (userId) => {
-    setLoading(true);
-    try {
-      await axios.put(`http://localhost:5000/api/admin/users/${userId}/password`, { password: newPassword }, { withCredentials: true });
-      fetchUsers();
-      setNewPassword('');
-    } catch (error) {
-      console.error('Error updating password:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdateCurrency = async (currencyCode) => {
-    setLoading(true);
-    try {
-      await axios.put(`http://localhost:5000/api/currencies/${currencyCode}`, { rate: newRate }, { withCredentials: true });
-      fetchCurrencies();
-      setNewRate('');
-    } catch (error) {
-      console.error('Error updating currency rate:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEditHotel = (hotel) => {
-    setEditingHotel(hotel);
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setEditingHotel(null);
-  };
-
-  const handleUpdateHotel = async () => {
-    setLoading(true);
-    try {
-      await axios.put(`http://localhost:5000/api/admin/hotels/${editingHotel.id}`, editingHotel, { withCredentials: true });
-      fetchHotels();
-      handleCloseModal();
-    } catch (error) {
-      console.error('Error updating hotel:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleExit = () => {
+    navigate('/'); // Navigating to the home page (replace '/' with your desired path)
   };
 
   return (
-    <Container style={{ marginTop: '50px' }}>
-      <h2>ADMIN PANEL</h2>
-      <Box mt={4}>
-        <Typography variant="h3" align="center" color="primary" gutterBottom>
-          🏨 Admin Panel 🛠️
-        </Typography>
+    <div>
+      {/* Navbar */}
+      <Navbar bg="primary" variant="dark" expand="lg" className="sticky-top shadow-sm">
+        <Navbar.Brand href="#" className="text-white">
+          <strong>Admin Panel</strong>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbarNav" />
+        <Navbar.Collapse id="navbarNav">
+          <Nav className="ml-auto">
+            <Button variant="outline-light" onClick={handleExit}>
+              Exit Admin Panel
+            </Button>
+          </Nav>
+        </Navbar.Collapse>
 
-        <Tabs>
-          <TabList>
-            <Tab>Hotels</Tab>
-            <Tab>Add Hotel</Tab>
-            <Tab>Users</Tab>
-            <Tab>Currency Exchange</Tab>
-            <Tab>Financial Analytics</Tab>
-          </TabList>
+        {/* Add Menu Button for Larger Screens */}
+        <Button
+          className="d-none d-lg-block ms-auto me-3"
+          variant="outline-light"
+          onClick={() => setShowSidebar(!showSidebar)}
+        >
+          <i className="bi bi-list"></i> Menu
+        </Button>
+      </Navbar>
 
-          {/* Tab Panel for Hotels */}
-          <TabPanel>
-            <Hotelmanagement />
-          </TabPanel>
-
-          {/* Tab Panel for Add Hotel */}
-          <TabPanel>
-            <Card sx={{ mb: 4 }}>
-              <CardContent>
-                <Typography variant="h5" color="secondary" gutterBottom>
-                  🌟 Add New Hotel 🌟
-                </Typography>
-                <form onSubmit={handleAddHotel}>
-                  <Grid container spacing={2}>
-                    {/* Hotel Details */}
-                    {Object.keys(newHotel).map((key) => (
-                      key !== 'status' && (
-                        <Grid item xs={12} sm={6} key={key}>
-                          <TextField
-                            fullWidth
-                            label={`Hotel ${key.charAt(0).toUpperCase() + key.slice(1)}`}
-                            name={key}
-                            value={newHotel[key]}
-                            onChange={handleChange}
-                            required
-                            variant="outlined"
-                          />
-                        </Grid>
-                      )
-                    ))}
-                  </Grid>
-                  <Button variant="contained" color="primary" type="submit" sx={{ mt: 3 }}>
+      <Container fluid>
+        <Row>
+          {/* Sidebar */}
+          <Col xs={12} md={3} lg={2} className="p-0">
+            <Offcanvas show={showSidebar} onHide={() => setShowSidebar(false)} className="custom-offcanvas">
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title>Admin Panel</Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <Stack gap={2}>
+                  <Button
+                    variant={selectedTab === 0 ? 'outline-primary active' : 'outline-primary'}
+                    onClick={() => setSelectedTab(0)}
+                  >
+                    Hotels
+                  </Button>
+                  <Button
+                    variant={selectedTab === 1 ? 'outline-primary active' : 'outline-primary'}
+                    onClick={() => setSelectedTab(1)}
+                  >
                     Add Hotel
                   </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabPanel>
+                  <Button
+                    variant={selectedTab === 2 ? 'outline-primary active' : 'outline-primary'}
+                    onClick={() => setSelectedTab(2)}
+                  >
+                    Users
+                  </Button>
+                  <Button
+                    variant={selectedTab === 3 ? 'outline-primary active' : 'outline-primary'}
+                    onClick={() => setSelectedTab(3)}
+                  >
+                    Currency Exchange
+                  </Button>
+                  <Button
+                    variant={selectedTab === 4 ? 'outline-primary active' : 'outline-primary'}
+                    onClick={() => setSelectedTab(4)}
+                  >
+                    Financial Analytics
+                  </Button>
+                  <Button
+                    variant={selectedTab === 5 ? 'outline-primary active' : 'outline-primary'}
+                    onClick={() => setSelectedTab(5)}
+                  >
+                    Offer Management
+                  </Button>
+                </Stack>
+              </Offcanvas.Body>
+            </Offcanvas>
 
-          {/* Tab Panel for Users */}
-          <TabPanel>
-            <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
-              👥 Users Management 👥
-            </Typography>
-            {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
-                <CircularProgress />
-              </Box>
-            ) : (
-              <List sx={{ mb: 4 }}>
-                {users.map((user) => (
-                  <ListItem key={user.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <ListItemText
-                      primary={`${user.username}`}
-                      secondary={`Email: ${user.email}`}
-                    />
-                    <IconButton edge="end" color="primary" onClick={() => handleUpdatePassword(user.id)}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton edge="end" color="error" onClick={() => handleDeleteUser(user.id)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </TabPanel>
+            {/* For mobile devices */}
+            <Button className="d-lg-none" variant="primary" onClick={() => setShowSidebar(true)}>
+              <i className="bi bi-list"></i> Menu
+            </Button>
+          </Col>
 
-          {/* Tab Panel for Currency Exchange */}
-          <TabPanel>
-            <UserCurrencyManagement />
-          </TabPanel>
+          {/* Main Content */}
+          <Col xs={12} md={9} lg={10}>
+            <div className="p-4">
+              {loading ? (
+                <div className="d-flex justify-content-center align-items-center">
+                  <Spinner animation="border" variant="primary" />
+                </div>
+              ) : (
+                <>
+                  <h2 className="mb-4 text-primary">
+                    {selectedTab === 0 && 'Hotels'}
+                    {selectedTab === 1 && 'Add New Hotel'}
+                    {selectedTab === 2 && 'Users'}
+                    {selectedTab === 3 && 'Currency Exchange'}
+                    {selectedTab === 4 && 'Financial Analytics'}
+                    {selectedTab === 5 && 'Offer Management'}
+                  </h2>
 
-          {/* Tab Panel for Sales Chart */}
-          <TabPanel>
-            <DashboardAnalytics />
-          </TabPanel>
-        </Tabs>
-      </Box>
-    </Container>
+                  {selectedTab === 0 && <Hotelmanagement />}
+                  {selectedTab === 1 && (
+                    <Card className="custom-card">
+                      <Card.Body>
+                        <Card.Title className="text-primary">🌟 Add New Hotel 🌟</Card.Title>
+                        <Form onSubmit={handleAddHotel}>
+                          <Row>
+                            {Object.keys(newHotel).map((key) => (
+                              key !== 'status' && (
+                                <Col xs={12} sm={6} key={key}>
+                                  <Form.Group controlId={key}>
+                                    <Form.Label>{key.charAt(0).toUpperCase() + key.slice(1)}</Form.Label>
+                                    <Form.Control
+                                      type="text"
+                                      name={key}
+                                      value={newHotel[key]}
+                                      onChange={handleChange}
+                                      required
+                                    />
+                                  </Form.Group>
+                                </Col>
+                              )
+                            ))}
+                          </Row>
+                          <Button variant="primary" type="submit" className="mt-3">
+                            Add Hotel
+                          </Button>
+                        </Form>
+                      </Card.Body>
+                    </Card>
+                  )}
+                  {selectedTab === 2 && <Usermanagement />}
+                  {selectedTab === 3 && <UserCurrencyManagement />}
+                  {selectedTab === 4 && <DashboardAnalytics />}
+                  {selectedTab === 5 && <Updateoffer />}
+                </>
+              )}
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 
 export default Adminpanel;
+

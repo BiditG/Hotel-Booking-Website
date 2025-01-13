@@ -37,6 +37,28 @@ const DashboardAnalytics = () => {
 
   const totalSalesFormatted = formatAmount(total_sales);
 
+  const calculateProfitLoss = (revenue) => {
+    // Define the expense percentage based on revenue bands
+    let expensePercentage;
+  
+    if (revenue < 1000) {
+      // Small hotels with lower revenue may have higher operational costs
+      expensePercentage = 0.8;  // 80% expenses
+    } else if (revenue >= 1000 && revenue < 5000) {
+      // Mid-sized hotels
+      expensePercentage = 0.7;  // 70% expenses
+    } else {
+      // Larger hotels with higher revenue may benefit from economies of scale
+      expensePercentage = 0.6;  // 60% expenses
+    }
+  
+    const expenses = revenue * expensePercentage;
+    const profitOrLoss = revenue - expenses;
+  
+    return { profitOrLoss, expenses };
+  };
+  
+
   // Pie chart data (total sales for users and hotels)
   const pieChartData = [
     { name: 'Users', value: users.reduce((sum, user) => sum + parseFloat(user.total_amount), 0) },
@@ -46,10 +68,10 @@ const DashboardAnalytics = () => {
   // Sales over time data (for the line chart)
   const salesOverTime = [
     { date: '2025-01-01', sales: 1200 },
-    { date: '2025-01-02', sales: 1500 },
-    { date: '2025-01-03', sales: 1800 },
-    { date: '2025-01-04', sales: 2000 },
-    { date: '2025-01-05', sales: 2200 },
+    { date: '2025-02-02', sales: 1500 },
+    { date: '2025-03-03', sales: 1800 },
+    { date: '2025-04-04', sales: 2000 },
+    { date: '2025-05-05', sales: 2200 },
   ];
 
   return (
@@ -148,25 +170,34 @@ const DashboardAnalytics = () => {
           </Card>
         </Col>
 
-        {/* Hotels Table */}
+        {/* Hotels Table with Profit/Loss Calculation */}
         <Col xs={12} md={5}>
           <Card className="shadow-sm rounded">
             <Card.Body>
-              <Card.Title><Hotel fontSize="small" /> Hotels (Highest Amount Received)</Card.Title>
+              <Card.Title><Hotel fontSize="small" /> Hotels (Profit/Loss)</Card.Title>
               <Table striped bordered hover>
                 <thead>
                   <tr>
                     <th>Hotel Name</th>
-                    <th className="text-right">Total Amount Received</th>
+                    <th className="text-right">Revenue</th>
+                    <th className="text-right">Expenses</th>
+                    <th className="text-right">Profit/Loss</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {hotels.map((hotel, index) => (
-                    <tr key={index}>
-                      <td>{hotel.hotel_name}</td>
-                      <td className="text-right">${formatAmount(hotel.total_amount)}</td>
-                    </tr>
-                  ))}
+                  {hotels.map((hotel, index) => {
+                    const { profitOrLoss, expenses } = calculateProfitLoss(parseFloat(hotel.total_amount));
+                    return (
+                      <tr key={index}>
+                        <td>{hotel.hotel_name}</td>
+                        <td className="text-right">${formatAmount(hotel.total_amount)}</td>
+                        <td className="text-right">${formatAmount(expenses)}</td>
+                        <td className={`text-right ${profitOrLoss >= 0 ? 'text-success' : 'text-danger'}`}>
+                          ${formatAmount(profitOrLoss)}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </Card.Body>
