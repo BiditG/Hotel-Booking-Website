@@ -111,16 +111,35 @@ const HotelManagement = () => {
     setEditingHotel(null);
   };
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // Filter hotels based on search query
   const filteredHotels = hotels.filter((hotel) =>
     hotel.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     hotel.city.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleDeleteHotel = async (hotelId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this hotel?');
+    if (confirmDelete) {
+      try {
+        setLoading(true);
+        const response = await axios.delete(`http://localhost:5000/api/admin/hotels/${hotelId}`, { withCredentials: true });
+        if (response.status === 200) {
+          setHotels(hotels.filter((hotel) => hotel.id !== hotelId));
+          alert('Hotel deleted successfully!');
+        } else {
+          alert('Error deleting hotel.');
+        }
+      } catch (error) {
+        alert('Failed to delete hotel. Please try again.');
+        console.error('Error deleting hotel:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <Box sx={{ padding: isMobile ? 2 : 3 }}>
@@ -128,7 +147,6 @@ const HotelManagement = () => {
         🏨 Hotels List 🏨
       </Typography>
 
-      {/* Search Input */}
       <TextField
         label="Search Hotels"
         variant="outlined"
@@ -152,7 +170,11 @@ const HotelManagement = () => {
               <IconButton edge="end" color="primary" onClick={() => handleEditHotel(hotel)}>
                 <EditIcon />
               </IconButton>
-              <IconButton edge="end" color="error">
+              <IconButton
+                edge="end"
+                color="error"
+                onClick={() => handleDeleteHotel(hotel.id)}
+              >
                 <DeleteIcon />
               </IconButton>
             </ListItem>
@@ -162,13 +184,7 @@ const HotelManagement = () => {
         <Typography>No hotels available</Typography>
       )}
 
-      {/* Edit Hotel Modal */}
-      <Dialog
-        open={openEditModal}
-        onClose={handleCloseModal}
-        fullWidth
-        maxWidth="sm"
-      >
+      <Dialog open={openEditModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
         <DialogTitle>Edit Hotel</DialogTitle>
         <DialogContent>
           <TextField
@@ -213,7 +229,6 @@ const HotelManagement = () => {
             onChange={(e) => setUpdatedHotel({ ...updatedHotel, rating: e.target.value })}
             sx={{ mb: 2 }}
           />
-          {/* Status Field */}
           <TextField
             select
             label="Status"

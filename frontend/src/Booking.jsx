@@ -35,10 +35,13 @@ function Booking() {
   const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const [exchangeRates, setExchangeRates] = useState({});
 
-  // Peak season months (June, July, August, and December)
-  const peakSeasonMonths = [6, 7, 8, 12];
-
   const currentDate = new Date();
+  const maxBookingDate = new Date();
+  maxBookingDate.setMonth(currentDate.getMonth() + 3); // Set the max booking date to 3 months from today
+
+  const today = new Date().toISOString().split("T")[0];
+  const maxDate = maxBookingDate.toISOString().split("T")[0]; // Convert maxBookingDate to string format
+
   const daysInAdvance = (new Date(checkInDate) - currentDate) / (1000 * 60 * 60 * 24);
 
   // Fetch exchange rates from API
@@ -71,7 +74,7 @@ function Booking() {
   const checkSeason = (date) => {
     const checkIn = new Date(date);
     const month = checkIn.getMonth() + 1;
-    return peakSeasonMonths.includes(month) ? "peak" : "off-peak";
+    return [6, 7, 8, 12].includes(month) ? "peak" : "off-peak";
   };
 
   useEffect(() => {
@@ -136,7 +139,14 @@ function Booking() {
   };
 
   const handleCheckInChange = (event) => {
-    setCheckInDate(event.target.value);
+    const selectedCheckInDate = event.target.value;
+
+    if (new Date(selectedCheckInDate) > maxBookingDate) {
+      alert("You can only book a maximum of 3 months in advance.");
+      setCheckInDate(today); // Reset to today's date if invalid
+    } else {
+      setCheckInDate(selectedCheckInDate);
+    }
   };
 
   const handleCheckOutChange = (event) => {
@@ -208,9 +218,6 @@ function Booking() {
     { id: 16, image: "/images/Bournemouth.jpg", height: 350 },
     { id: 17, image: "/images/Kent.jpg", height: 300 },
   ];
-
-  // Get today's date for check-in date validation
-  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="booking-container" style={{ marginTop: '120px' }}>

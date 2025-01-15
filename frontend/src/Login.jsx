@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { TextField, Button, FormControlLabel, Checkbox, Container, Box, Typography, Paper } from '@mui/material';
 import './Login.css';
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -38,41 +39,54 @@ const Login = () => {
   };
 
   return (
-    <div className="login">
-      <div className="login-box">
-        <h2>Login</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            className="login-input"
+    <Container component="main" maxWidth="xs" style={{marginTop: '120px'}}>
+      <Paper elevation={3} sx={{ padding: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography variant="h5" align="center" gutterBottom>
+          Login
+        </Typography>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <TextField
+            label="Email"
             type="email"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
             required
           />
-          <input
-            className="login-input"
+          <TextField
+            label="Password"
             type="password"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
             required
           />
-          <label>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
-              className="login-checkbox"
-            />
-            Remember me
-          </label>
-          <button type="submit" className="login-btn">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+                color="primary"
+              />
+            }
+            label="Remember me"
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ marginTop: 2 }}
+          >
             Login
-          </button>
+          </Button>
         </form>
-      </div>
-    </div>
+      </Paper>
+    </Container>
   );
 };
 
