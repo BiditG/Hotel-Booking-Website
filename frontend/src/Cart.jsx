@@ -14,6 +14,8 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Modal,
+  Box,
 } from "@mui/material";
 import { FaHotel, FaTrashAlt } from "react-icons/fa";
 import "./Cart.css";
@@ -24,6 +26,10 @@ function Cart() {
   const [error, setError] = useState(null);
   const [currencies, setCurrencies] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState("USD");
+  const [showCancellationModal, setShowCancellationModal] = useState(false);
+  const [cancellationCharge, setCancellationCharge] = useState(0);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [selectedCheckInDate, setSelectedCheckInDate] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -76,70 +82,52 @@ function Cart() {
     return (price * parseFloat(currencyObj.rate)).toFixed(2);
   };
 
-  // Cancel a Booking
-  const handleCancelBooking = async (bookingId) => {
-    if (window.confirm("Are you sure you want to cancel this booking?")) {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/bookings/${bookingId}`,
-          {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-          }
-        );
+  // Calculate Cancellation Charges
+  const calculateCancellationCharges = (checkInDate, totalPrice) => {
+    const now = new Date();
+    const checkIn = new Date(checkInDate);
+    const daysBeforeCheckIn = (checkIn - now) / (1000 * 60 * 60 * 24); // days before check-in
 
-        if (response.ok) {
-          fetchCart();
-          alert("Booking cancelled successfully!");
-        } else {
-          alert("Failed to cancel booking.");
-        }
-      } catch (error) {
-        console.error("Error canceling booking:", error);
-      }
+    if (daysBeforeCheckIn > 60) {
+      return 0; // No charges if cancelled more than 60 days before check-in
+    } else if (daysBeforeCheckIn <= 60 && daysBeforeCheckIn > 30) {
+      return (totalPrice * 0.5).toFixed(2); // 50% cancellation charges if cancelled between 30 and 60 days
+    } else {
+      return totalPrice.toFixed(2); // 100% cancellation charges if cancelled within 30 days
     }
   };
 
-  // Proceed to Payment
-  const handleProceedToPayment = (booking) => {
-    const convertedPrice = convertPrice(booking.totalPrice, selectedCurrency);
-    navigate("/payment", {
-      state: {
-        hotel: booking.hotel,
-        totalPrice: convertedPrice,
-        bookingId: booking.id,
-        selectedCurrency,
-        currencies,
-      },
-    });
+  // Handle Booking Cancellation
+  const handleCancelBooking = (bookingId, checkInDate, totalPrice) => {
+    const cancellationCharge = calculateCancellationCharges(checkInDate, totalPrice);
+    setCancellationCharge(cancellationCharge);
+    setSelectedBookingId(bookingId);
+    setSelectedCheckInDate(checkInDate);
+    setShowCancellationModal(true);
   };
 
-  // Download Receipt
-  const handleDownloadReceipt = (bookingId) => {
-    // Assuming the server provides an endpoint to generate and download the receipt as a PDF or text file
-    fetch(`http://localhost:5000/api/bookings/${bookingId}/receipt`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    })
-      .then((response) => {
-        if (response.ok) {
-          // Create a download link dynamically
-          response.blob().then((blob) => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `receipt_${bookingId}.pdf`; // Adjust the file name as needed
-            a.click();
-          });
-        } else {
-          alert("Failed to download receipt.");
+  // Confirm Cancellation
+  const confirmCancellation = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/bookings/${selectedBookingId}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
         }
-      })
-      .catch((err) => {
-        console.error("Error downloading receipt:", err);
-      });
+      );
+
+      if (response.ok) {
+        fetchCart();
+        setShowCancellationModal(false);
+        alert("Booking cancelled successfully!");
+      } else {
+        alert("Failed to cancel booking.");
+      }
+    } catch (error) {
+      console.error("Error canceling booking:", error);
+    }
   };
 
   // Format Date
@@ -155,11 +143,22 @@ function Cart() {
     setSelectedCurrency(event.target.value);
   };
 
-  // Render the Select dropdown only when currencies have been loaded
+  // Handle Proceed to Payment
+  const handleProceedToPayment = (booking) => {
+    const convertedPrice = convertPrice(booking.totalPrice, selectedCurrency);
+    navigate("/payment", {
+      state: {
+        hotel: booking.hotel,
+        totalPrice: convertedPrice,
+        bookingId: booking.id,
+        selectedCurrency,
+        currencies,
+      },
+    });
+  };
+
   if (currencies.length === 0) {
-    return (
-      <CircularProgress /> // You can show a loading spinner until currencies are fetched
-    );
+    return <CircularProgress />; // You can show a loading spinner until currencies are fetched
   }
 
   return (
@@ -174,7 +173,7 @@ function Cart() {
       {loading && <CircularProgress />}
       {error && <Typography color="error">{error}</Typography>}
 
-      <FormControl variant="outlined" fullWidth style={{margin: '10px'}}>
+      <FormControl variant="outlined" fullWidth style={{ margin: "10px" }}>
         <InputLabel>Currency</InputLabel>
         <Select value={selectedCurrency} onChange={handleCurrencyChange} label="Currency">
           <MenuItem value="">Select Currency</MenuItem> {/* Empty option as fallback */}
@@ -190,66 +189,104 @@ function Cart() {
         <Typography variant="h6">No bookings found in your cart. 😢</Typography>
       ) : (
         <Grid container spacing={4}>
-          {bookings.map((booking) => {
-            console.log("Booking Status:", booking.status); // Debugging: Log booking status
-            return (
-              <Grid item xs={12} sm={6} md={4} key={booking.id}>
-                <Card elevation={3}>
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={booking.hotel?.image || "/default-image.jpg"}
-                    alt={booking.hotel?.name || "Hotel Image"}
-                  />
-                  <CardContent>
-                    <Typography variant="h6">
-                      {booking.hotel?.name || "Hotel Name"} <FaHotel />
-                    </Typography>
-                    <Typography>
-                      <strong>Status:</strong> {booking.status}
-                    </Typography>
-                    <Typography>
-                      <strong>Check-in:</strong> {formatDate(booking.checkInDate)}
-                    </Typography>
-                    <Typography>
-                      <strong>Check-out:</strong> {formatDate(booking.checkOutDate)}
-                    </Typography>
-                    <Typography>
-                      <strong>Total Price:</strong> {convertPrice(booking.totalPrice, selectedCurrency)}{" "}
-                      {selectedCurrency}
-                    </Typography>
-                  </CardContent>
-                  <div style={{ display: "flex", justifyContent: "space-between", padding: "16px" }}>
-                    {booking.status === "Confirmed" ? (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleDownloadReceipt(booking.id)}
-                      >
-                        Download Receipt 🧾
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleProceedToPayment(booking)}
-                      >
-                        Proceed to Payment 💳
-                      </Button>
-                    )}
-                    <IconButton color="secondary" onClick={() => handleCancelBooking(booking.id)}>
-                      <FaTrashAlt />
-                    </IconButton>
-                  </div>
-                </Card>
-              </Grid>
-            );
-          })}
+          {bookings.map((booking) => (
+            <Grid item xs={12} sm={6} md={4} key={booking.id}>
+              <Card elevation={3}>
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={booking.hotel?.image || "/default-image.jpg"}
+                  alt={booking.hotel?.name || "Hotel Image"}
+                />
+                <CardContent>
+                  <Typography variant="h6">
+                    {booking.hotel?.name || "Hotel Name"} <FaHotel />
+                  </Typography>
+                  <Typography>
+                    <strong>Status:</strong> {booking.status}
+                  </Typography>
+                  <Typography>
+                    <strong>Check-in:</strong> {formatDate(booking.checkInDate)}
+                  </Typography>
+                  <Typography>
+                    <strong>Check-out:</strong> {formatDate(booking.checkOutDate)}
+                  </Typography>
+                  <Typography>
+                    <strong>Total Price:</strong> {convertPrice(booking.totalPrice, selectedCurrency)}{" "}
+                    {selectedCurrency}
+                  </Typography>
+                </CardContent>
+                <div style={{ display: "flex", justifyContent: "space-between", padding: "16px" }}>
+                  {booking.status === "Confirmed" ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleDownloadReceipt(booking.id)}
+                    >
+                      Download Receipt 🧾
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleProceedToPayment(booking)}
+                    >
+                      Proceed to Payment 💳
+                    </Button>
+                  )}
+                  <IconButton
+                    color="secondary"
+                    onClick={() =>
+                      handleCancelBooking(booking.id, booking.checkInDate, booking.totalPrice)
+                    }
+                  >
+                    <FaTrashAlt />
+                  </IconButton>
+                </div>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       )}
+
+      {/* Cancellation Confirmation Modal */}
+      <Modal open={showCancellationModal} onClose={() => setShowCancellationModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            padding: 4,
+            borderRadius: 2,
+            width: "80%",
+            maxWidth: "400px",
+            boxShadow: 24,
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Confirm Cancellation
+          </Typography>
+          <Typography variant="body2" sx={{ marginBottom: 2 }}>
+            Are you sure you want to cancel this booking? The cancellation charge will be{" "}
+            {cancellationCharge} {selectedCurrency}.
+          </Typography>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={confirmCancellation}
+            sx={{ marginRight: 2 }}
+          >
+            Confirm Cancellation
+          </Button>
+          <Button variant="outlined" onClick={() => setShowCancellationModal(false)}>
+            Cancel
+          </Button>
+        </Box>
+      </Modal>
     </Container>
   );
 }
 
 export default Cart;
-

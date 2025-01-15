@@ -81,11 +81,11 @@ const Profile = () => {
   }
 
   return (
-    <Container maxWidth="sm" style={{marginTop: '12cd backedn0px'}}>
+    <Container maxWidth="sm" style={{ marginTop: '120px' }}>
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" align="center" gutterBottom>User Profile</Typography>
 
-        <Typography variant="h6"><strong>Username:</strong> {user.username}</Typography>
+        <Typography variant="h6"><strong> Full Name:</strong> {user.username}</Typography>
         <Typography variant="body1"><strong>Email:</strong> {user.email}</Typography>
 
         {/* Password Change Form */}

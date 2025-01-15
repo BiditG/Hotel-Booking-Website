@@ -2,7 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Card, CardContent } from "@mui/material";
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Box
+} from "@mui/material";
 import Masonry from "./Masonry";
 import "./Booking.css";
 
@@ -20,8 +32,8 @@ function Booking() {
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [isLongStay, setIsLongStay] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState("USD"); // Currency state
-  const [exchangeRates, setExchangeRates] = useState({}); // Exchange rates state
+  const [selectedCurrency, setSelectedCurrency] = useState("USD");
+  const [exchangeRates, setExchangeRates] = useState({});
 
   // Peak season months (June, July, August, and December)
   const peakSeasonMonths = [6, 7, 8, 12];
@@ -42,25 +54,23 @@ function Booking() {
           acc[currency_code] = parseFloat(rate);
           return acc;
         }, {});
-        setExchangeRates(rates); // Store the fetched exchange rates
+        setExchangeRates(rates);
       } catch (error) {
         console.error("Error fetching exchange rates:", error);
       }
     };
-
     fetchExchangeRates();
   }, []);
 
-  // Convert price to selected currency
   const convertPrice = (price) => {
-    if (!exchangeRates[selectedCurrency]) return price; // Return original price if conversion rate is not available
+    if (!exchangeRates[selectedCurrency]) return price;
     return (price * exchangeRates[selectedCurrency]).toFixed(2);
   };
 
   // Logic to determine if the selected check-in date is in the peak or off-peak season
   const checkSeason = (date) => {
     const checkIn = new Date(date);
-    const month = checkIn.getMonth() + 1; // Months are 0-indexed, so adding 1
+    const month = checkIn.getMonth() + 1;
     return peakSeasonMonths.includes(month) ? "peak" : "off-peak";
   };
 
@@ -68,14 +78,11 @@ function Booking() {
     let basePrice = hotel.price;
     let roomPrice = basePrice;
 
-    // Determine if the selected date is in peak or off-peak season
     const season = checkSeason(checkInDate);
     let priceToUse = season === "peak" ? hotel.standard_rate_peak : hotel.standard_rate_off_peak;
 
-    // Apply the appropriate rate
     roomPrice = priceToUse;
 
-    // Adjust for room type and number of guests
     if (roomType === "Double") {
       roomPrice = roomPrice * 1.2;
       if (numGuests > 1) {
@@ -88,7 +95,6 @@ function Booking() {
       }
     }
 
-    // Apply discount
     roomPrice -= roomPrice * (discount / 100);
 
     setTotalPrice(roomPrice);
@@ -104,6 +110,19 @@ function Booking() {
     }
     setCancellationCharges(charge);
   }, [checkInDate, totalPrice]);
+
+  // Discount logic based on days in advance
+  useEffect(() => {
+    if (daysInAdvance >= 80 && daysInAdvance <= 90) {
+      setDiscount(30);
+    } else if (daysInAdvance >= 60 && daysInAdvance < 80) {
+      setDiscount(20);
+    } else if (daysInAdvance >= 45 && daysInAdvance < 60) {
+      setDiscount(10);
+    } else {
+      setDiscount(0);
+    }
+  }, [daysInAdvance]);
 
   const handleRoomChange = (event) => {
     setRoomType(event.target.value);
@@ -121,14 +140,24 @@ function Booking() {
   };
 
   const handleCheckOutChange = (event) => {
-    setCheckOutDate(event.target.value);
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(event.target.value);
-    const stayDuration = (checkOut - checkIn) / (1000 * 60 * 60 * 24);
-    if (stayDuration > 30) {
-      setIsLongStay(true);
+    const selectedCheckOutDate = event.target.value;
+    // Ensure checkout date is not before check-in date
+    if (new Date(selectedCheckOutDate) < new Date(checkInDate)) {
+      alert("Checkout date cannot be before check-in date.");
+      setCheckOutDate(checkInDate); // Reset to check-in date if invalid
     } else {
-      setIsLongStay(false);
+      setCheckOutDate(selectedCheckOutDate);
+
+      // Check if the duration exceeds 30 days
+      const checkIn = new Date(checkInDate);
+      const checkOut = new Date(selectedCheckOutDate);
+      const stayDuration = (checkOut - checkIn) / (1000 * 60 * 60 * 24);
+
+      if (stayDuration > 30) {
+        alert("You can only book a maximum of 30 days in one booking.");
+        setCheckOutDate(checkInDate); // Reset checkout date if duration exceeds 30 days
+      }
+      setIsLongStay(stayDuration > 30);
     }
   };
 
@@ -153,7 +182,7 @@ function Booking() {
           checkOutDate,
           cancellationCharges,
           amenities: Array.isArray(hotel.amenities) ? hotel.amenities : [],
-          selectedCurrency, // Pass selected currency
+          selectedCurrency,
           exchangeRates,
         },
       });
@@ -180,30 +209,35 @@ function Booking() {
     { id: 17, image: "/images/Kent.jpg", height: 300 },
   ];
 
+  // Get today's date for check-in date validation
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <div className="booking-container" style={{ marginTop: '120px' }}>
-      <h2 className="hotel-title">{hotel.name}</h2>
-      <p className="hotel-description">{hotel.description}</p>
+      <Typography variant="h3" className="hotel-title" align="center">{hotel.name}</Typography>
+      <Typography variant="body1" className="hotel-description" align="center" sx={{ marginBottom: 3 }}>{hotel.description}</Typography>
 
-      <Tabs className="booking-tabs">
-        <TabList className="tab-list">
-          <Tab className="tab">Booking</Tab>
-          <Tab className="tab">Gallery</Tab>
+      <Tabs>
+        <TabList>
+          <Tab>Booking</Tab>
+          <Tab>Gallery</Tab>
         </TabList>
 
         <TabPanel>
-          <Card>
+          <Card sx={{ marginBottom: 2, padding: 3 }}>
             <CardContent>
-              <h3>Amenities:</h3>
-              <p>{Array.isArray(hotel.amenities) ? hotel.amenities.join(", ") : hotel.amenities || "No amenities available"}</p>
+              <Typography variant="h6">Amenities:</Typography>
+              <Typography variant="body2">
+                {Array.isArray(hotel.amenities) ? hotel.amenities.join(", ") : hotel.amenities || "No amenities available"}
+              </Typography>
 
-              <h3>Rating:</h3>
-              <p>{hotel.rating}</p>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>Rating:</Typography>
+              <Typography variant="body2">{hotel.rating}</Typography>
 
-              <h3>Price:</h3>
-              <p>Base Price: {hotel.price} USD</p>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>Price:</Typography>
+              <Typography variant="body2">Base Price: {hotel.price} USD</Typography>
 
-              <FormControl fullWidth>
+              <FormControl fullWidth sx={{ marginTop: 2 }}>
                 <InputLabel>Room Type</InputLabel>
                 <Select value={roomType} onChange={handleRoomChange}>
                   <MenuItem value="Standard">Standard Room</MenuItem>
@@ -212,56 +246,62 @@ function Booking() {
                 </Select>
               </FormControl>
 
-              <h3>Number of Guests:</h3>
-              <TextField
-                type="number"
-                value={numGuests}
-                onChange={handleGuestChange}
-                fullWidth
-                inputProps={{ min: 1, max: roomType === "Standard" ? 1 : roomType === "Double" ? 2 : 4 }}
-              />
+              <Typography variant="h6" sx={{ marginTop: 2 }}>Number of Guests:</Typography>
+              <FormControl fullWidth sx={{ marginTop: 1 }}>
+                <Select
+                  value={numGuests}
+                  onChange={handleGuestChange}
+                  disabled={roomType === "Standard" && numGuests === 1}
+                >
+                  <MenuItem value={1}>1 Guest</MenuItem>
+                  {roomType !== "Standard" && <MenuItem value={2}>2 Guests</MenuItem>}
+                  {roomType === "Family" && <MenuItem value={3}>3 Guests</MenuItem>}
+                  {roomType === "Family" && <MenuItem value={4}>4 Guests</MenuItem>}
+                </Select>
+              </FormControl>
 
-              <h3>Check-in Date:</h3>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>Check-in Date:</Typography>
               <TextField
                 type="date"
                 value={checkInDate}
                 onChange={handleCheckInChange}
                 fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ min: today }}  // Prevent past dates for check-in
               />
 
-              <h3>Check-out Date:</h3>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>Check-out Date:</Typography>
               <TextField
                 type="date"
                 value={checkOutDate}
                 onChange={handleCheckOutChange}
                 fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ min: checkInDate }}  // Prevent checkout before check-in
               />
 
-              {isLongStay && <p className="warning-message">You can only book a maximum of 30 days in one booking. Please make separate bookings if you need a longer stay.</p>}
+              {isLongStay && (
+                <Typography variant="body2" color="error" sx={{ marginTop: 2 }}>
+                  You can only book a maximum of 30 days in one booking.
+                </Typography>
+              )}
 
-              <h3>Total Price:</h3>
-              <p>{convertPrice(totalPrice)} {selectedCurrency}</p>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>Total Price:</Typography>
+              <Typography variant="body2">{convertPrice(totalPrice)} {selectedCurrency}</Typography>
 
-              <h3>Discount:</h3>
-              <p>{discount}% (Applied {daysInAdvance} days in advance)</p>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>Discount:</Typography>
+              <Typography variant="body2">{discount}% (Applied {Math.floor((new Date(checkInDate) - currentDate) / (1000 * 60 * 60 * 24))} days in advance)</Typography>
 
-              <h3>Cancellation Charges (if applicable):</h3>
-              <p>{convertPrice(cancellationCharges)} {selectedCurrency}</p>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>Cancellation Charges (if applicable):</Typography>
+              <Typography variant="body2">{convertPrice(cancellationCharges)} {selectedCurrency}</Typography>
 
-              <FormControl fullWidth>
+              <FormControl fullWidth sx={{ marginTop: 2 }}>
                 <InputLabel>Currency</InputLabel>
                 <Select value={selectedCurrency} onChange={handleCurrencyChange}>
                   <MenuItem value="USD">USD</MenuItem>
                   <MenuItem value="EUR">EUR</MenuItem>
                   <MenuItem value="GBP">GBP</MenuItem>
                   <MenuItem value="INR">INR</MenuItem>
-                  {/* Add more currencies as needed */}
                 </Select>
               </FormControl>
 
@@ -270,7 +310,7 @@ function Booking() {
                 color="primary"
                 fullWidth
                 onClick={handleBookNow}
-                style={{ marginTop: "20px" }}
+                sx={{ marginTop: 2 }}
               >
                 Book Now
               </Button>
@@ -286,10 +326,10 @@ function Booking() {
       </Tabs>
 
       {bookingSuccess && (
-        <div className="booking-success">
-          <h3>Your booking was successful!</h3>
-          <p>Booking ID: {bookingId}</p>
-        </div>
+        <Box sx={{ marginTop: 3 }}>
+          <Typography variant="h5" color="success.main">Your booking was successful!</Typography>
+          <Typography variant="body1">Booking ID: {bookingId}</Typography>
+        </Box>
       )}
     </div>
   );

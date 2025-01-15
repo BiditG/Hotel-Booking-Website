@@ -3,11 +3,12 @@ from flask_mysqldb import MySQL
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
-from datetime import datetime
+from datetime import datetime, timedelta
 from fpdf import FPDF
 from io import BytesIO
 
 app = Flask(__name__)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)  # Adjust as needed
 
 # Enable CORS for the frontend origin (your React app running at http://localhost:5173)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
@@ -122,13 +123,39 @@ def register():
     username = data['username']
     email = data['email']
     password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    address = data['address']  # New address field
+    postalcode = data['postalCode']  # New postalCode field
 
+    # Insert new user into the database with address and postalCode fields
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)", (username, email, password))
+    cur.execute(
+        "INSERT INTO users (username, email, password, address, postalcode) VALUES (%s, %s, %s, %s, %s)",
+        (username, email, password, address, postalcode)
+    )
     mysql.connection.commit()
     cur.close()
     return jsonify({'message': 'User registered successfully'})
 
+
+@app.route('/check-email', methods=['POST'])
+def check_email():
+    data = request.get_json()
+    email = data.get('email')
+
+    # Check if email already exists in the database
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+    user = cur.fetchone()
+    cur.close()
+
+    if user:
+        return jsonify({'exists': True})
+    else:
+        return jsonify({'exists': False})
+
+
+
+# Route to login
 @app.route('/login', methods=['POST', 'OPTIONS'])
 def login():
     if request.method == 'OPTIONS':
@@ -146,10 +173,17 @@ def login():
 
     # Check if user exists and password is correct
     if user and bcrypt.check_password_hash(user[2], password):
-        remember = data.get('remember', False)  # Check if remember me is true
+        remember = data.get('remember', False)  # Get "remember" value from the request data
         user_obj = User(id=user[0], username=user[1], email=user[3])  # Include email in user object
         login_user(user_obj, remember=remember)  # Pass remember flag here
-        
+
+        # If "Remember Me" is selected, we set the session as permanent
+        if remember:
+            session.permanent = True  # Ensures session remains persistent
+            app.permanent_session_lifetime = timedelta(days=30)  # Set the expiration time for permanent sessions
+        else:
+            session.permanent = False  # Ensures non-permanent session for un-checked "Remember Me"
+
         # Store user info in session
         session['user_id'] = user_obj.id  # Store user ID in the session
         
@@ -184,8 +218,40 @@ def get_user():
 # Route to logout
 @app.route('/api/logout', methods=['GET'])
 def logout():
-    logout_user()  # This will log the user out from the session
+    logout_user() 
+    session.clear() # This will log the user out from the session
     return jsonify({'message': 'Logged out successfully'})
+
+
+@app.route('/api/change-password', methods=['POST'])
+@login_required  # Ensure the user is logged in
+def change_password():
+    data = request.get_json()
+    print(data)
+
+    # Check if the new password is provided
+    new_password = data.get('newPassword')
+    if not new_password:
+        return jsonify({'message': 'New password is required'}), 400
+
+
+    # Hash the new password using bcrypt
+    hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+
+    try:
+        # Update the user's password in the database
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE users SET password = %s WHERE id = %s", (hashed_password, current_user.id))
+        mysql.connection.commit()
+        cur.close()
+
+        # Optionally log the user out after a password change, forcing a re-login
+        logout_user()
+
+        return jsonify({'message': 'Password updated successfully'}), 200
+    except Exception as e:
+        print(f"Error updating password: {e}")
+        return jsonify({'message': 'Failed to update password'}), 500
 
 @app.route('/api/bookings', methods=['GET'])
 @login_required
