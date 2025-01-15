@@ -81,7 +81,7 @@ const Profile = () => {
   }
 
   return (
-    <Container maxWidth="sm" style={{marginTop: '120px'}}>
+    <Container maxWidth="sm" style={{marginTop: '12cd backedn0px'}}>
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" align="center" gutterBottom>User Profile</Typography>
 

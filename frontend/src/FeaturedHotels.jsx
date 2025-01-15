@@ -56,7 +56,7 @@ function FeaturedHotels() {
           ></ion-icon>
         </ListGroup.Item>
         <ListGroup.Item>
-          <strong>Price:</strong> {hotel.price} 
+          <strong>AVERAGE SPENDING:</strong> {hotel.price + `$`} 
           <ion-icon
             name="cash-sharp"
             style={{ color: "#1d58a2", position: "relative", top: "2px", left: "5px" }}

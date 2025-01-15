@@ -33,6 +33,7 @@ import TopPayingCustomers from "./toppayingcustomers";
 import DashboardAnalytics from "./Dashboardanalytics";
 import Usermanagement from "./Usermanagement";
 import Updateoffer from "./Updateoffer";
+import SearchResults1 from "./searchresults1";
 
 // Custom Hook to conditionally render Navibar based on current location
 function Navigation() {
@@ -135,6 +136,7 @@ function App() {
         <Route path="/dashboardanalytics" element={<DashboardAnalytics />} />
         <Route path="/Usermanagement" element={<Usermanagement />} />
         <Route path="/Updateoffer" element={<Updateoffer />} />
+        <Route path="searchresults1" element={<SearchResults1/>}/>
       </Routes>
 
       <Footer />

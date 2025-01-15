@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaFilter, FaMap, FaMoneyBillWave } from "react-icons/fa";
 import { Autocomplete, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Button, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
+import DatePicker from "react-datepicker";  // Importing the React Datepicker component
+import "react-datepicker/dist/react-datepicker.css";  // Importing the default styles
 import "./Search.css";
+import { IconButton } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 
 const SearchBar = () => {
   const [hotels, setHotels] = useState([]);
   const [destination, setDestination] = useState("");
-  const [checkInDate, setCheckInDate] = useState("");
-  const [checkOutDate, setCheckOutDate] = useState("");
+  const [checkInDate, setCheckInDate] = useState(null);
+  const [checkOutDate, setCheckOutDate] = useState(null);
   const [numGuests, setNumGuests] = useState("1");
   const [filteredHotels, setFilteredHotels] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,6 +25,7 @@ const SearchBar = () => {
   const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const [minPrice, setMinPrice] = useState(""); // Minimum price state
   const [maxPrice, setMaxPrice] = useState(""); // Maximum price state
+  const [minRoomCapacity, setMinRoomCapacity] = useState(""); // Minimum room capacity state
   const [exchangeRates, setExchangeRates] = useState({});
   const navigate = useNavigate();
 
@@ -126,12 +131,11 @@ const SearchBar = () => {
       return;
     }
 
-    // Filter hotels based on destination, dates, number of guests, rating, and price range
+    // Filter hotels based on destination, dates, number of guests, rating, price range, and room capacity
     const filtered = hotels.filter((hotel) => {
       const city = hotel.city ? hotel.city.toLowerCase() : "";
       const destinationMatch = city.includes(destination.trim().toLowerCase());
 
-      // For simplicity, we assume that the hotel has availability for the given dates and number of guests
       const dateMatch = true; // Placeholder for actual date availability logic
       const guestsMatch = true; // Placeholder for actual guest count logic
       const ratingMatch = hotel.rating >= selectedRating;  // Rating filter logic
@@ -141,7 +145,10 @@ const SearchBar = () => {
         (!minPrice || hotel.price >= minPrice) &&
         (!maxPrice || hotel.price <= maxPrice);
 
-      return destinationMatch && dateMatch && guestsMatch && ratingMatch && priceMatch;
+      // Room capacity match
+      const roomCapacityMatch = !minRoomCapacity || hotel.room_capacity >= minRoomCapacity;
+
+      return destinationMatch && dateMatch && guestsMatch && ratingMatch && priceMatch && roomCapacityMatch;
     });
 
     if (filtered.length === 0) {
@@ -149,7 +156,7 @@ const SearchBar = () => {
     } else {
       setFilteredHotels(filtered);
       navigate("/SearchResults", {
-        state: { hotels: filtered, selectedCurrency: selectedCurrency, exchangeRates: exchangeRates }
+        state: { hotels: filtered, selectedCurrency: selectedCurrency, exchangeRates: exchangeRates, destination: destination}
       });
     }
   };
@@ -171,6 +178,9 @@ const SearchBar = () => {
   const handleCloseMap = () => setShowMapModal(false);
   const handleShowCurrency = () => setShowCurrencyModal(true);
   const handleCloseCurrency = () => setShowCurrencyModal(false);
+
+  // Get today's date to disable past dates
+  const today = new Date();
 
   return (
     <div className="search-bar">
@@ -195,39 +205,87 @@ const SearchBar = () => {
         </div>
 
         {/* Check-in Date Input */}
-        <div className="form-group">
-          <input
-            type="date"
-            className="input-field"
-            value={checkInDate}
-            onChange={(e) => setCheckInDate(e.target.value)}
+        <div className="form-group date-group">
+          <DatePicker
+            selected={checkInDate}
+            onChange={(date) => setCheckInDate(date)}
+            minDate={today}
+            placeholderText="Select Check-in Date"
+            className="input-field datepicker"
             required
+            calendarClassName="custom-calendar"
+            customInput={
+              <TextField 
+                fullWidth 
+                label="Check-in Date" 
+                variant="outlined" 
+                className="datepicker-field" 
+                style={{backgroundColor: 'white'}}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      onClick={() => setCheckInDate(null)}
+                      edge="end"
+                      color="secondary"
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  )
+                }}
+              />
+            }
           />
         </div>
 
         {/* Check-out Date Input */}
-        <div className="form-group">
-          <input
-            type="date"
-            className="input-field"
-            value={checkOutDate}
-            onChange={(e) => setCheckOutDate(e.target.value)}
+        <div className="form-group date-group">
+          <DatePicker
+            selected={checkOutDate}
+            onChange={(date) => setCheckOutDate(date)}
+            minDate={today}
+            placeholderText="Select Check-out Date"
+            className="input-field datepicker"
             required
+            calendarClassName="custom-calendar"
+            customInput={
+              <TextField 
+                fullWidth 
+                label="Check-out Date" 
+                variant="outlined" 
+                className="datepicker-field" 
+                style={{backgroundColor: 'white'}}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      onClick={() => setCheckOutDate(null)}
+                      edge="end"
+                      color="secondary"
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  )
+                }}
+              />
+            }
           />
         </div>
 
-        {/* Number of Guests Input */}
+        {/* Number of Guests Input (Material-UI Select) */}
         <div className="form-group">
-          <select
-            className="input-field"
-            value={numGuests}
-            onChange={(e) => setNumGuests(e.target.value)}
-          >
-            <option value="1">👤 1 Guest</option>
-            <option value="2">👥 2 Guests</option>
-            <option value="3">👥 3 Guests</option>
-            <option value="4">👥 4+ Guests</option>
-          </select>
+          <FormControl fullWidth>
+            <InputLabel>Number of Guests</InputLabel>
+            <Select
+              value={numGuests}
+              onChange={(e) => setNumGuests(e.target.value)}
+              label="Number of Guests"
+              style={{backgroundColor: 'white'}}
+            >
+              <MenuItem value="1">👤 1 Guest</MenuItem>
+              <MenuItem value="2">👥 2 Guests</MenuItem>
+              <MenuItem value="3">👥 3 Guests</MenuItem>
+              <MenuItem value="4">👥 4+ Guests</MenuItem>
+            </Select>
+          </FormControl>
         </div>
 
         {/* Submit Button */}
@@ -291,56 +349,20 @@ const SearchBar = () => {
               </Select>
             </FormControl>
           </div>
+          <div className="form-group">
+            <InputLabel>Room Capacity 🛏️</InputLabel>
+            <input
+              type="number"
+              className="input-field"
+              placeholder="Min Room Capacity"
+              value={minRoomCapacity}
+              onChange={(e) => setMinRoomCapacity(e.target.value)}
+            />
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseFilter}>Close</Button>
           <Button onClick={handleCloseFilter}>Apply Filters</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Map Modal */}
-      <Dialog open={showMapModal} onClose={handleCloseMap}>
-        <DialogTitle>📍 Hotel Location Map</DialogTitle>
-        <DialogContent>
-          {mapLocation ? (
-            <iframe
-              src={mapLocation}
-              width="100%"
-              height="300"
-              frameBorder="0"
-              allowFullScreen=""
-              aria-hidden="false"
-              tabIndex="0"
-            ></iframe>
-          ) : (
-            <p>Map location not available for this destination.</p>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseMap}>Close</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Currency Modal */}
-      <Dialog open={showCurrencyModal} onClose={handleCloseCurrency}>
-        <DialogTitle>💰 Select Currency</DialogTitle>
-        <DialogContent>
-          <FormControl fullWidth>
-            <Select
-              value={selectedCurrency}
-              onChange={(e) => setSelectedCurrency(e.target.value)}
-            >
-              <MenuItem value="USD">USD</MenuItem>
-              <MenuItem value="GBP">GBP</MenuItem>
-              <MenuItem value="EUR">EUR</MenuItem>
-              <MenuItem value="INR">INR</MenuItem>
-              {/* Add more currencies as needed */}
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCurrency}>Close</Button>
-          <Button onClick={handleCloseCurrency}>Apply Currency</Button>
         </DialogActions>
       </Dialog>
     </div>
@@ -348,3 +370,4 @@ const SearchBar = () => {
 };
 
 export default SearchBar;
+

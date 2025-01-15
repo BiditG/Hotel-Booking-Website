@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "./Rooms.css";
 
 const cities = [
@@ -30,7 +31,7 @@ function Rooms() {
   );
 
   return (
-    <div className="rooms-and-rates" style={{marginTop: '50px'}}>
+    <div className="rooms-and-rates" style={{ marginTop: "50px" }}>
       {/* Search Bar */}
       <div className="search-container">
         <input
@@ -46,23 +47,37 @@ function Rooms() {
       <div className="cards-container">
         {filteredCities.map((city, index) => (
           <div className="card" key={index}>
-            <div className="card-image-container">
-              <img src={city.image} alt={city.name} className="card-image" />
-            </div>
-            <div className="card-content">
-              <h2 className="city-name">{city.name}</h2>
-              {city.capacity ? (
-                <>
-                  <p className="capacity">Capacity: {city.capacity} rooms</p>
-                  <p className="rates">
-                    Peak Rate: <span className="highlight">£{city.peakRate}</span> | Off-Peak Rate:{" "}
-                    <span className="highlight">£{city.offPeakRate}</span>
-                  </p>
-                </>
-              ) : (
-                <p className="unavailable">Rates and capacity unavailable</p>
-              )}
-            </div>
+            <Link
+              to={{
+                pathname: "/searchresults1",
+                state: {
+                  destination: city.name, // Pass city name as destination
+                  checkInDate: "2025-01-20", // Pass check-in date
+                  checkOutDate: "2025-01-25", // Pass check-out date
+                  numGuests: 2, // Pass number of guests
+                  hotels: [], // Placeholder for hotel data (empty array for now)
+                  exchangeRates: {} // Placeholder for exchange rates (empty object for now)
+                },
+              }}
+            >
+              <div className="card-image-container">
+                <img src={city.image} alt={city.name} className="card-image" />
+              </div>
+              <div className="card-content">
+                <h2 className="city-name">{city.name}</h2>
+                {city.capacity ? (
+                  <>
+                    <p className="capacity">Capacity: {city.capacity} rooms</p>
+                    <p className="rates">
+                      Peak Rate: <span className="highlight">£{city.peakRate}</span> | Off-Peak Rate:{" "}
+                      <span className="highlight">£{city.offPeakRate}</span>
+                    </p>
+                  </>
+                ) : (
+                  <p className="unavailable">Rates and capacity unavailable</p>
+                )}
+              </div>
+            </Link>
           </div>
         ))}
       </div>
