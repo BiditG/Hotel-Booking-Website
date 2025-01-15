@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Row, Col, Card, Button, Form, Navbar, Nav, Offcanvas, Stack, Spinner } from 'react-bootstrap';
+import { Container, Grid, Card, Button, FormControl, InputLabel, Input, CircularProgress, Typography, Drawer, List, ListItem, ListItemText, IconButton, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import MenuIcon from '@mui/icons-material/Menu'; // Material UI menu icon
+import CloseIcon from '@mui/icons-material/Close'; // Close Icon for the sidebar
 import Hotelmanagement from './Hotelmanagement';
 import UserCurrencyManagement from './Usercurrencymanagement';
 import DashboardAnalytics from './Dashboardanalytics';
 import Usermanagement from './Usermanagement';
 import Updateoffer from './Updateoffer';
-import './Adminpanel.css'; // External CSS file for styling
 
 const Adminpanel = () => {
   const [hotels, setHotels] = useState([]);
@@ -111,135 +112,154 @@ const Adminpanel = () => {
     navigate('/'); // Navigating to the home page (replace '/' with your desired path)
   };
 
+  const drawerStyle = {
+    width: 240,
+    flexShrink: 0,
+    zIndex: 1200,
+  };
+
+  const contentStyle = {
+    padding: '16px',
+  };
+
   return (
     <div>
       {/* Navbar */}
-      <Navbar bg="primary" variant="dark" expand="lg" className="sticky-top shadow-sm">
-        <Navbar.Brand href="#" className="text-white">
-          <strong>Admin Panel</strong>
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="navbarNav" />
-        <Navbar.Collapse id="navbarNav">
-          <Nav className="ml-auto">
-            <Button variant="outline-light" onClick={handleExit}>
-              Exit Admin Panel
-            </Button>
-          </Nav>
-        </Navbar.Collapse>
-
-        {/* Add Menu Button for Larger Screens */}
-        <Button
-          className="d-none d-lg-block ms-auto me-3"
-          variant="outline-light"
-          onClick={() => setShowSidebar(!showSidebar)}
-        >
-          <i className="bi bi-list"></i> Menu
-        </Button>
-      </Navbar>
+      <div style={{ backgroundColor: '#013b72', padding: '16px', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h6" style={{ display: 'inline-block' }}>
+          Admin Panel
+        </Typography>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            color="primary"
+            aria-label="open sidebar"
+            onClick={() => setShowSidebar(!showSidebar)} // Toggle sidebar open/close
+            style={{ color: 'white', display: 'block', marginRight: '16px' }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={handleExit}
+            style={{
+              color: 'white',
+              backgroundColor: '#f44336',
+              '&:hover': { backgroundColor: '#d32f2f' },
+            }}
+          >
+            Exit Admin Panel
+          </Button>
+        </div>
+      </div>
 
       <Container fluid>
-        <Row>
+        <Grid container spacing={2}>
           {/* Sidebar */}
-          <Col xs={12} md={3} lg={2} className="p-0">
-            <Offcanvas show={showSidebar} onHide={() => setShowSidebar(false)} className="custom-offcanvas">
-              <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Admin Panel</Offcanvas.Title>
-              </Offcanvas.Header>
-              <Offcanvas.Body>
-                <Stack gap={2}>
-                  <Button
-                    variant={selectedTab === 0 ? 'outline-primary active' : 'outline-primary'}
-                    onClick={() => setSelectedTab(0)}
-                  >
-                    Hotels
-                  </Button>
-                  <Button
-                    variant={selectedTab === 1 ? 'outline-primary active' : 'outline-primary'}
-                    onClick={() => setSelectedTab(1)}
-                  >
-                    Add Hotel
-                  </Button>
-                  <Button
-                    variant={selectedTab === 2 ? 'outline-primary active' : 'outline-primary'}
-                    onClick={() => setSelectedTab(2)}
-                  >
-                    Users
-                  </Button>
-                  <Button
-                    variant={selectedTab === 3 ? 'outline-primary active' : 'outline-primary'}
-                    onClick={() => setSelectedTab(3)}
-                  >
-                    Currency Exchange
-                  </Button>
-                  <Button
-                    variant={selectedTab === 4 ? 'outline-primary active' : 'outline-primary'}
-                    onClick={() => setSelectedTab(4)}
-                  >
-                    Financial Analytics
-                  </Button>
-                  <Button
-                    variant={selectedTab === 5 ? 'outline-primary active' : 'outline-primary'}
-                    onClick={() => setSelectedTab(5)}
-                  >
-                    Offer Management
-                  </Button>
-                </Stack>
-              </Offcanvas.Body>
-            </Offcanvas>
-
-            {/* For mobile devices */}
-            <Button className="d-lg-none" variant="primary" onClick={() => setShowSidebar(true)}>
-              <i className="bi bi-list"></i> Menu
-            </Button>
-          </Col>
+          <Grid item xs={12} md={3} lg={2} className="p-0">
+            <Drawer
+              variant="persistent"
+              anchor="left"
+              open={showSidebar}
+              onClose={() => setShowSidebar(false)}
+              style={drawerStyle}
+              sx={{
+                '& .MuiDrawer-paper': {
+                  width: 240,
+                },
+              }}
+              BackdropProps={{
+                onClick: () => setShowSidebar(false), // Close the drawer when clicking outside
+              }}
+            >
+              <div style={{ padding: '10px', textAlign: 'right' }}>
+                <IconButton
+                  onClick={() => setShowSidebar(false)} // Close the sidebar
+                  style={{ color: '#013b72' }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </div>
+              <List>
+                <ListItem button selected={selectedTab === 0} onClick={() => setSelectedTab(0)}>
+                  <ListItemText primary="Hotels" />
+                </ListItem>
+                <Divider />
+                <ListItem button selected={selectedTab === 1} onClick={() => setSelectedTab(1)}>
+                  <ListItemText primary="Add Hotel" />
+                </ListItem>
+                <Divider />
+                <ListItem button selected={selectedTab === 2} onClick={() => setSelectedTab(2)}>
+                  <ListItemText primary="Users" />
+                </ListItem>
+                <Divider />
+                <ListItem button selected={selectedTab === 3} onClick={() => setSelectedTab(3)}>
+                  <ListItemText primary="Currency Exchange" />
+                </ListItem>
+                <Divider />
+                <ListItem button selected={selectedTab === 4} onClick={() => setSelectedTab(4)}>
+                  <ListItemText primary="Financial Analytics" />
+                </ListItem>
+                <Divider />
+                <ListItem button selected={selectedTab === 5} onClick={() => setSelectedTab(5)}>
+                  <ListItemText primary="Offer Management" />
+                </ListItem>
+              </List>
+            </Drawer>
+          </Grid>
 
           {/* Main Content */}
-          <Col xs={12} md={9} lg={10}>
-            <div className="p-4">
+          <Grid item xs={12} md={9} lg={10}>
+            <div style={contentStyle}>
               {loading ? (
-                <div className="d-flex justify-content-center align-items-center">
-                  <Spinner animation="border" variant="primary" />
-                </div>
+                <CircularProgress />
               ) : (
                 <>
-                  <h2 className="mb-4 text-primary">
+                  <Typography variant="h4" style={{ color: '#013b72', marginBottom: '16px' }} >
                     {selectedTab === 0 && 'Hotels'}
                     {selectedTab === 1 && 'Add New Hotel'}
                     {selectedTab === 2 && 'Users'}
                     {selectedTab === 3 && 'Currency Exchange'}
                     {selectedTab === 4 && 'Financial Analytics'}
                     {selectedTab === 5 && 'Offer Management'}
-                  </h2>
+                  </Typography>
 
                   {selectedTab === 0 && <Hotelmanagement />}
                   {selectedTab === 1 && (
-                    <Card className="custom-card">
-                      <Card.Body>
-                        <Card.Title className="text-primary">🌟 Add New Hotel 🌟</Card.Title>
-                        <Form onSubmit={handleAddHotel}>
-                          <Row>
-                            {Object.keys(newHotel).map((key) => (
-                              key !== 'status' && (
-                                <Col xs={12} sm={6} key={key}>
-                                  <Form.Group controlId={key}>
-                                    <Form.Label>{key.charAt(0).toUpperCase() + key.slice(1)}</Form.Label>
-                                    <Form.Control
-                                      type="text"
-                                      name={key}
-                                      value={newHotel[key]}
-                                      onChange={handleChange}
-                                      required
-                                    />
-                                  </Form.Group>
-                                </Col>
-                              )
-                            ))}
-                          </Row>
-                          <Button variant="primary" type="submit" className="mt-3">
-                            Add Hotel
-                          </Button>
-                        </Form>
-                      </Card.Body>
+                    <Card style={{ padding: '16px' }}>
+                      <Typography variant="h5" color="primary" gutterBottom>
+                        🌟 Add New Hotel 🌟
+                      </Typography>
+                      <form onSubmit={handleAddHotel}>
+                        <div>
+                          {Object.keys(newHotel).map((key) => (
+                            key !== 'status' && (
+                              <div key={key} style={{ marginBottom: '16px' }}>
+                                <InputLabel htmlFor={key} variant="outlined">
+                                  {key.charAt(0).toUpperCase() + key.slice(1)}
+                                </InputLabel>
+                                <FormControl fullWidth>
+                                  <Input
+                                    type="text"
+                                    name={key}
+                                    value={newHotel[key]}
+                                    onChange={handleChange}
+                                    required
+                                  />
+                                </FormControl>
+                              </div>
+                            )
+                          ))}
+                        </div>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          type="submit"
+                          style={{ marginTop: '16px' }}
+                        >
+                          Add Hotel
+                        </Button>
+                      </form>
                     </Card>
                   )}
                   {selectedTab === 2 && <Usermanagement />}
@@ -249,12 +269,11 @@ const Adminpanel = () => {
                 </>
               )}
             </div>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </Container>
     </div>
   );
 };
 
 export default Adminpanel;
-

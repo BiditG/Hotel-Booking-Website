@@ -878,8 +878,61 @@ def get_dashboard_data():
         'hotels': hotels_data
     })
 
+@app.route('/api/admin/offers/<int:offer_id>', methods=['PUT'])
+@login_required  # Ensure the user is logged in
+def update_offer(offer_id):
+    data = request.get_json()
 
+    # Get offer details from the request body
+    title = data.get('title')
+    price = data.get('price')
+    discount_percentage = data.get('discount_percentage')
+    discounted_price = data.get('discounted_price')
+    background_image = data.get('background_image')
+    days_in_advance = data.get('days_in_advance')  # Ensure that days_in_advance is included
 
+    if not title or not price or not discount_percentage or not discounted_price or not background_image or not days_in_advance:
+        return jsonify({"message": "Missing required fields"}), 400
+
+    try:
+        # Update the offer details in the database
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            UPDATE offers
+            SET title = %s, price = %s, discount_percentage = %s, discounted_price = %s, background_image = %s, updated_at = %s, days_in_advance = %s
+            WHERE id = %s
+        """, (title, price, discount_percentage, discounted_price, background_image, datetime.now(), days_in_advance, offer_id))
+
+        mysql.connection.commit()
+        cursor.close()
+
+        return jsonify({"message": "Offer updated successfully"}), 200
+
+    except Exception as e:
+        print(f"Error updating offer: {str(e)}")  # Log the error to the console for debugging
+        return jsonify({"message": "Error updating offer", "error": str(e)}), 500
+
+@app.route('/api/admin/sales_data', methods=['GET'])
+@login_required  # Ensure the user is logged in
+def get_sales_data():
+    try:
+        cursor = mysql.connection.cursor()
+
+        # Fetch sales over time data from the sales_over_time table
+        cursor.execute("""
+            SELECT sale_date, total_sales FROM sales_over_time
+        """)
+        sales_over_time = cursor.fetchall()
+
+        # Return the sales data in JSON format
+        sales_data = [{"date": sale[0], "sales": sale[1]} for sale in sales_over_time]
+
+        cursor.close()
+
+        return jsonify({"sales_over_time": sales_data}), 200
+
+    except Exception as e:
+        return jsonify({"message": "Error fetching sales data", "error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

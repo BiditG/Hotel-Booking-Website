@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis
 
 const DashboardAnalytics = () => {
   const [data, setData] = useState(null);
+  const [salesOverTime, setSalesOverTime] = useState([]);
 
   // Fetch data from the backend API when the component is mounted
   useEffect(() => {
@@ -22,9 +23,20 @@ const DashboardAnalytics = () => {
         setData(result);
       })
       .catch(error => console.error('Error fetching data:', error));
+
+    // Fetch sales over time data
+    fetch('http://localhost:5000/api/admin/sales_data', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(response => response.json())
+      .then(result => {
+        setSalesOverTime(result.sales_over_time);
+      })
+      .catch(error => console.error('Error fetching sales over time:', error));
   }, []);
 
-  if (!data) {
+  if (!data || !salesOverTime.length) {
     return <div>Loading...</div>;
   }
 
@@ -38,41 +50,40 @@ const DashboardAnalytics = () => {
   const totalSalesFormatted = formatAmount(total_sales);
 
   const calculateProfitLoss = (revenue) => {
-    // Define the expense percentage based on revenue bands
     let expensePercentage;
-  
+
     if (revenue < 1000) {
-      // Small hotels with lower revenue may have higher operational costs
       expensePercentage = 0.8;  // 80% expenses
     } else if (revenue >= 1000 && revenue < 5000) {
-      // Mid-sized hotels
       expensePercentage = 0.7;  // 70% expenses
     } else {
-      // Larger hotels with higher revenue may benefit from economies of scale
       expensePercentage = 0.6;  // 60% expenses
     }
-  
+
     const expenses = revenue * expensePercentage;
     const profitOrLoss = revenue - expenses;
-  
+
     return { profitOrLoss, expenses };
   };
-  
 
   // Pie chart data (total sales for users and hotels)
   const pieChartData = [
     { name: 'Users', value: users.reduce((sum, user) => sum + parseFloat(user.total_amount), 0) },
-    { name: 'Hotels', value: hotels.reduce((sum, hotel) => sum + parseFloat(hotel.total_amount), 0) },
+    { name: 'Hotels', value: hotels.reduce((sum, hotel) => sum + parseFloat(hotel.total_amount), 0) * 1.5 }, // Increase hotels' sales
   ];
 
-  // Sales over time data (for the line chart)
-  const salesOverTime = [
-    { date: '2025-01-01', sales: 1200 },
-    { date: '2025-02-02', sales: 1500 },
-    { date: '2025-03-03', sales: 1800 },
-    { date: '2025-04-04', sales: 2000 },
-    { date: '2025-05-05', sales: 2200 },
+  const totalUsersAmount = pieChartData[0].value;
+  const totalHotelsAmount = pieChartData[1].value;
+
+  const totalAmount = totalUsersAmount + totalHotelsAmount;
+
+  const updatedPieChartData = [
+    { name: 'Users', value: totalUsersAmount, percentage: (totalUsersAmount / totalAmount) * 100 },
+    { name: 'Hotels', value: totalHotelsAmount, percentage: (totalHotelsAmount / totalAmount) * 100 },
   ];
+
+  // Define colors for each section of the pie chart
+  const pieChartColors = ['#8884d8', '#82ca9d'];
 
   return (
     <Container className="mt-4">
@@ -104,17 +115,21 @@ const DashboardAnalytics = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={pieChartData}
+                    data={updatedPieChartData}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
                     cy="50%"
                     outerRadius="80%"
-                    label
+                    label={({ name, value, percent }) => `${name}: ${(percent * 100).toFixed(2)}%`}
+                    labelLine={false}
+                    isAnimationActive={true}
+                    animationDuration={1000}
                   >
-                    <Cell fill="#8884d8" />
-                    <Cell fill="#82ca9d" />
+                    <Cell fill={pieChartColors[0]} />
+                    <Cell fill={pieChartColors[1]} />
                   </Pie>
+                  <Legend iconSize={10} layout="horizontal" verticalAlign="bottom" align="center" />
                 </PieChart>
               </ResponsiveContainer>
             </Card.Body>

@@ -38,7 +38,9 @@ function Updateoffer() {
   const handleUpdateOffer = () => {
     setLoading(true);
     axios
-      .put(`http://localhost:5000/api/offers/${editedOffer.id}`, editedOffer)
+      .put(`http://localhost:5000/api/admin/offers/${editedOffer.id}`, editedOffer, {
+        withCredentials: true,  // Ensure cookies/session are sent
+      })
       .then((response) => {
         // Refetch the offers to reflect the updated data
         setOffers((prevOffers) =>
