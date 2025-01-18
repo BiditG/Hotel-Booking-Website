@@ -133,7 +133,7 @@ const Adminpanel = () => {
           <IconButton
             color="primary"
             aria-label="open sidebar"
-            onClick={() => setShowSidebar(!showSidebar)} // Toggle sidebar open/close
+            onClick={() => setShowSidebar(!showSidebar)} 
             style={{ color: 'white', display: 'block', marginRight: '16px' }}
           >
             <MenuIcon />

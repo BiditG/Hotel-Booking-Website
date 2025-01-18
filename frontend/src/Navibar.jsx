@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { FaHome, FaConciergeBell, FaTags, FaEnvelope, FaBook, FaUserCircle } from 'react-icons/fa';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
-import { Menu as MenuIcon } from '@mui/icons-material';
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Button, Box, Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import { Home, Hotel, LocalOffer, MailOutline, Book, AccountCircle, Menu as MenuIcon } from '@mui/icons-material';
 import './Navibar.css';
 
 function Navibar() {
   const [anchorEl, setAnchorEl] = useState(null); // For handling account dropdown menu state
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(null); // For mobile menu state
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // Open the dropdown menu when account icon is clicked
   const handleMenuOpen = (event) => {
@@ -23,58 +21,91 @@ function Navibar() {
     setAnchorEl(null);
   };
 
+  // Open the mobile menu
+  const handleMobileMenuOpen = (event) => {
+    setMobileMenuOpen(event.currentTarget);
+  };
+
+  // Close the mobile menu
+  const handleMobileMenuClose = () => {
+    setMobileMenuOpen(null);
+  };
+
+  const navLinks = [
+    { to: '/', label: 'Home', icon: <Home />, info: 'Return to the homepage with an overview of our offerings.' },
+    { to: '/rooms', label: 'Rooms & Rates', icon: <Hotel />, info: 'Browse our selection of luxurious rooms and competitive rates.' },
+    { to: '/offers', label: 'Offers', icon: <LocalOffer />, info: 'Check out our exclusive deals and discounts for your stay.' },
+    { to: '/contact', label: 'Contact', icon: <MailOutline />, info: 'Get in touch with us for any inquiries or support.' },
+    { to: '/cart', label: 'Bookings', icon: <Book />, info: 'Manage and view your existing bookings.' },
+  ];
+
   return (
-    <Navbar collapseOnSelect expand="lg" className="nav-container fixed-top">
-      <Container>
+    <AppBar position="fixed" sx={{ backgroundColor: '#1d58a2', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         {/* Logo */}
-        <Navbar.Brand as={Link} to="/" className="navbar-logo">
-          World Hotels
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="ms-auto nav-links">
-            {/* Home */}
-            <Nav.Link as={NavLink} to="/" className="nav-link-item" activeClassName="active">
-              <FaHome className="nav-icon" /> Home
-            </Nav.Link>
+        <Typography
+          variant="h6"
+          component={Link}
+          to="/"
+          sx={{
+            textDecoration: 'none',
+            color: '#fff',
+            fontWeight: 'bold',
+            fontFamily: 'Poppins, sans-serif',
+          }}
+        >
+          🌍 World Hotels
+        </Typography>
 
-            {/* Rooms */}
-            <Nav.Link as={NavLink} to="/rooms" className="nav-link-item" activeClassName="active">
-              <FaConciergeBell className="nav-icon" /> Rooms & Rates
-            </Nav.Link>
-
-            {/* Offers */}
-            <Nav.Link as={NavLink} to="/offers" className="nav-link-item" activeClassName="active">
-              <FaTags className="nav-icon" /> Offers
-            </Nav.Link>
-
-            {/* Contact */}
-            <Nav.Link as={NavLink} to="/contact" className="nav-link-item" activeClassName="active">
-              <FaEnvelope className="nav-icon" /> Contact
-            </Nav.Link>
-
-            {/* Bookings */}
-            <Nav.Link as={NavLink} to="/cart" className="nav-link-item" activeClassName="active">
-              <FaBook className="nav-icon" /> Bookings
-            </Nav.Link>
-
-            {/* Account Icon and Dropdown */}
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={handleMenuOpen}
-              sx={{ display: 'flex', alignItems: 'center' }}
-            >
-              <FaUserCircle className="nav-icon" />
+        {isMobile ? (
+          <>
+            {/* Mobile Menu Icon */}
+            <IconButton onClick={handleMobileMenuOpen} sx={{ color: '#fff' }}>
+              <MenuIcon sx={{ transform: mobileMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'all 0.3s ease' }} />
             </IconButton>
+            <Menu
+              anchorEl={mobileMenuOpen}
+              open={Boolean(mobileMenuOpen)}
+              onClose={handleMobileMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'mobile-menu-button',
+                sx: { backgroundColor: '#fff', color: '#333' },
+              }}
+            >
+              {navLinks.map((link) => (
+                <MenuItem
+                  key={link.label}
+                  component={NavLink}
+                  to={link.to}
+                  onClick={handleMobileMenuClose}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: '#155a8a',
+                      color: 'gold',
+                    },
+                  }}
+                >
+                  {link.icon} {link.label}
+                </MenuItem>
+              ))}
+              <MenuItem onClick={handleMenuOpen} sx={{
+                '&:hover': {
+                  backgroundColor: '#155a8a',
+                  color: 'gold',
+                },
+              }}>
+                <AccountCircle /> Account
+              </MenuItem>
+            </Menu>
 
-            {/* Account Menu */}
+            {/* Account Dropdown for Mobile */}
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
               MenuListProps={{
                 'aria-labelledby': 'account-menu-button',
+                sx: { backgroundColor: '#fff', color: '#333' },
               }}
             >
               <MenuItem component={NavLink} to="/Login" onClick={handleMenuClose}>
@@ -87,10 +118,64 @@ function Navibar() {
                 Profile
               </MenuItem>
             </Menu>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+          </>
+        ) : (
+          /* Desktop Navigation */
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            {navLinks.map((link) => (
+              <Tooltip key={link.label} title={<Typography sx={{ fontSize: '14px', fontFamily: 'Poppins, sans-serif' }}>{link.info}</Typography>} arrow>
+                <Button
+                  component={NavLink}
+                  to={link.to}
+                  sx={{
+                    color: '#fff',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    fontFamily: 'Poppins, sans-serif',
+                    '&:hover': {
+                      backgroundColor: '#155a8a',
+                      transform: 'scale(1.1)',
+                      color: 'gold',
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
+                  startIcon={link.icon}
+                >
+                  {link.label}
+                </Button>
+              </Tooltip>
+            ))}
+
+            {/* Account Icon and Dropdown */}
+            <Tooltip title={<Typography sx={{ fontSize: '14px', fontFamily: 'Poppins, sans-serif' }}>Account Options</Typography>}>
+              <IconButton onClick={handleMenuOpen} sx={{ color: '#fff', '&:hover': { color: 'gold' }, transition: 'all 0.3s ease' }}>
+                <AccountCircle fontSize="large" />
+              </IconButton>
+            </Tooltip>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'account-menu-button',
+                sx: { backgroundColor: '#fff', color: '#333' },
+              }}
+            >
+              <MenuItem component={NavLink} to="/Login" onClick={handleMenuClose}>
+                Login
+              </MenuItem>
+              <MenuItem component={NavLink} to="/Register" onClick={handleMenuClose}>
+                Register
+              </MenuItem>
+              <MenuItem component={NavLink} to="/Profile" onClick={handleMenuClose}>
+                Profile
+              </MenuItem>
+            </Menu>
+          </Box>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 }
 

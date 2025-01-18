@@ -34,7 +34,8 @@ import DashboardAnalytics from "./Dashboardanalytics";
 import Usermanagement from "./Usermanagement";
 import Updateoffer from "./Updateoffer";
 import SearchResults1 from "./searchresults1";
-
+import About from "./About";
+import Testimonials from "./Testimonials";
 // Custom Hook to conditionally render Navibar based on current location
 function Navigation() {
   const location = useLocation(); // Get current location
@@ -137,6 +138,8 @@ function App() {
         <Route path="/Usermanagement" element={<Usermanagement />} />
         <Route path="/Updateoffer" element={<Updateoffer />} />
         <Route path="searchresults1" element={<SearchResults1/>}/>
+        <Route path="/about" element={<About/>}/>
+        <Route path="/testimonials" element={<Testimonials/>}/>
       </Routes>
 
       <Footer />

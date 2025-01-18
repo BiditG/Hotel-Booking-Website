@@ -3,6 +3,7 @@ import "./FeaturedHotels.css";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import { Link } from "react-router-dom";
+import Testimonials from "./Testimonials";
 
 function FeaturedHotels() {
   const [hotels, setHotels] = useState([]);
@@ -74,8 +75,10 @@ function FeaturedHotels() {
   return (
     <>
       <br />
-      <div className="Featured-container" style={{ backgroundColor: "whitesmoke" }}>
+      <div className="Featured-container" >
         <br />
+        <br/>
+        <br/>
         <center>
           <h2 className="section-title">Featured Hotels</h2>
           <p className="section-description">
@@ -90,6 +93,7 @@ function FeaturedHotels() {
           </div>
         </center>
       </div>
+      <Testimonials/>
     </>
   );
 }

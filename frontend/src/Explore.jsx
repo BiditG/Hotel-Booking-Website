@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import './Explore.css';
 
 function Explore({ cities = [] }) {
+  const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    const scrollInterval = setInterval(() => {
+      if (scrollContainerRef.current) {
+        const container = scrollContainerRef.current;
+        container.scrollBy({ left: 1, behavior: 'smooth' });
+
+        // Reset scroll to start if reached the end
+        if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
+          container.scrollTo({ left: 0, behavior: 'smooth' });
+        }
+      }
+    }, 20); // Adjust the speed of scrolling
+
+    return () => clearInterval(scrollInterval);
+  }, []);
+
   const ExploreCards = [];
 
   for (let i = 0; i < cities.length; i++) {
@@ -41,7 +59,9 @@ function Explore({ cities = [] }) {
         <p className="explore-description">
           Discover some of the most beautiful and historic cities in the United Kingdom. Whether you're looking for rich culture, iconic landmarks, or scenic views, there's something for everyone in these cities.
         </p>
-        <div className="cards">{ExploreCards}</div>
+        <div className="cards" ref={scrollContainerRef} style={{ overflowX: 'auto', whiteSpace: 'nowrap', scrollbarWidth: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          {ExploreCards}
+        </div>
       </center>
     </>
   );
