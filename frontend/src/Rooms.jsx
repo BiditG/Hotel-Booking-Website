@@ -48,17 +48,16 @@ function Rooms() {
         {filteredCities.map((city, index) => (
           <div className="card" key={index}>
             <Link
-              to={{
-                pathname: "/searchresults1",
-                state: {
-                  destination: city.name, // Pass city name as destination
-                  checkInDate: "2025-01-20", // Pass check-in date
-                  checkOutDate: "2025-01-25", // Pass check-out date
-                  numGuests: 2, // Pass number of guests
-                  hotels: [], // Placeholder for hotel data (empty array for now)
-                  exchangeRates: {} // Placeholder for exchange rates (empty object for now)
-                },
+              to="/searchresults1" // Navigate to SearchResults1.jsx
+              state={{
+                destination: city.name, // Pass city name as destination
+                cityData: city, // Pass the entire city object
+                checkInDate: "2025-01-20", // Pass check-in date
+                checkOutDate: "2025-01-25", // Pass check-out date
+                numGuests: 2, // Pass number of guests
+                exchangeRates: {}, // Placeholder for exchange rates (can be updated as needed)
               }}
+              className="card-link"
             >
               <div className="card-image-container">
                 <img src={city.image} alt={city.name} className="card-image" />

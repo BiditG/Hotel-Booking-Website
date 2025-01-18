@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 const About = () => {
   return (
-    <Container maxWidth="lg" sx={{ mt: 8, mb: 8, backgroundColor: "#fff", borderRadius: "15px", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", p: 5 }}>
+    <Container maxWidth="lg" sx={{ mt: 8, mb: 8, backgroundColor: "#fff", borderRadius: "15px", p: 5 }}>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
