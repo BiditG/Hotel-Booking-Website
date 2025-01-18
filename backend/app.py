@@ -6,12 +6,27 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from datetime import datetime, timedelta
 from fpdf import FPDF
 from io import BytesIO
+from gpt4all import GPT4All
+import logging
 
 app = Flask(__name__)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)  # Adjust as needed
 
 # Enable CORS for the frontend origin (your React app running at http://localhost:5173)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+
+MODEL_NAME = "Meta-Llama-3-8B-Instruct.Q4_0.gguf"
+MODEL_PATH = r"C:\Users\User\AppData\Local\nomic.ai\GPT4All"
+
+#Loading the model with appropriate error message if unsuccessful
+try:
+    gpt4all_model = GPT4All(
+        model_name=MODEL_NAME,
+        model_path=MODEL_PATH
+    )
+except Exception as e:
+    logging.exception("Error loading GPT4All-Falcon model.")
+    gpt4all_model = None
 
 # Configure MySQL
 app.config['MYSQL_HOST'] = 'localhost'
@@ -933,6 +948,101 @@ def get_sales_data():
 
     except Exception as e:
         return jsonify({"message": "Error fetching sales data", "error": str(e)}), 500
+    
+
+
+
+def fetch_website_data():
+    """
+    Fetch website data from the MySQL database.
+    Returns:
+        list: A list of dictionaries containing website data.
+    """
+    try:
+        # Establish a connection and create a cursor
+        connection = mysql.connection
+        cursor = connection.cursor()
+
+        # Execute the query
+        cursor.execute("SELECT * FROM website_info")
+
+        # Fetch all rows from the executed query
+        columns = [desc[0] for desc in cursor.description]  # Get column names
+        rows = cursor.fetchall()
+
+        # Convert rows to a list of dictionaries
+        data = [dict(zip(columns, row)) for row in rows]
+
+        # Close the cursor
+        cursor.close()
+
+        return data
+
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        return []
+
+
+def get_gpt4all_response(prompt):
+    """
+    Generate a response using the GPT4All model.
+    Args:
+        prompt (str): The input text for the AI model.
+    Returns:
+        str: The AI-generated response.
+    """
+    if gpt4all_model is None:
+        logging.error("GPT4All model is not loaded.")
+        return "The AI model is currently unavailable."
+
+    try:
+        response = gpt4all_model.generate(prompt)
+        return response.strip() if response else "(No response generated.)"
+    except Exception as e:
+        logging.error(f"Error generating response: {e}")
+        return "I'm sorry, I couldn't process that request."
+
+    
+@app.route('/chat', methods=['POST'])
+def chat():
+    try:
+        user_input = request.json.get('user_input', '').strip()
+
+        if not user_input:
+            return jsonify({"response": "No input provided."})
+
+        # Fetch website details from the database
+        website_data = fetch_website_data()
+
+        # Format the data for AI input
+        website_prompt = "\n".join(
+            f"Section: {row['section_name']}\nDescription: {row['description']}\nAdditional Info: {row.get('additional_info', 'N/A')}"
+            for row in website_data
+        )
+
+        # Combine user input with the website data
+        full_prompt = (
+            "You are a customer service assistant for World Hotels. Below is the website's information:\n\n"
+            f"{website_prompt}\n\n"
+            f"User Query: {user_input}\n"
+            "Provide accurate and professional responses based on the website's data."
+        )
+
+        # Send prompt to the AI model
+        response = get_gpt4all_response(full_prompt)
+
+        return jsonify({"response": response})
+
+    except Exception as e:
+        logging.error(f"Error processing chat request: {e}")
+        return jsonify({"response": "An error occurred. Please try again later."}), 500
+
+
+    except Exception as e:
+        logging.exception("Error processing chat request.")
+        return jsonify({"response": "An error occurred. Please try again later."}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

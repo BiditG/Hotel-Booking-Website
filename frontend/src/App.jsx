@@ -36,6 +36,7 @@ import Updateoffer from "./Updateoffer";
 import SearchResults1 from "./searchresults1";
 import About from "./About";
 import Testimonials from "./Testimonials";
+import Chat from "./chatbot";
 // Custom Hook to conditionally render Navibar based on current location
 function Navigation() {
   const location = useLocation(); // Get current location
@@ -140,8 +141,9 @@ function App() {
         <Route path="searchresults1" element={<SearchResults1/>}/>
         <Route path="/about" element={<About/>}/>
         <Route path="/testimonials" element={<Testimonials/>}/>
+        <Route path="/chatbot" element={<Chat/>}/>
       </Routes>
-
+      <Chat/>
       <Footer />
     </Router>
   );
