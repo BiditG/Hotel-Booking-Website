@@ -126,6 +126,7 @@ function Offers() {
           ))}
         </Box>
       </Container>
+      
     </>
   );
 }

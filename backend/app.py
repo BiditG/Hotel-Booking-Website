@@ -1,3 +1,4 @@
+#Importing the necessary modules for backend
 from flask import Flask, jsonify, request, session,send_file
 from flask_mysqldb import MySQL
 from flask_cors import CORS
@@ -9,12 +10,15 @@ from io import BytesIO
 from gpt4all import GPT4All
 import logging
 
+#Initializing flask and session
 app = Flask(__name__)
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)  # Adjust as needed
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1) 
 
-# Enable CORS for the frontend origin (your React app running at http://localhost:5173)
+# Enabling CORS for the frontend origin (your React app running at http://localhost:5173)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
+
+# Model path and model name initialized
 MODEL_NAME = "Meta-Llama-3-8B-Instruct.Q4_0.gguf"
 MODEL_PATH = r"C:\Users\User\AppData\Local\nomic.ai\GPT4All"
 
@@ -28,13 +32,14 @@ except Exception as e:
     logging.exception("Error loading GPT4All-Falcon model.")
     gpt4all_model = None
 
-# Configure MySQL
+# Configuring MySQL accounts 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'  # Replace with your MySQL username
-app.config['MYSQL_PASSWORD'] = 'Pratima@12345'  # Replace with your MySQL password
-app.config['MYSQL_DB'] = 'hotels_db'  # Your database name
-app.config['SECRET_KEY'] = '123'  # Replace with a secure key
+app.config['MYSQL_USER'] = 'root'  # MySQL username
+app.config['MYSQL_PASSWORD'] = 'Pratima@12345'  # MySQL password
+app.config['MYSQL_DB'] = 'hotels_db'  # Database name
+app.config['SECRET_KEY'] = '123'  # Mock secure key
 
+#Initializing MYSQL, Bcrypt, LoginManager on the whole application
 mysql = MySQL(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
@@ -45,16 +50,18 @@ class User(UserMixin):
         self.id = id
         self.username = username
         self.email = email
-        self.is_admin = is_admin  # New attribute for checking if user is admin
+        self.is_admin = is_admin  
 
     def is_admin_user(self):
         return self.is_admin
 
 
+# Function to load user 
 @login_manager.user_loader
 def load_user(user_id):
     cur = mysql.connection.cursor()
     cur.execute("SELECT id, username, email, is_admin FROM users WHERE id = %s", (user_id,))
+    # fetchone() is used inorder to find the first matching data
     user = cur.fetchone()
     cur.close()
     if user:
@@ -62,7 +69,7 @@ def load_user(user_id):
     return None
 
 
-# Route to fetch all hotels
+# Route to fetch all hotels from the database
 @app.route('/api/hotels', methods=['GET'])
 def get_hotels():
     cur = mysql.connection.cursor()
@@ -80,7 +87,7 @@ def get_hotels():
             "amenities": hotel[4],
             "rating": hotel[5],
             "price": hotel[6],
-            "city": hotel[7],  # City field
+            "city": hotel[7],  
             "room_capacity": hotel[8],
             "standard_rate_peak": hotel[9],
             "standard_rate_off_peak": hotel[10]
@@ -89,19 +96,20 @@ def get_hotels():
 
     return jsonify(hotel_list)
 
-
+# Route to get discount with appropriate validation
 def get_discount(days_in_advance):
-    # Example discount logic based on days_in_advance
+    
     if days_in_advance >= 30:
-        return 20  # 20% discount for bookings made 30 days in advance
+        return 20  
     elif days_in_advance >= 15:
-        return 10  # 10% discount for bookings made 15 days in advance
+        return 10  
     elif days_in_advance >= 7:
-        return 5  # 5% discount for bookings made 7 days in advance
+        return 5  
     else:
-        return 0  # No discount for bookings made less than 7 days in advance
+        return 0  
 
 
+# Route to get offers from the database.
 @app.route('/api/offers', methods=['GET'])
 def get_offers():
     cur = mysql.connection.cursor()
@@ -111,8 +119,8 @@ def get_offers():
 
     offer_list = []
     for offer in offers:
-        discount_percentage = get_discount(offer[2])  # Assuming the 3rd column is 'days_in_advance'
-        discounted_price = offer[3] - (offer[3] * discount_percentage / 100)  # Assuming the 4th column is 'price'
+        discount_percentage = get_discount(offer[2])  
+        discounted_price = offer[3] - (offer[3] * discount_percentage / 100)  
         
         offer_dict = {
             "id": offer[0],
@@ -121,7 +129,7 @@ def get_offers():
             "price": offer[3],
             "discount_percentage": discount_percentage,
             "discounted_price": discounted_price,
-            "background_image": offer[4]  # Assuming the 5th column is 'background_image'
+            "background_image": offer[4]  
         }
         offer_list.append(offer_dict)
 
@@ -131,17 +139,22 @@ def get_offers():
 # Route for user registration
 @app.route('/register', methods=['POST', 'OPTIONS'])
 def register():
+
+
     if request.method == 'OPTIONS':
         return jsonify({'message': 'Preflight OK'}), 200
 
+    # Extracting the data in json format
     data = request.json
+    # Extracting of individual fields from the data
     username = data['username']
     email = data['email']
+    # BCRYPT  is used to hash the password
     password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    address = data['address']  # New address field
-    postalcode = data['postalCode']  # New postalCode field
+    address = data['address']  
+    postalcode = data['postalCode']  
 
-    # Insert new user into the database with address and postalCode fields
+    
     cur = mysql.connection.cursor()
     cur.execute(
         "INSERT INTO users (username, email, password, address, postalcode) VALUES (%s, %s, %s, %s, %s)",
@@ -151,7 +164,7 @@ def register():
     cur.close()
     return jsonify({'message': 'User registered successfully'})
 
-
+# Route to check if the email already exists
 @app.route('/check-email', methods=['POST'])
 def check_email():
     data = request.get_json()
@@ -366,12 +379,11 @@ def get_booking_details(booking_id):
 def cancel_booking(booking_id):
     cursor = mysql.connection.cursor()
 
-    # Check if the booking belongs to the current user
     cursor.execute("SELECT * FROM bookings WHERE id = %s AND user_id = %s", (booking_id, current_user.id))
     booking = cursor.fetchone()
 
     if booking:
-        # Proceed with cancellation
+        
         cursor.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
         mysql.connection.commit()
         cursor.close()

@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Button, Box, Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Button,
+  Box,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { Home, Hotel, LocalOffer, MailOutline, Book, AccountCircle, Menu as MenuIcon } from '@mui/icons-material';
 import './Navibar.css';
 
@@ -88,12 +100,15 @@ function Navibar() {
                   {link.icon} {link.label}
                 </MenuItem>
               ))}
-              <MenuItem onClick={handleMenuOpen} sx={{
-                '&:hover': {
-                  backgroundColor: '#155a8a',
-                  color: 'gold',
-                },
-              }}>
+              <MenuItem
+                onClick={handleMenuOpen}
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#155a8a',
+                    color: 'gold',
+                  },
+                }}
+              >
                 <AccountCircle /> Account
               </MenuItem>
             </Menu>
@@ -123,7 +138,40 @@ function Navibar() {
           /* Desktop Navigation */
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             {navLinks.map((link) => (
-              <Tooltip key={link.label} title={<Typography sx={{ fontSize: '14px', fontFamily: 'Poppins, sans-serif' }}>{link.info}</Typography>} arrow>
+              <Tooltip
+                key={link.label}
+                title={
+                  <Typography
+                    sx={{
+                      fontSize: '14px',
+                      fontFamily: 'Poppins, sans-serif',
+                      backgroundColor: '#fff',
+                      color: '#000',
+                      padding: '5px 10px',
+                      borderRadius: '4px',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                    }}
+                  >
+                    {link.info}
+                  </Typography>
+                }
+                arrow
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: '#fff',
+                      color: '#000',
+                      border: '1px solid #ddd',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                    },
+                  },
+                  arrow: {
+                    sx: {
+                      color: '#fff',
+                    },
+                  },
+                }}
+              >
                 <Button
                   component={NavLink}
                   to={link.to}
@@ -147,8 +195,43 @@ function Navibar() {
             ))}
 
             {/* Account Icon and Dropdown */}
-            <Tooltip title={<Typography sx={{ fontSize: '14px', fontFamily: 'Poppins, sans-serif' }}>Account Options</Typography>}>
-              <IconButton onClick={handleMenuOpen} sx={{ color: '#fff', '&:hover': { color: 'gold' }, transition: 'all 0.3s ease' }}>
+            <Tooltip
+              title={
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontFamily: 'Poppins, sans-serif',
+                    backgroundColor: '#fff',
+                    color: '#000',
+                    padding: '5px 10px',
+                    borderRadius: '4px',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                  }}
+                >
+                  Account Options
+                </Typography>
+              }
+              arrow
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    backgroundColor: '#fff',
+                    color: '#000',
+                    border: '1px solid #ddd',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                  },
+                },
+                arrow: {
+                  sx: {
+                    color: '#fff',
+                  },
+                },
+              }}
+            >
+              <IconButton
+                onClick={handleMenuOpen}
+                sx={{ color: '#fff', '&:hover': { color: 'gold' }, transition: 'all 0.3s ease' }}
+              >
                 <AccountCircle fontSize="large" />
               </IconButton>
             </Tooltip>

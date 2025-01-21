@@ -156,7 +156,7 @@ const SearchBar = () => {
     } else {
       setFilteredHotels(filtered);
       navigate("/SearchResults", {
-        state: { hotels: filtered, selectedCurrency: selectedCurrency, exchangeRates: exchangeRates, destination: destination}
+        state: { hotels: filtered, selectedCurrency: selectedCurrency, exchangeRates: exchangeRates, destination: destination }
       });
     }
   };
@@ -215,12 +215,12 @@ const SearchBar = () => {
             required
             calendarClassName="custom-calendar"
             customInput={
-              <TextField 
-                fullWidth 
-                label="Check-in Date" 
-                variant="outlined" 
-                className="datepicker-field" 
-                style={{backgroundColor: 'white'}}
+              <TextField
+                fullWidth
+                label="Check-in Date"
+                variant="outlined"
+                className="datepicker-field"
+                style={{ backgroundColor: 'white' }}
                 InputProps={{
                   endAdornment: (
                     <IconButton
@@ -248,12 +248,12 @@ const SearchBar = () => {
             required
             calendarClassName="custom-calendar"
             customInput={
-              <TextField 
-                fullWidth 
-                label="Check-out Date" 
-                variant="outlined" 
-                className="datepicker-field" 
-                style={{backgroundColor: 'white'}}
+              <TextField
+                fullWidth
+                label="Check-out Date"
+                variant="outlined"
+                className="datepicker-field"
+                style={{ backgroundColor: 'white' }}
                 InputProps={{
                   endAdornment: (
                     <IconButton
@@ -278,7 +278,7 @@ const SearchBar = () => {
               value={numGuests}
               onChange={(e) => setNumGuests(e.target.value)}
               label="Number of Guests"
-              style={{backgroundColor: 'white'}}
+              style={{ backgroundColor: 'white' }}
             >
               <MenuItem value="1">👤 1 Guest</MenuItem>
               <MenuItem value="2">👥 2 Guests</MenuItem>
@@ -365,7 +365,56 @@ const SearchBar = () => {
           <Button onClick={handleCloseFilter}>Apply Filters</Button>
         </DialogActions>
       </Dialog>
+      {/* Map Modal */}
+      <Dialog open={showMapModal} onClose={handleCloseMap}>
+        <DialogTitle>🌍 Map View</DialogTitle>
+        <DialogContent>
+          {mapLocation ? (
+            <iframe
+              title="Google Map"
+              src={mapLocation}
+              width="100%"
+              height="400"
+              frameBorder="0"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+            ></iframe>
+          ) : (
+            <p>No map location available for the selected destination.</p>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseMap}>Close</Button>
+        </DialogActions>
+      </Dialog>
+      {/* Currency Modal */}
+      <Dialog open={showCurrencyModal} onClose={handleCloseCurrency}>
+        <DialogTitle>💱 Select Currency</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth>
+            <Select
+              value={selectedCurrency}
+              onChange={(e) => setSelectedCurrency(e.target.value)}
+            >
+              {Object.keys(exchangeRates).map((currency) => (
+                <MenuItem key={currency} value={currency}>
+                  {currency}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <p>Exchange Rate: {exchangeRates[selectedCurrency] || "Unavailable"}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCurrency}>Close</Button>
+          <Button onClick={handleCloseCurrency}>Confirm</Button>
+        </DialogActions>
+      </Dialog>
+
+
     </div>
+
   );
 };
 

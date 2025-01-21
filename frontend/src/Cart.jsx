@@ -156,6 +156,39 @@ function Cart() {
       },
     });
   };
+  const handleDownloadReceipt = async (bookingId) => {
+    try {
+      // Make a GET request to the backend API to fetch the receipt PDF
+      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}/receipt`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Include cookies for authentication
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to download receipt.");
+      }
+  
+      // Convert the response into a Blob to handle the PDF file
+      const blob = await response.blob();
+  
+      // Create a downloadable URL for the Blob
+      const url = window.URL.createObjectURL(blob);
+  
+      // Create an anchor element and trigger the download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `receipt_${bookingId}.pdf`;
+      document.body.appendChild(link); // Append the link to the body
+      link.click(); // Trigger the click to start the download
+      document.body.removeChild(link); // Remove the link after downloading
+    } catch (error) {
+      console.error("Error downloading receipt:", error);
+      alert("An error occurred while downloading the receipt. Please try again later.");
+    }
+  };
 
   if (currencies.length === 0) {
     return <CircularProgress />; // You can show a loading spinner until currencies are fetched

@@ -22,7 +22,7 @@ function Contact() {
           <br />
           <br />
           We look forward to hearing from you! In order to manage your request
-          or question correctly, NH will process your personal data accordingly.
+          or question correctly, WH will process your personal data accordingly.
           Read our privacy policy here. To speak with one of our RESERVATIONS
           AGENTS, don’t hesitate to give us a call using the following telephone
           numbers.
@@ -37,7 +37,7 @@ function Contact() {
         >
           <Card.Body>
             <p className="contactparagraph">
-              To speak with a member of our NH DISCOVERY team regarding your
+              To speak with a member of our WH DISCOVERY team regarding your
               account, please feel free to contact us from Monday - Friday
               between 08:00am and 09:00pm or on weekends between the hours of
               08:00am - 05:00pm

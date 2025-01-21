@@ -48,6 +48,7 @@ function Rooms() {
         {filteredCities.map((city, index) => (
           <div className="card" key={index}>
             <Link
+            style={{textDecoration: 'None'}}
               to="/searchresults1" // Navigate to SearchResults1.jsx
               state={{
                 destination: city.name, // Pass city name as destination

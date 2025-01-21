@@ -172,7 +172,7 @@ function CityDetail() {
   const city = cities.find(c => c.name.toLowerCase() === cityName.toLowerCase());
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" style={{marginTop: '120px'}}>
       <Box my={4}>
         {city ? (
           <Paper elevation={3} sx={{ padding: 4 }}>

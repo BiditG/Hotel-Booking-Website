@@ -79,7 +79,7 @@ const Register = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
+    <Container maxWidth="sm" sx={{ mt: 4 }} style={{marginTop: "100px"}}>
       <Box sx={{ p: 3, border: "1px solid #ddd", borderRadius: 2 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Register

@@ -1,19 +1,27 @@
+
+// Necessary imports 
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Grid, Card, Button, FormControl, InputLabel, Input, CircularProgress, Typography, Drawer, List, ListItem, ListItemText, IconButton, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu'; // Material UI menu icon
-import CloseIcon from '@mui/icons-material/Close'; // Close Icon for the sidebar
+import MenuIcon from '@mui/icons-material/Menu'; 
+import CloseIcon from '@mui/icons-material/Close'; 
 import Hotelmanagement from './Hotelmanagement';
 import UserCurrencyManagement from './Usercurrencymanagement';
 import DashboardAnalytics from './Dashboardanalytics';
 import Usermanagement from './Usermanagement';
 import Updateoffer from './Updateoffer';
 
+//Admin panel main function
 const Adminpanel = () => {
+
+  //Initializing states 
   const [hotels, setHotels] = useState([]);
   const [users, setUsers] = useState([]);
   const [currencies, setCurrencies] = useState([]);
+
+  //Empty variables for setting up a new hotel
   const [newHotel, setNewHotel] = useState({
     name: '',
     description: '',
@@ -27,24 +35,38 @@ const Adminpanel = () => {
     standard_rate_off_peak: '',
     status: 'available',
   });
-  const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(0);
-  const [showSidebar, setShowSidebar] = useState(false);
 
+  //Loading is false by default
+  const [loading, setLoading] = useState(false);
+  // Selected tab is 0 by default
+  const [selectedTab, setSelectedTab] = useState(0);
+  // Side bar is false by default
+  const [showSidebar, setShowSidebar] = useState(false);
+  // Initializing the navigate function
   const navigate = useNavigate();
 
+
+
+  // Function to fetch hotels from the backend
+  // Loading is true untill data is fetched
   const fetchHotels = async () => {
     setLoading(true);
+
+    // Fetching details using axios
     try {
       const response = await axios.get('http://localhost:5000/api/admin/hotels', { withCredentials: true });
+
+      //Updating the state of hotel once the data is rendered
       setHotels(response.data);
+
     } catch (error) {
       console.error('Error fetching hotels:', error);
     } finally {
       setLoading(false);
     }
   };
-
+  
+  // Function to fetch users from the backend
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -57,6 +79,7 @@ const Adminpanel = () => {
     }
   };
 
+   // Function to fetch currencies from the backend
   const fetchCurrencies = async () => {
     setLoading(true);
     try {
@@ -69,12 +92,16 @@ const Adminpanel = () => {
     }
   };
 
+  // Automatically calls the functions when the component renders
   useEffect(() => {
     fetchHotels();
     fetchUsers();
     fetchCurrencies();
   }, []);
 
+  // e is the event
+  // ...newHotel spreads the current state of the new hotel
+  // key = value pair
   const handleChange = (e) => {
     setNewHotel({
       ...newHotel,
@@ -82,9 +109,14 @@ const Adminpanel = () => {
     });
   };
 
+  // Function to add hotel
   const handleAddHotel = async (e) => {
+
+    // Prevents the default behaviour of loading of browser which can disrupt flow in SPA like react 
     e.preventDefault();
     setLoading(true);
+
+    // Post the details of new hotels to the existing hotels and reload the new hotels
     try {
       await axios.post('http://localhost:5000/api/admin/hotels', newHotel, { withCredentials: true });
       fetchHotels();
@@ -108,16 +140,18 @@ const Adminpanel = () => {
     }
   };
 
+  // Navigating to the home page on exit
   const handleExit = () => {
-    navigate('/'); // Navigating to the home page (replace '/' with your desired path)
+    navigate('/'); 
   };
 
+  // Styles for drawer and content
   const drawerStyle = {
     width: 240,
     flexShrink: 0,
     zIndex: 1200,
   };
-
+ 
   const contentStyle = {
     padding: '16px',
   };
@@ -169,12 +203,12 @@ const Adminpanel = () => {
                 },
               }}
               BackdropProps={{
-                onClick: () => setShowSidebar(false), // Close the drawer when clicking outside
+                onClick: () => setShowSidebar(false), 
               }}
             >
               <div style={{ padding: '10px', textAlign: 'right' }}>
                 <IconButton
-                  onClick={() => setShowSidebar(false)} // Close the sidebar
+                  onClick={() => setShowSidebar(false)}
                   style={{ color: '#013b72' }}
                 >
                   <CloseIcon />
@@ -232,9 +266,12 @@ const Adminpanel = () => {
                       </Typography>
                       <form onSubmit={handleAddHotel}>
                         <div>
+                        {/* Iterates over the keys (property names) of the newHotel object. */}
                           {Object.keys(newHotel).map((key) => (
                             key !== 'status' && (
                               <div key={key} style={{ marginBottom: '16px' }}>
+
+                                {/*Capitalizes the first letter of the property name*/}
                                 <InputLabel htmlFor={key} variant="outlined">
                                   {key.charAt(0).toUpperCase() + key.slice(1)}
                                 </InputLabel>
