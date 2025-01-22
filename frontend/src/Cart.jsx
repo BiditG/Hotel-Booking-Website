@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { FaHotel, FaTrashAlt } from "react-icons/fa";
 import "./Cart.css";
+import RateModal from "./Rate"; 
 
 function Cart() {
   const [bookings, setBookings] = useState([]);
@@ -30,6 +31,7 @@ function Cart() {
   const [cancellationCharge, setCancellationCharge] = useState(0);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [selectedCheckInDate, setSelectedCheckInDate] = useState(null);
+  const [showRateModal, setShowRateModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -67,6 +69,23 @@ function Cart() {
       }
     } catch (err) {
       setError("Error fetching currencies: " + err.message);
+    }
+  };
+  const handleSubmitRating = async (rating, feedback) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/submit-rating", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating, feedback }),
+      });
+
+      if (response.ok) {
+        alert("Thank you for your feedback!");
+      } else {
+        alert("Failed to submit rating. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting rating:", error);
     }
   };
 
@@ -196,6 +215,12 @@ function Cart() {
 
   return (
     <Container className="cart-container">
+      {/* Rating Modal */}
+      <RateModal
+        open={showRateModal}
+        onClose={() => setShowRateModal(false)}
+        onSubmit={handleSubmitRating}
+      />
       <div className="text-center mb-4">
         <Typography variant="h4" gutterBottom>
           Your Cart 🛒

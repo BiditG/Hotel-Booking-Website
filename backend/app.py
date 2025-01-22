@@ -966,33 +966,36 @@ def get_sales_data():
 
 def fetch_website_data():
     """
-    Fetch website data from the MySQL database.
+    Fetch website data and ratings from the MySQL database.
     Returns:
-        list: A list of dictionaries containing website data.
+        dict: A dictionary containing website data and raw ratings data.
     """
     try:
-        # Establish a connection and create a cursor
         connection = mysql.connection
         cursor = connection.cursor()
 
-        # Execute the query
+        # Fetch website information
         cursor.execute("SELECT * FROM website_info")
-
-        # Fetch all rows from the executed query
-        columns = [desc[0] for desc in cursor.description]  # Get column names
+        columns = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
+        website_data = [dict(zip(columns, row)) for row in rows]
 
-        # Convert rows to a list of dictionaries
-        data = [dict(zip(columns, row)) for row in rows]
+        # Fetch all ratings
+        cursor.execute("SELECT rating, feedback FROM website_ratings")
+        ratings = cursor.fetchall()  # Returns a list of tuples (rating, feedback)
 
-        # Close the cursor
+        # Close cursor
         cursor.close()
 
-        return data
+        return {
+            "website_data": website_data,
+            "ratings": [{"rating": r[0], "feedback": r[1]} for r in ratings],
+        }
 
     except Exception as e:
         logging.error(f"Database error: {e}")
-        return []
+        return {"website_data": [], "ratings": []}
+
 
 
 def get_gpt4all_response(prompt):
@@ -1023,21 +1026,30 @@ def chat():
         if not user_input:
             return jsonify({"response": "No input provided."})
 
-        # Fetch website details from the database
-        website_data = fetch_website_data()
+        # Fetch website details and raw ratings
+        data = fetch_website_data()
+        website_data = data["website_data"]
+        ratings = data["ratings"]
 
-        # Format the data for AI input
+        # Format the website data for AI input
         website_prompt = "\n".join(
             f"Section: {row['section_name']}\nDescription: {row['description']}\nAdditional Info: {row.get('additional_info', 'N/A')}"
             for row in website_data
         )
 
-        # Combine user input with the website data
+        # Format the ratings data for AI input
+        ratings_prompt = "Ratings Data:\n" + "\n".join(
+            f"Rating: {r['rating']}, Feedback: {r['feedback'] or 'No feedback provided'}"
+            for r in ratings
+        )
+
+        # Combine user input with the website data and raw ratings data
         full_prompt = (
-            "You are a customer service assistant for World Hotels. Below is the website's information:\n\n"
+            "You are a customer service assistant for World Hotels. Below is the website's information and raw ratings data:\n\n"
             f"{website_prompt}\n\n"
+            f"{ratings_prompt}\n\n"
             f"User Query: {user_input}\n"
-            "Provide accurate and professional responses based on the website's data."
+            "Analyze the ratings data and provide insights or respond to the query professionally based on the data."
         )
 
         # Send prompt to the AI model
@@ -1049,10 +1061,121 @@ def chat():
         logging.error(f"Error processing chat request: {e}")
         return jsonify({"response": "An error occurred. Please try again later."}), 500
 
+    
+@app.route('/api/submit-rating', methods=['POST'])
+def submit_rating():
+    try:
+        data = request.json
+        rating = data.get('rating')
+        feedback = data.get('feedback')
+
+        # Validate input
+        if not rating or not (1 <= rating <= 5):
+            return jsonify({"error": "Invalid rating. Rating must be between 1 and 5."}), 400
+
+        # Get a new cursor from the MySQL connection
+        cursor = mysql.connection.cursor()
+        
+        # Insert the rating and feedback into the database
+        query = "INSERT INTO website_ratings (rating, feedback) VALUES (%s, %s)"
+        cursor.execute(query, (rating, feedback))
+        mysql.connection.commit()
+
+        # Close the cursor
+        cursor.close()
+
+        # Return success response
+        return jsonify({"message": "Rating submitted successfully!"}), 200
 
     except Exception as e:
-        logging.exception("Error processing chat request.")
-        return jsonify({"response": "An error occurred. Please try again later."}), 500
+        print(f"Error: {e}")
+        return jsonify({"error": "An error occurred while submitting the rating."}), 500
+    
+
+@app.route('/api/ratings', methods=['GET'])
+def get_ratings():
+    try:
+        connection = mysql.connection
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT id, rating, feedback, created_at FROM website_ratings ORDER BY created_at DESC")
+        rows = cursor.fetchall()
+
+        ratings = [
+            {"id": row[0], "rating": row[1], "feedback": row[2], "created_at": row[3].strftime('%Y-%m-%d %H:%M:%S')}
+            for row in rows
+        ]
+
+        cursor.close()
+        return jsonify({"ratings": ratings}), 200
+    except Exception as e:
+        logging.error(f"Error fetching ratings: {e}")
+        return jsonify({"error": "Failed to fetch ratings"}), 500
+
+
+@app.route('/api/analyze', methods=['POST'])
+def analyze_data():
+    try:
+        # Get user input from request
+        user_input = request.json.get('query', '').strip()  # Changed key to 'query'
+
+        if not user_input:
+            return jsonify({"error": "No input provided."}), 400
+
+        # Fetch contextual data
+        data = fetch_website_data()
+        website_data = data.get("website_data", [])
+        ratings = data.get("ratings", [])
+
+        # Fetch sales data
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            SELECT sale_date, total_sales FROM sales_over_time
+        """)
+        sales_over_time = cursor.fetchall()
+        sales_data = [{"date": sale[0].strftime('%Y-%m-%d'), "sales": sale[1]} for sale in sales_over_time]
+        cursor.close()
+
+        # Format website data for AI input
+        website_prompt = "\n".join(
+            f"Section: {row['section_name']}\nDescription: {row['description']}\nAdditional Info: {row.get('additional_info', 'N/A')}"
+            for row in website_data
+        )
+
+        # Format ratings data for AI input
+        ratings_prompt = "Ratings Data:\n" + "\n".join(
+            f"Rating: {r['rating']}, Feedback: {r['feedback'] or 'No feedback provided'}"
+            for r in ratings
+        )
+
+        # Format sales data for AI input
+        sales_prompt = "Sales Data (Over Time):\n" + "\n".join(
+            f"Date: {sale['date']}, Total Sales: {sale['sales']}"
+            for sale in sales_data
+        )
+
+        # Generate the AI prompt
+        full_prompt = (
+            "You are an intelligent assistant for analyzing business data. Below is the business's website information, ratings data, and sales data:\n\n"
+            f"{website_prompt}\n\n"
+            f"{ratings_prompt}\n\n"
+            f"{sales_prompt}\n\n"
+            f"User Query: {user_input}\n"
+            "Provide a detailed, insightful response based on the data provided."
+        )
+
+        # Get response from the AI model
+        response = gpt4all_model.generate(full_prompt)
+
+        # Ensure the response is not excessively long
+        if len(response) > 3000:
+            response = response[:3000] + "... [Response truncated]"
+
+        return jsonify({"response": response.strip()}), 200
+
+    except Exception as e:
+        logging.error(f"Error processing analyze request: {e}")
+        return jsonify({"error": "An internal error occurred."}), 500
 
 
 

@@ -12,6 +12,8 @@ import UserCurrencyManagement from './Usercurrencymanagement';
 import DashboardAnalytics from './Dashboardanalytics';
 import Usermanagement from './Usermanagement';
 import Updateoffer from './Updateoffer';
+import RateAdmin from './Rateadmin';
+import AIChatModal from './AI';
 
 //Admin panel main function
 const Adminpanel = () => {
@@ -238,6 +240,14 @@ const Adminpanel = () => {
                 <ListItem button selected={selectedTab === 5} onClick={() => setSelectedTab(5)}>
                   <ListItemText primary="Offer Management" />
                 </ListItem>
+                <Divider />
+                <ListItem button selected={selectedTab === 6} onClick={() => setSelectedTab(6)}>
+                  <ListItemText primary="Ratings" />
+                </ListItem>
+                <Divider />
+                <ListItem button selected={selectedTab === 7} onClick={() => setSelectedTab(7)}>
+                  <ListItemText primary="AI analysis" />
+                </ListItem>
               </List>
             </Drawer>
           </Grid>
@@ -256,6 +266,8 @@ const Adminpanel = () => {
                     {selectedTab === 3 && 'Currency Exchange'}
                     {selectedTab === 4 && 'Financial Analytics'}
                     {selectedTab === 5 && 'Offer Management'}
+                    {selectedTab === 6 && 'Ratings'}
+                    {selectedTab === 7 && 'A.I analysis'}
                   </Typography>
 
                   {selectedTab === 0 && <Hotelmanagement />}
@@ -303,6 +315,8 @@ const Adminpanel = () => {
                   {selectedTab === 3 && <UserCurrencyManagement />}
                   {selectedTab === 4 && <DashboardAnalytics />}
                   {selectedTab === 5 && <Updateoffer />}
+                  {selectedTab === 6 && <RateAdmin/>}
+                  {selectedTab === 7 && <AIChatModal/>}
                 </>
               )}
             </div>

@@ -37,6 +37,10 @@ import SearchResults1 from "./searchresults1";
 import About from "./About";
 import Testimonials from "./Testimonials";
 import Chat from "./chatbot";
+import RatingModal from "./Rate";
+import RateAdmin from "./Rateadmin";
+import AIAnalysisModal from "./AI";
+import AIChatModal from "./AI";
 // Custom Hook to conditionally render Navibar based on current location
 function Navigation() {
   const location = useLocation(); // Get current location
@@ -142,6 +146,9 @@ function App() {
         <Route path="/about" element={<About/>}/>
         <Route path="/testimonials" element={<Testimonials/>}/>
         <Route path="/chatbot" element={<Chat/>}/>
+        <Route path='/rate' element={<RatingModal/>}/>
+        <Route path='/rateadmin'element={<RateAdmin/>}/>
+        <Route path="/AI" element={<AIChatModal/>}/>
       </Routes>
       <Chat/>
       <Footer />
