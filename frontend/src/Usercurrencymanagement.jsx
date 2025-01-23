@@ -7,7 +7,7 @@ import { Button } from '@mui/material'; // Add Button if needed
 const UserCurrencyManagement = () => {
   const [currencies, setCurrencies] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [newRate, setNewRate] = useState(''); // State for storing new rate
+  const [newRates, setNewRates] = useState({}); // Object to store new rates for each currency
 
   // Fetch currencies from API
   useEffect(() => {
@@ -15,7 +15,6 @@ const UserCurrencyManagement = () => {
       setLoading(true);
       try {
         const response = await axios.get('http://localhost:5000/api/currencies', { withCredentials: true });
-        console.log(response.data); // Log the response to check the data format
         setCurrencies(response.data || []);
       } catch (error) {
         console.error('Error fetching currencies:', error);
@@ -27,27 +26,34 @@ const UserCurrencyManagement = () => {
     fetchCurrencies();
   }, []);
 
-  // Handle rate input change
-  const handleRateChange = (e) => {
-    setNewRate(e.target.value); // Update the newRate value
+  // Handle rate input change for a specific currency
+  const handleRateChange = (currencyCode, value) => {
+    setNewRates((prevRates) => ({
+      ...prevRates,
+      [currencyCode]: value, // Update the specific currency's rate
+    }));
   };
 
   // Handle update currency rate
   const handleUpdateCurrency = async (currencyCode) => {
-    if (!newRate) {
-      alert("Please enter a new rate");
+    const rate = newRates[currencyCode]; // Get the rate for the specific currency
+    if (!rate) {
+      alert('Please enter a new rate');
       return;
     }
 
     try {
       await axios.put(
         `http://localhost:5000/api/currencies/${currencyCode}`,
-        { rate: newRate },
+        { rate },
         { withCredentials: true }
       );
       alert('Currency rate updated successfully!');
-      // Reset newRate after successful update
-      setNewRate('');
+      // Reset the rate for the updated currency
+      setNewRates((prevRates) => ({
+        ...prevRates,
+        [currencyCode]: '',
+      }));
       // Fetch the currencies again after updating
       const response = await axios.get('http://localhost:5000/api/currencies', { withCredentials: true });
       setCurrencies(response.data || []);
@@ -77,8 +83,8 @@ const UserCurrencyManagement = () => {
                 <TextField
                   fullWidth
                   label="New Rate"
-                  value={newRate}
-                  onChange={handleRateChange}
+                  value={newRates[currency.currency_code] || ''} // Use the rate for this currency
+                  onChange={(e) => handleRateChange(currency.currency_code, e.target.value)} // Pass the currency code
                   variant="outlined"
                   type="number"
                 />
@@ -97,3 +103,4 @@ const UserCurrencyManagement = () => {
 };
 
 export default UserCurrencyManagement;
+

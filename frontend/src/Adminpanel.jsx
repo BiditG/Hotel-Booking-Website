@@ -3,10 +3,10 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Grid, Card, Button, FormControl, InputLabel, Input, CircularProgress, Typography, Drawer, List, ListItem, ListItemText, IconButton, Divider } from '@mui/material';
+import { Container, Grid, Card, Button, FormControl, InputLabel, Input, CircularProgress, Typography, Drawer, List, ListItem, ListItemText, IconButton, Divider, TextField  } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu'; 
-import CloseIcon from '@mui/icons-material/Close'; 
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import Hotelmanagement from './Hotelmanagement';
 import UserCurrencyManagement from './Usercurrencymanagement';
 import DashboardAnalytics from './Dashboardanalytics';
@@ -67,7 +67,7 @@ const Adminpanel = () => {
       setLoading(false);
     }
   };
-  
+
   // Function to fetch users from the backend
   const fetchUsers = async () => {
     setLoading(true);
@@ -81,7 +81,7 @@ const Adminpanel = () => {
     }
   };
 
-   // Function to fetch currencies from the backend
+  // Function to fetch currencies from the backend
   const fetchCurrencies = async () => {
     setLoading(true);
     try {
@@ -144,7 +144,7 @@ const Adminpanel = () => {
 
   // Navigating to the home page on exit
   const handleExit = () => {
-    navigate('/'); 
+    navigate('/');
   };
 
   // Styles for drawer and content
@@ -153,7 +153,7 @@ const Adminpanel = () => {
     flexShrink: 0,
     zIndex: 1200,
   };
- 
+
   const contentStyle = {
     padding: '16px',
   };
@@ -169,7 +169,7 @@ const Adminpanel = () => {
           <IconButton
             color="primary"
             aria-label="open sidebar"
-            onClick={() => setShowSidebar(!showSidebar)} 
+            onClick={() => setShowSidebar(!showSidebar)}
             style={{ color: 'white', display: 'block', marginRight: '16px' }}
           >
             <MenuIcon />
@@ -205,7 +205,7 @@ const Adminpanel = () => {
                 },
               }}
               BackdropProps={{
-                onClick: () => setShowSidebar(false), 
+                onClick: () => setShowSidebar(false),
               }}
             >
               <div style={{ padding: '10px', textAlign: 'right' }}>
@@ -272,39 +272,40 @@ const Adminpanel = () => {
 
                   {selectedTab === 0 && <Hotelmanagement />}
                   {selectedTab === 1 && (
-                    <Card style={{ padding: '16px' }}>
-                      <Typography variant="h5" color="primary" gutterBottom>
+                    <Card style={{ padding: '24px', maxWidth: '600px', margin: 'auto', marginTop: '32px', boxShadow: '0px 3px 6px rgba(0,0,0,0.1)' }}>
+                      <Typography variant="h5" color="primary" gutterBottom style={{ textAlign: 'center' }}>
                         🌟 Add New Hotel 🌟
                       </Typography>
-                      <form onSubmit={handleAddHotel}>
-                        <div>
-                        {/* Iterates over the keys (property names) of the newHotel object. */}
-                          {Object.keys(newHotel).map((key) => (
-                            key !== 'status' && (
-                              <div key={key} style={{ marginBottom: '16px' }}>
 
-                                {/*Capitalizes the first letter of the property name*/}
-                                <InputLabel htmlFor={key} variant="outlined">
-                                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                                </InputLabel>
-                                <FormControl fullWidth>
-                                  <Input
-                                    type="text"
-                                    name={key}
-                                    value={newHotel[key]}
-                                    onChange={handleChange}
-                                    required
-                                  />
-                                </FormControl>
-                              </div>
-                            )
-                          ))}
-                        </div>
+                      <form onSubmit={handleAddHotel}>
+                        <Grid container spacing={3}>
+                          {/* Iterate over the keys of the `newHotel` object */}
+                          {Object.keys(newHotel).map(
+                            (key) =>
+                              key !== 'status' && (
+                                <Grid item xs={12} sm={6} key={key}>
+                                  <FormControl fullWidth>
+                                    <TextField
+                                      label={key.charAt(0).toUpperCase() + key.slice(1)} // Capitalize the first letter of the property name
+                                      variant="outlined"
+                                      name={key}
+                                      value={newHotel[key]}
+                                      onChange={handleChange}
+                                      required
+                                      type={key.toLowerCase().includes('email') ? 'email' : 'text'} // Example: Add field-specific input types
+                                    />
+                                  </FormControl>
+                                </Grid>
+                              )
+                          )}
+                        </Grid>
+
                         <Button
                           variant="contained"
                           color="primary"
                           type="submit"
-                          style={{ marginTop: '16px' }}
+                          fullWidth
+                          style={{ marginTop: '24px', padding: '12px' }}
                         >
                           Add Hotel
                         </Button>
@@ -315,8 +316,8 @@ const Adminpanel = () => {
                   {selectedTab === 3 && <UserCurrencyManagement />}
                   {selectedTab === 4 && <DashboardAnalytics />}
                   {selectedTab === 5 && <Updateoffer />}
-                  {selectedTab === 6 && <RateAdmin/>}
-                  {selectedTab === 7 && <AIChatModal/>}
+                  {selectedTab === 6 && <RateAdmin />}
+                  {selectedTab === 7 && <AIChatModal />}
                 </>
               )}
             </div>

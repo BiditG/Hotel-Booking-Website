@@ -187,7 +187,7 @@ const DashboardAnalytics = () => {
 
         {/* Hotels Table with Profit/Loss Calculation */}
         <Col xs={12} md={5}>
-          <Card className="shadow-sm rounded">
+          <Card className="shadow-sm rounded" style={{width: '450px'}}>
             <Card.Body>
               <Card.Title><Hotel fontSize="small" /> Hotels (Profit/Loss)</Card.Title>
               <Table striped bordered hover>
